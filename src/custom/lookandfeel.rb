@@ -28,6 +28,7 @@ module XmlConv
 					:status_pending_pickup		=>	'Bereit zum Abholen',
 					:status_picked_up					=>	'Abgeholt',
 					:th_commit_time						=>	'Zeit',
+					:th_error									=>	'Fehler',
 					:th_input									=>	'Input',
 					:th_uri_comparable				=>	'Empfänger',
 					:th_filename							=>	'Filename',
