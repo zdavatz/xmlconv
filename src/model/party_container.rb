@@ -9,7 +9,7 @@ module XmlConv
 				if((role = party.role) && !role.empty?)
 					role = role.gsub(/\B[A-Z]/, '_\&')
 					instance_variable_set("@#{role.downcase}", party)
-					parties.push(party)
+					self.parties.push(party)
 				end
 			end
 			def parties

@@ -2,7 +2,7 @@
 # TestDelivery -- xmlconv2 -- 01.06.2004 -- hwyss@ywesee.com
 
 $: << File.dirname(__FILE__)
-$: << File.expand_path('../src', File.dirname(__FILE__))
+$: << File.expand_path('../../src', File.dirname(__FILE__))
 
 require 'test/unit'
 require 'model/delivery'
@@ -15,8 +15,6 @@ module XmlConv
 				@delivery = Delivery.new
 			end
 			def test_attr_accessors
-				assert_respond_to(@delivery, :delivery_id)
-				assert_respond_to(@delivery, :delivery_id=)
 				assert_respond_to(@delivery, :customer)
 				assert_respond_to(@delivery, :customer=)
 				assert_respond_to(@delivery, :bsr)
@@ -25,13 +23,15 @@ module XmlConv
 			def test_attr_readers
 				assert_respond_to(@delivery, :items)
 				assert_respond_to(@delivery, :parties)
+				assert_respond_to(@delivery, :ids)
+				assert_respond_to(@delivery, :customer_id)
 			end
-			def test_party_id
+			def test_bsr_id
 				bsr = Mock.new('BSR')
-				bsr.__next(:party_id) { 'id_string' } 
-				assert_nil(@delivery.party_id)
+				bsr.__next(:bsr_id) { 'id_string' } 
+				assert_nil(@delivery.bsr_id)
 				@delivery.bsr = bsr
-				assert_equal('id_string', @delivery.party_id)
+				assert_equal('id_string', @delivery.bsr_id)
 				bsr.__verify
 			end
 			def test_add_party

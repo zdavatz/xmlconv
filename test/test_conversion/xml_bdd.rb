@@ -1,15 +1,15 @@
 #!/usr/bin/env ruby
-# TestBddFactory -- xmlconv2 -- 01.06.2004 -- hwyss@ywesee.com
+# TestXmlBdd -- xmlconv2 -- 01.06.2004 -- hwyss@ywesee.com
 
 $: << File.dirname(__FILE__)
 $: << File.expand_path('../../src', File.dirname(__FILE__))
 
 require 'test/unit'
-require 'conversion/bdd_factory'
+require 'conversion/xml_bdd'
 
 module XmlConv
 	module Conversion
-		class TestBddFactory < Test::Unit::TestCase
+		class TestXmlBdd < Test::Unit::TestCase
 			def setup
 				src = <<-EOS
 <?xml version="1.0" encoding="ISO-8859-1"?>
@@ -105,27 +105,28 @@ module XmlConv
 				@xml_doc = REXML::Document.new(src)
 			end
 			def test_xml2bdd
-				bdd = BddFactory.xml2bdd(@xml_doc)
+				bdd = XmlBdd.xml2bdd(@xml_doc)
 				assert_instance_of(Model::Bdd, bdd)
 				bsr = bdd.bsr
 				assert_instance_of(Model::Bsr, bsr)
 				delivery = bdd.deliveries.first
 				assert_instance_of(Model::Delivery, delivery)
+				assert_equal(bsr, delivery.bsr)
 			end
 			def test__bdd_add_xml_bsr
 				xml_bsr = REXML::XPath.first(@xml_doc, 'BDD/BSR')
 				bdd = Model::Bdd.new
-				BddFactory._bdd_add_xml_bsr(bdd, xml_bsr)
+				XmlBdd._bdd_add_xml_bsr(bdd, xml_bsr)
 				bsr = bdd.bsr
 				assert_instance_of(Model::Bsr, bsr)
 				parties = bsr.parties
 				assert_instance_of(Model::Party, parties.first)
-				assert_equal('%%%99999%%% Kundennummer ElectroLAN', bsr.customer_id)
+				assert_equal('%%%99999%%% Kundennummer ElectroLAN', bsr.bsr_id)
 			end
 			def test__container_add_xml_party__seller
 				xml_party = REXML::XPath.first(@xml_doc, 'BDD/Delivery/Party')
 				delivery = Model::Delivery.new
-				BddFactory._container_add_xml_party(delivery, xml_party)
+				XmlBdd._container_add_xml_party(delivery, xml_party)
 				seller = delivery.seller
 				assert_instance_of(Model::Party, seller)
 				assert_instance_of(Model::Name, seller.name)
@@ -139,7 +140,7 @@ module XmlConv
 			def test__container_add_xml_party__customer
 				xml_party = REXML::XPath.first(@xml_doc, "BDD/Delivery/Party[@Role='Customer']")
 				delivery = Model::Delivery.new
-				BddFactory._container_add_xml_party(delivery, xml_party)
+				XmlBdd._container_add_xml_party(delivery, xml_party)
 				customer = delivery.customer	
 				assert_instance_of(Model::Party, customer)
 				cust_addr = customer.address
@@ -170,7 +171,7 @@ module XmlConv
 			def test__bdd_add_xml_delivery
 				xml_delivery = REXML::XPath.first(@xml_doc, 'BDD/Delivery')
 				bdd = Model::Bdd.new
-				BddFactory._bdd_add_xml_delivery(bdd, xml_delivery)
+				XmlBdd._bdd_add_xml_delivery(bdd, xml_delivery)
 				delivery = bdd.deliveries.first
 				assert_instance_of(Model::Delivery, delivery)		
 				assert_equal('B-465178 W', delivery.customer_id)

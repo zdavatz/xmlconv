@@ -2,7 +2,7 @@
 # TestDeliveryItem -- xmlconv2 -- 01.06.2004 -- hwyss@ywesee.com
 
 $: << File.dirname(__FILE__)
-$: << File.expand_path('../src', File.dirname(__FILE__))
+$: << File.expand_path('../../src', File.dirname(__FILE__))
 
 require 'test/unit'
 require 'model/delivery_item'
@@ -22,14 +22,14 @@ module XmlConv
 				assert_respond_to(@item, :delivery_date=)
 			end
 			def test_attr_readers
-				assert_respond_to(@item, :part_ids)
-				assert_respond_to(@item, :et_nummer)
+				assert_respond_to(@item, :ids)
+				assert_respond_to(@item, :et_nummer_id)
 			end
-			def test_add_part_id
-				assert_equal({}, @item.part_ids)
-				@item.add_part_id('ET-NUMMER', 'et_number')
-				assert_equal('et_number', @item.et_nummer)
-				assert_equal({'ET-NUMMER'	=>	'et_number'}, @item.part_ids)
+			def test_add_id
+				assert_equal({}, @item.ids)
+				@item.add_id('ET-NUMMER', 'et_number')
+				assert_equal('et_number', @item.et_nummer_id)
+				assert_equal({'ET-NUMMER'	=>	'et_number'}, @item.ids)
 			end
 		end
 	end

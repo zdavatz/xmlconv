@@ -12,6 +12,9 @@ module XmlConv
 			def add_line(line)
 				lines.push(line)
 			end
+			def size
+				@lines.size
+			end
 		end
 	end
 end

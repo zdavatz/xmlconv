@@ -4,9 +4,23 @@
 module XmlConv
 	module Model
 		class Name
-			attr_accessor :first, :last
+			attr_reader :first, :last, :text
+			def first=(arg)
+				set_attr('@first', arg)
+			end
+			def last=(arg)
+				set_attr('@last', arg)
+			end
+			def text=(arg)
+				set_attr('@text', arg)
+			end
 			def to_s
-				[@first, @last].compact.join(' ')
+				[@first, @text, @last].compact.join(' ')
+			end
+			private
+			def set_attr(attr, arg)
+				str = arg.to_s
+				instance_variable_set(attr, str.empty? ? nil : str)
 			end
 		end
 	end

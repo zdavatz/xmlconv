@@ -1,5 +1,5 @@
 #!/usr/bin/env ruby
-# BddFactory -- xmlconv2 -- 01.06.2004 -- hwyss@ywesee.com
+# XmlBdd -- xmlconv2 -- 01.06.2004 -- hwyss@ywesee.com
 
 require 'date'
 require 'rexml/document'
@@ -14,7 +14,7 @@ require 'model/party'
 
 module XmlConv
 	module Conversion
-		class BddFactory
+		class XmlBdd
 			class << self
 				def xml2bdd(xml_document)
 					bdd = Model::Bdd.new
@@ -35,6 +35,7 @@ module XmlConv
 				end
 				def _bdd_add_xml_delivery(bdd, xml_delivery)
 					delivery = Model::Delivery.new
+					delivery.bsr = bdd.bsr
 					REXML::XPath.each(xml_delivery, 'DeliveryId') { |xml_id|
 						_container_add_xml_id(delivery, xml_id)
 					}
