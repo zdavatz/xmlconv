@@ -1,0 +1,292 @@
+24.5.2004
+*********
+*********
+User Story Bestellung:
+----------------------
+WF sendet eine XML-Bestellung an unsere IP. 
+hwyss@ywesee.com: Ich würde grundsätzlich empfehlen, dass wir einen Domain-Name vorsehen und nicht direkt über die IP - dann können wir bei Bedarf ohne weiteres den Service auf einem Anderen Server laufen lassen
+hwyss@ywesee.com: Über welches Protokoll kommt die Bestellung bei uns an? Ich kann mir HTTP/POST oder FTP vorstellen, wobei wir bei HTTP-POST den Request abfangen müssen, bevor er von Apache/mod-ruby verarbeitet wird (wir brauchen den 'Raw' POST-Body). 
+marcel.fehr@w-f.ch: Wir senden unsere Messages per HTTP mit folgendem 'Absender': 212.90.201.189:25000
+Bitte senden Sie uns ihre Dokumente auf: http://212.90.201.188/plica_in:25004
+
+
+Wir wandeln diese Bestellung ins i2-Format um und legen die Bestellung auf unsere FTP zum abholen bereit. 
+H: Vorschlag: Ftp-Server auf gleichem Domain-Namen wie 'Bestell-Eingang'
+
+Die Bestellungen müssen in einem WebInterface angeschaut werden können. Das Webinterface ist geschützt durch Benutzername und Passwort. Die Namensgebung der Datei ist egal. Der Name muss eindeutig und mit der Endung .dat versehen sein.
+
+Benötigte Felder
+ORDERS (13 Segmente):
+--------------------
+PartyId (BSR)
+DeliveryId
+FirstName (Employee)
+LastName 
+Name (ShipTo)
+AddressLine
+City
+ZipCode
+Name (BillTo)
+AddressLine
+City
+ZipCode
+LineNum
+IdentNo
+Qty (ET-Nummer)
+DeliveryDate
+
+CONFIRM (38 Segmente):
+----------------------
+Name (Customer)
+Name (Seller)
+Adressline
+City
+ZipCode
+AddressLine (Customer)
+City
+ZipCode
+FirstName (Employee)
+LastName
+Name (ShipTo)
+AddressLine
+City
+ZipCode
+Name (BillTo)
+AddressLine
+City
+ZipCode
+LineNum
+IdentNo(ET-Nummer)
+Qty
+BruttoPreis
+Grundrabatt
+Abspr.Mengenrab.
+NettoPreis
+BruttoPreisME
+GrundrabattME
+Abspr.Mendenrab.ME
+NettoPreisME
+Bezeichnung
+Price
+SummePositionen
+MehrwertsteuerPct
+Mehrwertsteuer  
+Rundung
+Endbetrag
+Agreement
+TermsCond
+
+INVOICE (35 Segmente)
+----------------------
+Name (Customer)
+InvoiceId (Customer)
+InvoiceId
+ESR
+Name (Seller)
+AddressLine
+City
+ZipCode
+Name (BillTo)
+AddressLine
+City
+ZipCode
+IdentNo(ET-Nummer)
+Ursprungsland
+Qty
+ShipToName
+ShipToAddressLine
+ShipToAddressLine
+ShipToCity
+ShipToZipCode
+BruttoPreis
+Grundrabatt
+Abspr.Mengenrab.
+NettoPreis
+BruttoPreisME
+GrundrabattME
+Abspr.Mendenrab.ME
+NettoPreisME
+FreeText
+TermsCond
+SummePositionen
+MehrwertsteuerPct
+Mehrwertsteuer
+Rundung
+Endbetrag
+
+Feldbeschreibung i2:
+--------------------
+001 Empfänger Identifikation: EPIN Plica 20 (length)
+002 MessageType OREDERX 6 (length)
+003 Dokumentname codiert 220 3 (length)
+010 Dokumentenummern oder Dateiname 14 (length)
+100 Sender Identifikation: Sender- oder Firmenname (wird von Plica vergeben)
+101 Auftragsnummer oder Kommission (Eintrag zwingend)
+201 Adresscode: Käufer=BY, Kunde=CU, Lieferadresse=DP
+202 Adressnummer gemäss Adresscode, darf bei 201 DP nicht vorkommen.
+220 AdressName1
+221 AdressName2
+222 AdressStrasse
+223 AdressOrt
+224 AdressLand
+225 AdressPLZ
+226 AdressStrasse2
+231 Ihr Zeichen
+236 Auftragstext
+237 Bestellart, Schnittstelle XML=61
+238 Versandart gemäss Implementation i2
+239 Lieferbedingung gemäss Implementation i2
+242 Auftragszusatzkosten, Versandkosten in Kundewährung
+243 Auftragsart
+244 Belegart
+245 Auftragszusatzkosten, Nachnahmegebühr in Kundenwährung
+250 Referenzcode=ADE
+251 Referenzangabe Kommission gemäss Referenzcode
+300 Datumscode Lieferdatum=2 oder Bestelldatum=4
+301 Datumsformat gemäss Datumscode: CCYYMMDD
+310 Kreditkartennummer
+311 Kreditkartenverfalldatum
+490 Steuerung Auftragstext: Kopftext = 0 Fusstext = 1
+491 Texte pro Kopf/Fuss 40 Zeilen
+
+Bemerkungen zu obigen Feldern:
+Feld 201 / 202: Können mehrfach vorhanden sein, einmal für den Übermittler (Käufer) und einmal für den Auftraggeber (Kunde). Die Nummern müssen im Kundenstamm Plica vorhanden sein.
+Feld 300 / 301: Können mehrfach vorhanden sein, einmal für das Bestelldatum und einmal für das Lieferdatum.
+Feld 201: Ist für die normale Auftragübergabe unter 'BY' die Auftragsteuerung hinterlegt. 'CU' entspricht der Kundennummer. Da der Käufer die Auftragsteuerung hinterlegt hat, ist für Edifakt der Adresscode 'CU' nicht aktiv.
+Feld 201 / 220-290: Für die Verwendung der Lieferadresse in "prosa" (Feld 220 - 229) muss das Feld 201 'DP' beinhalten. Das Feld 202 darf nicht vorhanden sein!
+Feld 242: Über das Merkmal im Kundenstamm (EDI-PartnerNr), NUPR" wird gesteuert, ob ein Wert 0.00 als Versandkosten übernommen wird.
+Feld 243 / 244: Bei fehlenden Werten werden diejenigen aus dem EDI-Stamm aktiviert.
+
+500 Positionsnummerierung
+501 Artikelnummer (EAN-Code)
+502 Artikelnummer Käufer
+520 Menge
+521 Mengeneinheit in Stück
+540 Datumscode Lieferdatum=2
+541 Datum format CCYYMMDD) gemäss Datumscode
+603 Verrechnungsart gemäss Codetabelle i2
+604 Verkaufspreis
+605 Formularart für Positionstext, RS=Rüstschein.
+606 Positionstext für Formularart aus 605
+910 ESR Code 1te Stelle
+911 ESR Code 2te bis 21te Stelle
+912 ESR Code 22te bis 51te Stelle
+
+Feld 521: Die Mengeneinheit wird im Artikelstamm gesteuert. Die Angabe 'PCE' ist also nicht relevant.
+Feld 603: Ist von der Struktur der vom Kunden vergebebnen Code abhängig.
+Feld 604: Ist ein Wert vorhanden ,so wird die Preisfindung beim Eröffnen der Auftragsposition ausgeschaltet. Über das Merkmal im Kundenstamm (EDI-PartnerNr), "NUPR" wird gesteuert, ob ein Wert 0.00 als Positionspreis übernommen wird.
+Feld 605: Formulararten - Rüstschein = 'RS' /  Lieferschein = 'LS' / Rechung = 'RG'.
+Feld 606: Kann maximal 40 mal hintereinander  gesetzt sein = Text 40 Zeilen a 70 Zeichen.
+
+Beispiel einer Test-Bestellung von WF an Janico:
+------------------------------------------------
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE BDD SYSTEM "ABB BDD.dtd">
+<BDD Version="2">
+  <BSR Version="3">
+    <Timestamp Zone="+1">20040416151630</Timestamp>
+    <Verb>Place</Verb>
+    <Noun>Order</Noun>
+    <Party Role="Customer" Version="2">
+      <Name>ElectroLAN SA</Name>
+      <PartyId Domain="ACC">%%%99999%%% Kundennummer ElectroLAN</PartyId>
+    </Party>
+  </BSR>
+  <Delivery Version="3">
+    <Status Date="20040416151442" Domain="">Order</Status>
+    <DeliveryId Domain="Customer">B-465551 N</DeliveryId>
+    <Party Version="2" Role="Seller">
+      <Name>Plica AG</Name>
+      <Address>
+        <AddressLine>Z³rcherstr. 350/Postfach 173</AddressLine>
+        <City>Frauenfeld</City>
+        <ZipCode Domain="">8501</ZipCode>
+      </Address>
+    </Party>
+    <Party Version="2" Role="Customer">
+      <Name>ElectroLAN SA</Name>
+      <Phone Domain="Business">01 / 839 58 44</Phone>
+      <Address>
+        <AddressLine>Rue des Tunnels 67-69</AddressLine>
+        <City>Neuenburg</City>
+        <ZipCode Domain="CH">2006</ZipCode>
+      </Address>
+      <Party Role="Employee">
+        <Name>
+          <LastName>Russo Giovanni</LastName>
+        </Name>
+        <Competency>Sachbearbeiter</Competency>
+      </Party>
+      <Party Role="ShipTo">
+        <Name>ElectroLAN SA</Name>
+        <PartyId Domain="ACC">%%%99999%%% Lieferadressnummer</PartyId>
+        <Address>
+          <AddressLine>Filiale Neuenburg</AddressLine>
+          <AddressLine>rue des tunnels 67-69</AddressLine>
+          <City>NeuchÔtel</City>
+          <ZipCode Domain="CH">2000</ZipCode>
+        </Address>
+      </Party>
+      <Party Role="BillTo">
+        <Name>ElectroLAN SA</Name>
+        <PartyId Domain="ACC">%%%99999%%% Rechnungsadressnummer</PartyId>
+        <Address>
+          <AddressLine>Rue des Tunnels 67-69</AddressLine>
+          <City>Neuenburg</City>
+          <ZipCode Domain="CH">2006</ZipCode>
+        </Address>
+      </Party>
+    </Party>
+    <DeliveryItem>
+      <LineNo>2510819</LineNo>
+      <PartId>
+        <IdentNo Domain="ET-NUMMER">125051399</IdentNo>
+        <IdentNo Domain="LIEFERANTENARTIKEL">13.1003.025</IdentNo>
+      </PartId>
+      <Qty>30</Qty>
+      <FreeText Type="BEZEICHNUNG">STAHLROHR ERZ M25 VZ</FreeText>
+      <DeliveryDate>SOFORT</DeliveryDate>
+    </DeliveryItem>
+    <DeliveryItem>
+      <LineNo>2510820</LineNo>
+      <PartId>
+        <IdentNo Domain="ET-NUMMER">125061299</IdentNo>
+        <IdentNo Domain="LIEFERANTENARTIKEL">ALU M20</IdentNo>
+      </PartId>
+      <Qty>1530</Qty>
+      <FreeText Type="BEZEICHNUNG">ALU-ROHR M20</FreeText>
+      <DeliveryDate>SOFORT</DeliveryDate>
+    </DeliveryItem>
+    <DeliveryItem>
+      <LineNo>2510821</LineNo>
+      <PartId>
+        <IdentNo Domain="ET-NUMMER">125091309</IdentNo>
+        <IdentNo Domain="LIEFERANTENARTIKEL">KRH.M25</IdentNo>
+      </PartId>
+      <Qty>204</Qty>
+      <FreeText Type="BEZEICHNUNG">KRH-ROHR M25 GU</FreeText>
+      <DeliveryDate>SOFORT</DeliveryDate>
+    </DeliveryItem>
+    <DeliveryItem>
+      <LineNo>2510822</LineNo>
+      <PartId>
+        <IdentNo Domain="ET-NUMMER">125251609</IdentNo>
+        <IdentNo Domain="LIEFERANTENARTIKEL">15.1602.550</IdentNo>
+      </PartId>
+      <Qty>50</Qty>
+      <FreeText Type="BEZEICHNUNG">KRFW-G ROHR PP M50 GU</FreeText>
+      <DeliveryDate>SOFORT</DeliveryDate>
+    </DeliveryItem>
+    <DeliveryItem>
+      <LineNo>2510823</LineNo>
+      <PartId>
+        <IdentNo Domain="ET-NUMMER">125272709</IdentNo>
+        <IdentNo Domain="LIEFERANTENARTIKEL">28M63.12</IdentNo>
+      </PartId>
+      <Qty>50</Qty>
+      <FreeText Type="BEZEICHNUNG">INST-ROHR FLEX.M63 HGU</FreeText>
+      <DeliveryDate>SOFORT</DeliveryDate>
+    </DeliveryItem>
+  </Delivery>
+</BDD>
+
