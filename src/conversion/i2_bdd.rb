@@ -112,7 +112,7 @@ module XmlConv
 					when 'CONFIRM'
 						bsr.verb = 'Return'
 						bsr.noun = 'Status'
-					when 'INVOICE'
+					when 'INVOIC'
 						bsr.verb = 'Return'
 						bsr.noun = 'Invoice'
 					end
