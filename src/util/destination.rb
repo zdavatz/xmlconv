@@ -29,7 +29,7 @@ module XmlConv
 		class DestinationDir < Destination
 			attr_reader :filename
 			def deliver(delivery)
-				FileUtils.mkdir_p(@path)
+				#FileUtils.mkdir_p(@path)
 				@filename = delivery.filename
 				path = File.expand_path(@filename, @path)
 				@status = :pending_pickup

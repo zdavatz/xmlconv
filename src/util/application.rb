@@ -32,7 +32,8 @@ module XmlConv
 				transaction.execute
 				@transactions.push(transaction)
 				@transactions.odba_store
-			rescue
+			rescue StandardError => error
+				transaction.error = error
 				@failed_transactions.push(transaction)
 				@failed_transactions.odba_store
 			end
