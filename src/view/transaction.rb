@@ -26,6 +26,7 @@ module XmlConv
 					components.store([0,2], :error_string)
 					colspan_map.store([0,2], 2)
 				end
+				super
 			end
 		end
 		class Transaction < Template
