@@ -104,7 +104,7 @@ module XmlConv
 				EOS
 				@xml_doc = REXML::Document.new(@src)
 			end
-			def test_xml2bdd
+			def test_convert
 				bdd = XmlBdd.convert(@xml_doc)
 				assert_instance_of(Model::Bdd, bdd)
 				bsr = bdd.bsr

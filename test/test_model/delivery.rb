@@ -19,12 +19,15 @@ module XmlConv
 				assert_respond_to(@delivery, :customer=)
 				assert_respond_to(@delivery, :bsr)
 				assert_respond_to(@delivery, :bsr=)
+				assert_respond_to(@delivery, :agreement)
+				assert_respond_to(@delivery, :agreement=)
 			end
 			def test_attr_readers
 				assert_respond_to(@delivery, :items)
 				assert_respond_to(@delivery, :parties)
 				assert_respond_to(@delivery, :ids)
 				assert_respond_to(@delivery, :customer_id)
+				assert_respond_to(@delivery, :prices)
 			end
 			def test_bsr_id
 				bsr = Mock.new('BSR')
@@ -47,6 +50,12 @@ module XmlConv
 				@delivery.add_item(item)	
 				assert_equal([item], @delivery.items)
 				item.__verify
+			end
+			def test_add_price
+				assert_equal([], @delivery.prices)
+				price = Mock.new('BruttoPreis')
+				@delivery.add_price(price)
+				assert_equal([price], @delivery.prices)
 			end
 		end
 	end

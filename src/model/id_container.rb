@@ -4,7 +4,6 @@
 module XmlConv
 	module Model
 		module IdContainer
-			attr_reader :ids
 			def add_id(domain, value)
 				self.ids.store(domain, value)
 				if(domain && !domain.empty?)
