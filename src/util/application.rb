@@ -32,19 +32,12 @@ module XmlConv
 =end
 			def execute(transaction)
 				transaction.transaction_id = next_transaction_id
-				#puts "transaction_id #{transaction.transaction_id}"
 				transaction.execute
-				#puts "exectuded"
+			rescue Exception => error
+				transaction.error = error
+			ensure
 				@transactions.push(transaction)
 				@transactions.odba_store
-			rescue Exception => error
-				#puts "rescue #{error}"
-				transaction.error = error
-				#puts "in transaction"
-				@failed_transactions.push(transaction)
-				#puts "in transactions"
-				@failed_transactions.odba_store
-				#puts "persistent"
 			end
 			def next_transaction_id
 				@id_mutex.synchronize {
