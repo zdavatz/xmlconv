@@ -65,6 +65,8 @@ table.navigation
 }
 td.helfti
 {
+	font-family: monospace, fixed;
 	width: 50%;
 	vertical-align: top;
+	white-space: pre;
 }

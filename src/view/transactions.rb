@@ -31,6 +31,22 @@ module XmlConv
 			def commit_time(model)
 				time_format(model.commit_time)
 			end
+			def origin(model)
+				uri_fmt(model.origin)
+			end
+			def uri(model)
+				uri_fmt(model.uri)
+			end
+			def uri_fmt(uri)
+				uri = uri.to_s
+				if((i1 = uri.index(/([^\/])\/[^\/]/, 1)) \
+						&& (i2 = uri.rindex(/(\/[^\/]+){3}/)) \
+						&& (i2 > i1))
+					uri[0..(i1.next)] << '...' << uri[i2..-1]
+				else 
+					uri
+				end
+			end
 			def status_comparable(model)
 				model.update_status
 				status = model.status
@@ -52,7 +68,16 @@ module XmlConv
 				link
 			end
 		end
+=begin
+		class TransactionsComposite < HtmlGrid::Composite
+			COMPONENTS = {
+				#[0,0]	=>	Pager,
+				[0,1]	=>	TransactionsList,
+			}
+		end
+=end
 		class Transactions < Template
+			#CONTENT = TransactionsComposite
 			CONTENT = TransactionsList
 		end
 	end

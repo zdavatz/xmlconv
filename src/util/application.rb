@@ -14,10 +14,13 @@ module XmlConv
 		class Application
 			attr_reader :transactions, :failed_transactions
 			include ODBA::Persistable
-			ODBA_EXCLUDE_VARS = ['@next_transaction_id']
+			ODBA_EXCLUDE_VARS = ['@next_transaction_id', '@id_mutex']
 			def initialize
 				@transactions = []
 				@failed_transactions = []
+			end
+			def init
+				@id_mutex = Mutex.new
 			end
 =begin
 			def convert(input, reader, writer, destination, request)
@@ -38,10 +41,12 @@ module XmlConv
 				@failed_transactions.odba_store
 			end
 			def next_transaction_id
-				@next_transaction_id ||= @transactions.collect { |transaction|
-					transaction.transaction_id.to_i
-				}.max.to_i
-				@next_transaction_id += 1
+				@id_mutex.synchronize {
+					@next_transaction_id ||= @transactions.collect { |transaction|
+						transaction.transaction_id.to_i
+					}.max.to_i
+					@next_transaction_id += 1
+				}
 			end
 			def transaction(transaction_id)
 				transaction_id = transaction_id.to_i
@@ -68,6 +73,7 @@ class XmlConvApp < SBSM::DRbServer
 		@system = ODBA.cache_server.fetch_named('XmlConv', self) { 
 			XmlConv::Util::Application.new
 		}
+		@system.init
 		if(self::class::POLLING_INTERVAL)
 			start_polling
 		end
