@@ -11,7 +11,7 @@ module XmlConv
 	module Util
 		class PollingMission
 			attr_accessor :directory, :reader, :writer, :destination, 
-										:error_recipients, :debug_recipients
+										:error_recipients, :debug_recipients, :backup_dir
 		end
 		class PollingManager
 			PROJECT_ROOT = File.expand_path('../..', File.dirname(__FILE__))
@@ -56,7 +56,8 @@ module XmlConv
 						transaction.error_recipients = source.error_recipients
 						@system.execute(transaction)
 					ensure
-						File.delete(path)
+						FileUtils.mkdir_p(source.backup_dir)
+						FileUtils.mv(path, source.backup_dir)
 					end
 				}
 			end
