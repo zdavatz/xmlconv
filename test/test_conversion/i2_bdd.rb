@@ -71,9 +71,9 @@ module XmlConv
 				date = Mock.new('Date')
 				time = Mock.new('Time')
 				mtype = Mock.new('MType')
-				sender = Mock.new('Sender')
-				sender.__next(:attributes) { 'value' }
-				sender.__next(:value) { 'ACC-ID' }
+				recipient = Mock.new('Recipient')
+				recipient.__next(:attributes) { 'value' }
+				recipient.__next(:value) { 'RecipientName' }
 				mtype.__next(:attributes) { 'value' }
 				mtype.__next(:value) { 'CONFIRM' }
 				time.__next(:attributes) { 'value' }
@@ -83,7 +83,7 @@ module XmlConv
 				ast.__next(:date) { date }
 				ast.__next(:time) { time }
 				ast.__next(:mtype) { mtype }
-				ast.__next(:sender) { sender }
+				ast.__next(:recipient) { recipient }
 				bdd.__next(:bsr=) { |bsr| 
 					assert_instance_of(Model::Bsr, bsr)
 					assert_equal(Time.local(2004, 6, 28, 17, 54), bsr.timestamp)
@@ -93,7 +93,9 @@ module XmlConv
 					party = bsr.parties.first
 					assert_instance_of(Model::Party, party)
 					assert_equal('Customer', party.role)
-					assert_equal('ACC-ID', party.acc_id)
+					name = party.name
+					assert_instance_of(Model::Name, name)
+					assert_equal('RecipientName', name.to_s)
 				}
 				I2Bdd._bdd_add_header(bdd, ast)
 				bdd.__verify
@@ -101,7 +103,7 @@ module XmlConv
 				date.__verify
 				time.__verify
 				mtype.__verify
-				sender.__verify
+				recipient.__verify
 			end
 			def test__bdd_add_header__invoice
 				bdd = Mock.new('Bdd')
@@ -109,9 +111,9 @@ module XmlConv
 				date = Mock.new('Date')
 				time = Mock.new('Time')
 				mtype = Mock.new('MType')
-				sender = Mock.new('Sender')
-				sender.__next(:attributes) { 'value' }
-				sender.__next(:value) { 'ACC-ID' }
+				recipient = Mock.new('Recipient')
+				recipient.__next(:attributes) { 'value' }
+				recipient.__next(:value) { 'RecipientName' }
 				mtype.__next(:attributes) { 'value' }
 				mtype.__next(:value) { 'INVOIC' }
 				time.__next(:attributes) { 'value' }
@@ -121,7 +123,7 @@ module XmlConv
 				ast.__next(:date) { date }
 				ast.__next(:time) { time }
 				ast.__next(:mtype) { mtype }
-				ast.__next(:sender) { sender }
+				ast.__next(:recipient) { recipient }
 				bdd.__next(:bsr=) { |bsr| 
 					assert_instance_of(Model::Bsr, bsr)
 					assert_equal(Time.local(2004, 6, 28, 17, 54), bsr.timestamp)
@@ -131,7 +133,9 @@ module XmlConv
 					party = bsr.parties.first
 					assert_instance_of(Model::Party, party)
 					assert_equal('Customer', party.role)
-					assert_equal('ACC-ID', party.acc_id)
+					name = party.name
+					assert_instance_of(Model::Name, name)
+					assert_equal('RecipientName', name.to_s)
 				}
 				I2Bdd._bdd_add_header(bdd, ast)
 				bdd.__verify
@@ -563,9 +567,9 @@ module XmlConv
 					assert_instance_of(Model::DeliveryItem, item)
 					#assert_equal('10', item.line_no)
 					assert_equal(2, item.ids.size)
-					assert_equal('1234567890987', item.ids['ET-Nummer'])
+					assert_equal('1234567890987', item.ids['EAN-Nummer'])
 					#assert_equal('Seller-Code', item.ids['Lieferantenartikel'])
-					assert_equal('Buyer-Code', item.ids['ACC'])
+					assert_equal('Buyer-Code', item.ids['ET-Nummer'])
 					free_text = item.free_text
 					assert_instance_of(Model::FreeText, free_text)
 					assert_equal('Bezeichnung', free_text.type)
@@ -661,9 +665,9 @@ module XmlConv
 					assert_instance_of(Model::InvoiceItem, item)
 					#assert_equal('10', item.line_no)
 					assert_equal(2, item.ids.size)
-					assert_equal('1234567890987', item.ids['ET-Nummer'])
+					assert_equal('1234567890987', item.ids['EAN-Nummer'])
 					#assert_equal('Seller-Code', item.ids['Lieferantenartikel'])
-					assert_equal('Buyer-Code', item.ids['ACC'])
+					assert_equal('Buyer-Code', item.ids['ET-Nummer'])
 					free_text = item.free_text
 					assert_instance_of(Model::FreeText, free_text)
 					assert_equal('Bezeichnung', free_text.type)

@@ -23,6 +23,7 @@ module XmlConv
 		class TestApplication < Test::Unit::TestCase
 			def setup
 				@app = Util::Application.new
+				@app.init
 			end
 			def test_attr_readers
 				assert_respond_to(@app, :transactions)
