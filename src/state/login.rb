@@ -16,6 +16,23 @@ module XmlConv
 					self
 				end
 			end
+			def transaction
+				if((id = @session.user_input(:transaction_id)) \
+					&& (transaction = @session.transaction(id)))
+					TransactionLogin.new(@session, transaction)
+				else
+					self
+				end
+			end
+		end
+		class TransactionLogin < SBSM::State
+			def login
+				if(@session.login)
+					Transaction.new(@session, @model)
+				else
+					self
+				end
+			end
 		end
 	end
 end

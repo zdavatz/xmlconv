@@ -30,7 +30,7 @@ module XmlConv
 			SORT_DEFAULT = nil #:commit_time
 			SORT_REVERSE = false
 			def commit_time(model)
-				time_format(model.commit_time)
+				time_format(model.commit_time || model.start_time)
 			end
 			def origin(model)
 				uri_fmt(model.origin)
