@@ -41,7 +41,7 @@ begin
 	DRb.start_service
 	xmlconv = DRbObject.new(nil, XmlConv::SERVER_URI)
 	destination = XmlConv::Util::DestinationDir.new
-	destination.path = File.expand_path('../ftp/janico',
+	destination.path = File.expand_path('../ftp/janico/janico/out',
 		File.dirname(__FILE__))
 
 	transaction = XmlConv::Util::Transaction.new
