@@ -21,10 +21,8 @@ module XmlConv
 						while(part = parts.shift)
 							if((wrapline.length + part.length) >= BREAK_WIDTH)
 								wrap << wrapline
-								unless(parts.empty?)
-									wrap << "\"\n"
-									wrapline = "     \"" << part
-								end
+								wrap << "\"\n"
+								wrapline = "     \"" << part
 							else
 								wrapline << '" "' << part
 							end
