@@ -19,12 +19,21 @@ module XmlConv
 				assert_respond_to(@delivery, :customer=)
 				assert_respond_to(@delivery, :bsr)
 				assert_respond_to(@delivery, :bsr=)
+				assert_respond_to(@delivery, :agreement)
+				assert_respond_to(@delivery, :agreement=)
+				assert_respond_to(@delivery, :free_text)
+				assert_respond_to(@delivery, :free_text=)
+				assert_respond_to(@delivery, :status)
+				assert_respond_to(@delivery, :status=)
+				assert_respond_to(@delivery, :status_date)
+				assert_respond_to(@delivery, :status_date=)
 			end
 			def test_attr_readers
 				assert_respond_to(@delivery, :items)
 				assert_respond_to(@delivery, :parties)
 				assert_respond_to(@delivery, :ids)
 				assert_respond_to(@delivery, :customer_id)
+				assert_respond_to(@delivery, :prices)
 			end
 			def test_bsr_id
 				bsr = Mock.new('BSR')
@@ -34,11 +43,19 @@ module XmlConv
 				assert_equal('id_string', @delivery.bsr_id)
 				bsr.__verify
 			end
-			def test_add_party
+			def test_add_party__customer
 				party = Mock.new('Customer')
 				party.__next(:role) { 'Customer' }
 				@delivery.add_party(party)
 				assert_equal(party, @delivery.customer)
+				assert_equal([party], @delivery.parties)
+				party.__verify
+			end
+			def test_add_party__seller
+				party = Mock.new('Seller')
+				party.__next(:role) { 'Seller' }
+				@delivery.add_party(party)
+				assert_equal(party, @delivery.seller)
 				assert_equal([party], @delivery.parties)
 				party.__verify
 			end
@@ -47,6 +64,12 @@ module XmlConv
 				@delivery.add_item(item)	
 				assert_equal([item], @delivery.items)
 				item.__verify
+			end
+			def test_add_price
+				assert_equal([], @delivery.prices)
+				price = Mock.new('BruttoPreis')
+				@delivery.add_price(price)
+				assert_equal([price], @delivery.prices)
 			end
 		end
 	end

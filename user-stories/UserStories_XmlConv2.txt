@@ -1,3 +1,16 @@
+2004-06-25 Eugen Schaadt <eugen.schaadt@circon.net>
+* Herr Schaadt hat die Documentation für Invoice und Confirm erstellt
+
+2004-06-15 Marcel Vogelsang <marcel.vogelsang@circon.ch>
+*	Herr Vogelsang lässt den i/2-Cronjob alle 3o Minuten laufen, beginnend um 0600 Uhr bis 1900 Uhr.
+
+2004-06-11  Hannes Wyss  <hwyss@ywesee.com>
+* Ftp-Passwords
+	Ich habe das ftpassword tool auf dem Produktions-Server installiert.
+	Synopsis: 
+	ftpassword --passwd --file /etc/proftpd/proftpd.passwd \
+	           --change-password --name janico
+
 2004-06-10 Zeno Davatz <zdavatz@ywesee.com>
 *	Copyright by ywesee mit Link auf unsere page 
 	-	Bitte auf Login und allen anderen Seiten unten links.

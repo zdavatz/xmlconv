@@ -18,6 +18,8 @@ module XmlConv
 				assert_respond_to(@address, :city=)
 				assert_respond_to(@address, :zip_code)
 				assert_respond_to(@address, :zip_code=)
+				assert_respond_to(@address, :country)
+				assert_respond_to(@address, :country=)
 			end
 			def test_attr_readers
 				assert_respond_to(@address, :lines)

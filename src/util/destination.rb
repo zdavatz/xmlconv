@@ -2,7 +2,9 @@
 # Destination -- xmlconv2 -- 08.06.2004 -- hwyss@ywesee.com
 
 require 'fileutils'
+require 'uri'
 require 'odba'
+require 'net/http'
 
 module XmlConv
 	module Util
@@ -13,6 +15,7 @@ module XmlConv
 			STATUS_COMPARABLE = {
 				:pending_pickup	=>	10,	
 				:picked_up			=>	20,	
+				:http_ok				=>	20
 			}
 			def initialize
 				@status = :open
@@ -24,6 +27,8 @@ module XmlConv
 			end
 			def status_comparable
 				self::class::STATUS_COMPARABLE[@status].to_i				
+			end
+			def forget_credentials!
 			end
 		end
 		class DestinationDir < Destination
@@ -44,7 +49,48 @@ module XmlConv
 				end
 			end
 			def uri
-				"file:#{File.expand_path(@filename.to_s, @path)}"
+				URI.parse("file:#{File.expand_path(@filename.to_s, @path)}")
+			end
+		end
+		class DestinationHttp < Destination
+			HTTP_CLASS = Net::HTTP # replaceable for testing purposes
+			def initialize
+				super
+				@uri = URI.parse('http:/')
+			end
+			def deliver(delivery)
+				self.class::HTTP_CLASS.start(@uri.host, @uri.port) { |http|
+					request = Net::HTTP::Post.new(@uri.path)
+					if(@uri.user || @uri.password)
+						request.basic_auth(@uri.user, @uri.password)
+					end
+					response = http.request(request, delivery.to_s)	
+					forget_credentials!
+					@status = "http_#{response.message.downcase}".intern
+				}
+			end
+			def forget_credentials!
+				@uri = URI::HTTP.new(@uri.scheme, nil, @uri.host, @uri.port, 
+					@uri.registry, @uri.path, @uri.opaque, @uri.query, @uri.fragment)
+			end
+			def host
+				@uri.host
+			end
+			def host=(str)
+				@uri.host = str
+			end
+			def path
+				@uri.path if(@uri)
+			end
+			def path=(str)
+				@uri.path = str if(@uri)
+			end
+			def uri=(uri)
+				if(uri.is_a?(String))
+					@uri = URI.parse(uri)
+				else
+					@uri = uri
+				end
 			end
 		end
 	end

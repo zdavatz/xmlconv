@@ -67,6 +67,7 @@ module XmlConv
 				destination.__next(:deliver) { |delivery|
 					assert_equal(output, delivery)
 				}
+				destination.__next(:forget_credentials!) { }
 				time1 = Time.now
 				result = @transaction.execute
 				time2 = Time.now

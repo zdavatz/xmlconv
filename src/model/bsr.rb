@@ -7,6 +7,7 @@ module XmlConv
 	module Model
 		class Bsr 
 			include PartyContainer
+			attr_accessor :timestamp, :noun, :verb
 			def bsr_id
 				@customer.party_id unless(@customer.nil?)
 			end

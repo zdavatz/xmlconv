@@ -13,7 +13,7 @@ module XmlConv
 			DEFAULT_STATE = State::Login
 			LOOKANDFEEL = Custom::Lookandfeel
 			def login
-				if((pass =user_input(:pass)) \
+				if((pass = user_input(:pass)) \
 					&& (pass == "034bea8ec2af311a4913819499bd5bd5"))
 					@user = Util::KnownUser.new
 				end

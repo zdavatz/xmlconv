@@ -20,12 +20,19 @@ module XmlConv
 			end
 			def test_attr_readers
 				assert_respond_to(@bdd, :deliveries)
+				assert_respond_to(@bdd, :invoices)
 			end
 			def test_add_delivery
 				delivery = Mock.new('Delivery')
 				assert_equal([], @bdd.deliveries)
 				@bdd.add_delivery(delivery)
 				assert_equal([delivery], @bdd.deliveries)
+			end
+			def test_add_invoice
+				invoice = Mock.new('Invoice')
+				assert_equal([], @bdd.invoices)
+				@bdd.add_invoice(invoice)
+				assert_equal([invoice], @bdd.invoices)
 			end
 		end
 	end

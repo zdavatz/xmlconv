@@ -4,13 +4,14 @@
 module XmlConv
 	module Model
 		module IdContainer
-			attr_reader :ids
 			def add_id(domain, value)
 				self.ids.store(domain, value)
+=begin
 				if(domain && !domain.empty?)
 					var = domain.gsub(/-/, '_').downcase
 					instance_variable_set("@#{var}_id", value)
 				end
+=end
 			end
 			def ids
 				@ids ||= {}
