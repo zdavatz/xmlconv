@@ -4,6 +4,7 @@
 
 2004-06-10  Hannes Wyss  <hwyss@ywesee.com>
 * Synopsis
+	+ zrr: untiges wurde per Mail kommuniziert.
 	xmlconv empfängt momentan nur Bestellungen. Diese müssen an
 	http://janico.ywesee.com/plica.rbx
 	gesendet werden. Dabei gelten die Standard-HTTP Response-Codes, d.h. 
