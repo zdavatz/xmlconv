@@ -1,3 +1,18 @@
+2004-06-03  Hannes Wyss  <hwyss@ywesee.com>
+* Fragen zu User-Story: Order 
+	Welche Edifakt-Felder sind für FirstName (Employee) und LastName vorgesehen?
+	Ich kann mir folgendes vorstellen:
+	- Im Address-Record '201:BY', als '220:FirstName' (AddressName1) und
+		'221:LastName' (AddressName2)
+	- Im Address-Record '201:BY', als '231:FirstName LastName' (Ihr Zeichen)
+		aber das geht beides nicht, weil:
+		"Feld 201 / 220-290: Für die Verwendung der Lieferadresse in "prosa" 
+		(Feld 220 - 229) muss das Feld 201 'DP' beinhalten. Das Feld 202 darf
+		nicht vorhanden sein!", d.h. ich kann nur die Lieferadresse in 'prosa'
+		aufführen, also die XML-Node 'ShipTo'
+
+	Welche Edifakt-Felder sind für die XML-Node 'BillTo' vorgesehen?
+
 2004-05-06  Zeno Davatz  <zdavatz@ywesee.com>
 * User-Story: Ablauf / External Interfaces
 	DESCRIPTION:
@@ -37,8 +52,8 @@
 		City
 		ZipCode
 		LineNum
-		IdentNo
-		Qty (ET-Nummer)
+		IdentNo (ET-Nummer)
+		Qty 
 		DeliveryDate
 
 * User-Story: Bestätigung
@@ -126,12 +141,13 @@
 
 * User-Story: i2 -> Plica
 	CONSTRAINTS: Benötigte Felder
-	- Feldbeschreibung i2:
-		--------------------
+	- Header-Record
 		001 Empfänger Identifikation: EPIN Plica 20 (length)
-		002 MessageType OREDERX 6 (length)
+		002 MessageType ORDERX 6 (length)
 		003 Dokumentname codiert 220 3 (length)
 		010 Dokumentenummern oder Dateiname 14 (length)
+
+	- Order-Record
 		100 Sender Identifikation: Sender- oder Firmenname (wird von Plica vergeben)
 		101 Auftragsnummer oder Kommission (Eintrag zwingend)
 		201 Adresscode: Käufer=BY, Kunde=CU, Lieferadresse=DP
@@ -168,7 +184,8 @@
 		Feld 201 / 220-290: Für die Verwendung der Lieferadresse in "prosa" (Feld 220 - 229) muss das Feld 201 'DP' beinhalten. Das Feld 202 darf nicht vorhanden sein!
 		Feld 242: Über das Merkmal im Kundenstamm (EDI-PartnerNr), NUPR" wird gesteuert, ob ein Wert 0.00 als Versandkosten übernommen wird.
 		Feld 243 / 244: Bei fehlenden Werten werden diejenigen aus dem EDI-Stamm aktiviert.
-
+		
+	- Position Record
 		500 Positionsnummerierung
 		501 Artikelnummer (EAN-Code)
 		502 Artikelnummer Käufer
