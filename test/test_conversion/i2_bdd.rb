@@ -27,15 +27,15 @@ module XmlConv
 "02" "DP" "Name1" "Name2" "Street" "City" "AddressCode" "Country"
 "05" "A single Header-Text"
 "05" "Another single Header-Text"
-"10" "EAN13" "IdBuyer" "Description 1" "Description 2" "Quantity" 
+"10" "LineNo" "EAN13" "IdBuyer" "Description 1" "Description 2" "Quantity" 
 	"DeliveryDate" "PriceNetto" "PriceNetto * Quantity" "Discount" 
 	"Discount * Quantity" "Special Discount" "Special Discount * Quantity"
 	"PriceBrutto" "PriceBrutto * Quantity" 
-"10" "EAN13" "IdBuyer" "Description 1" "Description 2" "Quantity" 
+"10" "LineNo" "EAN13" "IdBuyer" "Description 1" "Description 2" "Quantity" 
 	"DeliveryDate" "PriceNetto" "PriceNetto * Quantity" "Discount" 
 	"Discount * Quantity" "Special Discount" "Special Discount * Quantity"
 	"PriceBrutto" "PriceBrutto * Quantity"
-"10" "EAN13" "IdBuyer" "Description 1" "Description 2" "Quantity" 
+"10" "LineNo" "EAN13" "IdBuyer" "Description 1" "Description 2" "Quantity" 
 	"DeliveryDate" "PriceNetto" "PriceNetto * Quantity" "Discount" 
 	"Discount * Quantity" "Special Discount" "Special Discount * Quantity"
 	"PriceBrutto" "PriceBrutto * Quantity"
@@ -527,7 +527,7 @@ module XmlConv
 				bsr = Mock.new('Bsr')
 				delivery = IsAMock.new('Delivery')
 				position = Mock.new('Position')
-				#lineno = ast_mock('LineNo', '10')
+				lineno = ast_mock('LineNo', '10')
 				eancode = ast_mock('EanCode', '1234567890987')
 				#sellercode = ast_mock('SellerCode', 'Seller-Code')
 				buyercode = ast_mock('BuyerCode', 'Buyer-Code')
@@ -543,7 +543,7 @@ module XmlConv
 				price7 = ast_mock('Price7', '119.45')
 				price8 = ast_mock('Price8', '238.90')
 				ddate = ast_mock('DDate', '20040629')
-				#position.__next(:lineno) { lineno }
+				position.__next(:lineno) { lineno }
 				position.__next(:eancode) { eancode }
 				#position.__next(:sellercode) { sellercode }
 				position.__next(:buyercode) { buyercode }
@@ -602,7 +602,7 @@ module XmlConv
 				bsr.__verify
 				delivery.__verify
 				position.__verify
-				#lineno.__verify
+				lineno.__verify
 				eancode.__verify
 				#sellercode.__verify
 				buyercode.__verify
@@ -623,7 +623,7 @@ module XmlConv
 				bsr = Mock.new('Bsr')
 				invoice = IsAMock.new('Invoice')
 				position = Mock.new('Position')
-				#lineno = ast_mock('LineNo', '10')
+				lineno = ast_mock('LineNo', '10')
 				eancode = ast_mock('EanCode', '1234567890987')
 				#sellercode = ast_mock('SellerCode', 'Seller-Code')
 				buyercode = ast_mock('BuyerCode', 'Buyer-Code')
@@ -640,7 +640,7 @@ module XmlConv
 				price8 = ast_mock('Price8', '238.90')
 				origin = ast_mock('Origin', 'CH')
 				customs = ast_mock('Customs', 'Customs-Number')
-				#position.__next(:lineno) { lineno }
+				position.__next(:lineno) { lineno }
 				position.__next(:eancode) { eancode }
 				#position.__next(:sellercode) { sellercode }
 				position.__next(:buyercode) { buyercode }
@@ -708,7 +708,7 @@ module XmlConv
 				bsr.__verify
 				invoice.__verify
 				position.__verify
-				#lineno.__verify
+				lineno.__verify
 				eancode.__verify
 				#sellercode.__verify
 				buyercode.__verify

@@ -317,7 +317,7 @@ module XmlConv
 				freetext = ToSMock.new('Freetext')
 				freetext.__next(:type) { 'Bezeichnung' }
 				freetext.__next(:to_s) { 'The FreeText' }
-				item.__next(:line_no) { }
+				item.__next(:line_no) { 'The Line Number' }
 				item.__next(:ids) { {'ACC' => '12345'} }
 				item.__next(:part_infos) { [] }
 				item.__next(:qty) { 'Quantity' }
@@ -328,11 +328,11 @@ module XmlConv
 				xml.__next(:add_element) { |xml_item|
 					assert_instance_of(REXML::Element, xml_item)
 					assert_equal('DeliveryItem', xml_item.name)
-					assert_equal(5, xml_item.elements.size)
-					#line_no = xml_item.elements[1]
-					#assert_equal('LineNo', line_no.name)
-					#assert_equal('The Line Number', line_no.text)
-					part_id = xml_item.elements[1]
+					assert_equal(6, xml_item.elements.size)
+					line_no = xml_item.elements[1]
+					assert_equal('LineNo', line_no.name)
+					assert_equal('The Line Number', line_no.text)
+					part_id = xml_item.elements[2]
 					assert_equal('PartId', part_id.name)
 					assert_equal(1, part_id.elements.size)
 					ident_no = part_id.elements[1]
@@ -340,14 +340,14 @@ module XmlConv
 					assert_equal(1, ident_no.attributes.size)
 					assert_equal('ACC', ident_no.attributes['Domain'])
 					assert_equal('12345', ident_no.text)
-					qty = xml_item.elements[2]
+					qty = xml_item.elements[3]
 					assert_equal('Qty', qty.name)
 					assert_equal('Quantity', qty.text)
-					xml_price1 = xml_item.elements[3]
+					xml_price1 = xml_item.elements[4]
 					assert_equal('Price', xml_price1.name)
-					xml_price2 = xml_item.elements[4]
+					xml_price2 = xml_item.elements[5]
 					assert_equal('Price', xml_price2.name)
-					xml_freetext = xml_item.elements[5]
+					xml_freetext = xml_item.elements[6]
 					assert_equal('FreeText', xml_freetext.name)
 					assert_equal(1, xml_freetext.attributes.size)
 					assert_equal('Bezeichnung', xml_freetext.attributes['Type'])
@@ -502,7 +502,7 @@ module XmlConv
 				price.__next(:amount) { 12345 }
 				part_info.__next(:dimension) { 'the Dimension' }
 				part_info.__next(:value) { 'the Value' }
-				item.__next(:line_no) { }
+				item.__next(:line_no) { '10' }
 				item.__next(:ids) { {'ACC' => 'idstr'} }
 				item.__next(:part_infos) { [part_info] }
 				item.__next(:qty) { 14 }
@@ -511,11 +511,11 @@ module XmlConv
 				xml.__next(:add_element) { |xml_item|
 					assert_instance_of(REXML::Element, xml_item)
 					assert_equal('InvoiceItem', xml_item.name)
-					assert_equal(3, xml_item.elements.size)
-					#line_no = xml_item.elements[1]
-					#assert_equal('LineNo', line_no.name)
-					#assert_equal('10', line_no.text)
-					part_id = xml_item.elements[1]
+					assert_equal(4, xml_item.elements.size)
+					line_no = xml_item.elements[1]
+					assert_equal('LineNo', line_no.name)
+					assert_equal('10', line_no.text)
+					part_id = xml_item.elements[2]
 					assert_equal('PartId', part_id.name)
 					assert_equal(2, part_id.elements.size)
 					ident_no = part_id.elements[1]
@@ -531,10 +531,10 @@ module XmlConv
 					assert_equal(1, value.attributes.size)
 					assert_equal('the Dimension', value.attributes['Dimension'])
 					assert_equal('the Value', value.text)
-					qty = xml_item.elements[2]
+					qty = xml_item.elements[3]
 					assert_equal('Qty', qty.name)
 					assert_equal('14', qty.text)
-					xml_price = xml_item.elements[3]
+					xml_price = xml_item.elements[4]
 					assert_equal('Price', xml_price.name)
 					assert_equal(1, xml_price.attributes.size)
 					assert_equal('BruttoPreis', xml_price.attributes['Purpose'])

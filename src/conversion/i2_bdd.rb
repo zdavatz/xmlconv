@@ -160,7 +160,7 @@ module XmlConv
 					bdd_addr
 				end
 				def _bdd_assemble_item(item, ast)
-					#item.line_no = _value(ast.lineno)
+					item.line_no = _value(ast.lineno)
 					if(etnr = _value(ast.eancode))
 						item.add_id('EAN-Nummer', etnr)
 					end

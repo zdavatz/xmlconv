@@ -38,24 +38,28 @@ Grammar I2
 										[: _, rtype, _, text]
 		Position		->	QUOTE "10" QUOTE
 											Field Field Field Field
-											Field Field Field Field Field
+											Field Field Field Field
 											Field Field Field
 											Field Field 
+											Field Field 
 										[: _, rtype, _, 
-											eancode, buyercode, description1, description2, 
-											qty, ddate, pricenettopce, pricenetto, discountpce,
-											discount, extradiscountpce, extradiscount, 
+											lineno, eancode, buyercode, description1, 
+											description2, qty, ddate, pricenettopce, 
+											pricenetto, discountpce, discount, 
+											extradiscountpce, extradiscount, 
 											pricebruttopce, pricebrutto]
 								|		QUOTE "10" QUOTE
 											Field Field Field Field
 											Field Field Field Field
 											Field Field Field 
-											Field Field Field Field
+											Field Field Field
+											Field Field
 										[: _, rtype, _, 
-											eancode, buyercode, description1, description2, 
-											qty, pricenettopce, pricenetto, discountpce, 
-											discount, extradiscountpce, extradiscount, 
-											pricebruttopce, pricebrutto, origin, customs]
+											lineno, eancode, buyercode, description1, 
+											description2, qty, pricenettopce, pricenetto, 
+											discountpce, discount, extradiscountpce, 
+											extradiscount, pricebruttopce, pricebrutto, 
+											origin, customs]
 		PositionText->	QUOTE "15" QUOTE Field
 										[: _, rtype, _, text]
 		Footer			->	QUOTE "90" QUOTE 

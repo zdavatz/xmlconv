@@ -7,13 +7,13 @@ module XmlConv
 	module Util
 		class Validator < SBSM::Validator
 			EVENTS = [
-				:login, :logout, :sort, :transaction, :home
+				:login, :logout, :sort, :transaction, :self, :home
 			]
 			STRINGS = [
 				:sortvalue,
 			]
 			NUMERIC = [
-				:transaction_id,
+				:transaction_id, :page
 			]
 		end
 	end
