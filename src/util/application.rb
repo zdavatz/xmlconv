@@ -7,6 +7,7 @@ require 'util/polling_manager'
 require 'util/session'
 require 'util/transaction'
 require 'util/validator'
+require 'thread'
 require 'odba'
 
 module XmlConv
@@ -71,15 +72,40 @@ class XmlConvApp < SBSM::DRbServer
 	SESSION = XmlConv::Util::Session
 	VALIDATOR = XmlConv::Util::Validator
 	POLLING_INTERVAL = 60 #* 15
+	attr_reader :polling_thread, :dispatch_queue, :dispatcher_thread
 	def initialize
 		@system = ODBA.cache_server.fetch_named('XmlConv', self) { 
 			XmlConv::Util::Application.new
 		}
 		@system.init
+		@dispatch_queue = []
+		@dispatch_mutex = Mutex.new
 		if(self::class::POLLING_INTERVAL)
 			start_polling
 		end
+		start_dispatcher
 		super(@system)
+	end
+	def dispatch(transaction)
+		@dispatch_mutex.synchronize {
+			@dispatch_queue.push(transaction)
+		}
+		@dispatcher_thread.wakeup
+	end
+	def start_dispatcher
+		@dispatcher_thread = Thread.new {
+			Thread.current.abort_on_exception = false
+			loop { 
+				Thread.stop
+				while(!@dispatch_queue.empty?)
+					transaction = nil
+					@dispatch_mutex.synchronize {
+						transaction = @dispatch_queue.shift
+					}
+					@system.execute(transaction)
+				end
+			}
+		}
 	end
 	def start_polling
 		@polling_thread = Thread.new {

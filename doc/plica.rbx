@@ -51,10 +51,10 @@ begin
 	transaction.destination = destination
 	transaction.origin = "http://#{connection.remote_ip}:#{connection.remote_port}"
 
-	xmlconv.execute(transaction)
+	xmlconv.dispatch(transaction)
 
 rescue StandardError => err
-	request.server.log_error(err.class)
+	request.server.log_error(err.class.to_s)
 	request.server.log_error(err.message)
 	request.server.log_error(err.backtrace.join("\n"))
 	request.status = 500
