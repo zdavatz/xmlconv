@@ -84,7 +84,7 @@ reader: XmlBdd
 				@sys.__next(:execute) { |transaction|
 					assert_instance_of(Util::Transaction, transaction)
 					assert_equal("File 1\n", transaction.input)
-					assert_equal(@file1, transaction.origin)
+					assert_equal('file:' << @file1, transaction.origin)
 					assert_equal('Reader', transaction.reader)
 					assert_equal('Writer', transaction.writer)
 					dest = transaction.destination

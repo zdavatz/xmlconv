@@ -23,28 +23,19 @@ module XmlConv
 				@src = <<-EOS
 "00" "Sender Identification" "Recipient Identification" 
 	"20040628" "1159" "CONFIRM" "1"
-"01" "456" "Receipt-Number" "20040627" "20040629" "Order Number" 
-	"Commission Number" "OC" "Employee" "TE" "0041 1 350 85 87" 
+"01" "456" "Receipt-Number" "20040627" "Order Number" 
+	"Commission Number" "OC" "Employee" 
 "02" "BY" "Name1" "Name2" "Street" "City" "AddressCode" "Country"
 "02" "SE" "Name1" "Name2" "Street" "City" "AddressCode" "Country"
 "02" "DP" "Name1" "Name2" "Street" "City" "AddressCode" "Country"
 "05" "A single Header-Text"
 "05" "Another single Header-Text"
-"10" "10" "EAN13" "IdSeller" "IdBuyer" "Description 1" 
-	"Description 2" "2" "Commission" "20040630" "QuantityUnit"
-	"PriceUnit" "1" "2" "0.1" "0.2" "0.2" "0.4" "0.7" "1.4" "VAT" 
-	"OriginCountry" "Customs"
-"15" "A single Position-Text"
-"15" "Another single Position-Text"
-"10" "20" "EAN13" "IdSeller" "IdBuyer" "Description 1" 
-	"Description 2" "2" "Commission" "20040630" "QuantityUnit"
-	"PriceUnit" "1" "2" "0.1" "0.2" "0.2" "0.4" "0.7" "1.4" "VAT" 
-	"OriginCountry" "Customs"
-"15" "Yet Another single Position-Text"
-"10" "30" "EAN13" "IdSeller" "IdBuyer" "Description 1" 
-	"Description 2" "2" "Commission" "20040630" "QuantityUnit"
-	"PriceUnit" "1" "2" "0.1" "0.2" "0.2" "0.4" "0.7" "1.4" "VAT" 
-	"OriginCountry" "Customs"
+"10" "EAN13" "IdBuyer" "Description 1" "Description 2" "2" "20040630"
+	"1" "2" "0.1" "0.2" "0.2" "0.4" "0.7" "1.4"
+"10" "EAN13" "IdBuyer" "Description 1" "Description 2" "2" "20040630" 
+	"1" "2" "0.1" "0.2" "0.2" "0.4" "0.7" "1.4" 
+"10" "EAN13" "IdBuyer" "Description 1" "Description 2" "2" "20040630" 
+	"1" "2" "0.1" "0.2" "0.2" "0.4" "0.7" "1.4" 
 "90" "4.2" "7.6" "0.32" "4.52" "Agreement"
 				EOS
 				@ast = Conversion::I2Bdd.parse(@src)
@@ -102,11 +93,9 @@ module XmlConv
         </Party>
       </Party>
       <DeliveryItem>
-        <LineNo>10</LineNo>
         <PartId>
           <IdentNo Domain='ET-Nummer'>EAN13</IdentNo>
           <IdentNo Domain='ACC'>IdBuyer</IdentNo>
-          <IdentNo Domain='Lieferantenartikel'>IdSeller</IdentNo>
         </PartId>
         <Qty>2</Qty>
         <Price Purpose='NettoPreis'>1.00</Price>
@@ -122,11 +111,9 @@ Description 2</FreeText>
         <DeliveryDate>20040630</DeliveryDate>
       </DeliveryItem>
       <DeliveryItem>
-        <LineNo>20</LineNo>
         <PartId>
           <IdentNo Domain='ET-Nummer'>EAN13</IdentNo>
           <IdentNo Domain='ACC'>IdBuyer</IdentNo>
-          <IdentNo Domain='Lieferantenartikel'>IdSeller</IdentNo>
         </PartId>
         <Qty>2</Qty>
         <Price Purpose='NettoPreis'>1.00</Price>
@@ -142,11 +129,9 @@ Description 2</FreeText>
         <DeliveryDate>20040630</DeliveryDate>
       </DeliveryItem>
       <DeliveryItem>
-        <LineNo>30</LineNo>
         <PartId>
           <IdentNo Domain='ET-Nummer'>EAN13</IdentNo>
           <IdentNo Domain='ACC'>IdBuyer</IdentNo>
-          <IdentNo Domain='Lieferantenartikel'>IdSeller</IdentNo>
         </PartId>
         <Qty>2</Qty>
         <Price Purpose='NettoPreis'>1.00</Price>

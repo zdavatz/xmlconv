@@ -61,9 +61,10 @@ module XmlConv
 				assert_equal('Header', header.name)
 			end
 			def test_parse_commission
+				# commented fields are not in the current version
 				src = <<-EOS
-"01" "456" "Receipt-Number" "20040627" "20040629" "Order Number" 
-"Commission Number" "OC" "Employee" "TE" "0041 1 350 85 87" 
+"01" "456" "Receipt-Number" "20040627" "Order Number" 
+"Commission Number" "OC" "Employee"
 				EOS
 				ast = @parser.parse(src)
 				assert_instance_of(SyntaxTree, ast)
@@ -74,18 +75,17 @@ module XmlConv
 				assert_equal('456', comm.btype.value)
 				assert_equal('Receipt-Number', comm.receipt.value)
 				assert_equal('20040627', comm.rdate.value)
-				assert_equal('20040629', comm.ddate.value)
+				#assert_equal('20040629', comm.ddate.value)
 				assert_equal('Order Number', comm.reference.value)
 				assert_equal('Commission Number', comm.commission.value)
 				assert_equal('OC', comm.contact.value)
 				assert_equal('Employee', comm.employee.value)
-				assert_equal('TE', comm.medium.value)
-				assert_equal('0041 1 350 85 87', comm.number.value)
-					
+				#assert_equal('TE', comm.medium.value)
+				#assert_equal('0041 1 350 85 87', comm.number.value)
 			end
 			def test_parse_incomplete_commission
 				src = <<-EOS
-"01" "" "" "" "" "" "" "" "" "" "" 
+"01" "" "" "" "" "" "" ""
 				EOS
 				ast = nil
 				assert_nothing_raised { 
@@ -146,31 +146,31 @@ module XmlConv
 				text = ast.records.first
 				assert_equal('HeaderText', text.name)
 			end
-			def test_parse_position
+			def test_parse_position__delivery
 				src = <<-EOS
-"10" "PositionNr" "EAN13" "IdSeller" "IdBuyer" "Description 1" 
-"Description 2" "Quantity" "Commission" "DeliveryDate" "QuantityUnit"
-"PriceUnit" "PriceNetto" "PriceNetto * Quantity" "Discount" 
+"10" "EAN13" "IdBuyer" "Description 1" "Description 2" "Quantity" 
+"DeliveryDate" "PriceNetto" "PriceNetto * Quantity" "Discount" 
 "Discount * Quantity" "Special Discount" "Special Discount * Quantity"
-"PriceBrutto" "PriceBrutto * Quantity" "VAT" "OriginCountry" "Customs"
+"PriceBrutto" "PriceBrutto * Quantity"
 				EOS
+				# commented fields are not in the current version
 				ast = @parser.parse(src)
 				assert_instance_of(SyntaxTree, ast)
 				position = ast.records.first
 				assert_instance_of(SyntaxTree, position)
 				assert_equal('Position', position.name)
 				assert_equal('10', position.rtype.value)
-				assert_equal('PositionNr', position.lineno.value)
+				#assert_equal('PositionNr', position.lineno.value)
 				assert_equal('EAN13', position.eancode.value)
-				assert_equal('IdSeller', position.sellercode.value)
+				#assert_equal('IdSeller', position.sellercode.value)
 				assert_equal('IdBuyer', position.buyercode.value)
 				assert_equal('Description 1', position.description1.value)
 				assert_equal('Description 2', position.description2.value)
 				assert_equal('Quantity', position.qty.value)
-				assert_equal('Commission', position.commission.value)
+				#assert_equal('Commission', position.commission.value)
 				assert_equal('DeliveryDate', position.ddate.value)
-				assert_equal('QuantityUnit', position.qtyunit.value)
-				assert_equal('PriceUnit', position.priceunit.value)
+				#assert_equal('QuantityUnit', position.qtyunit.value)
+				#assert_equal('PriceUnit', position.priceunit.value)
 				assert_equal('PriceNetto', position.pricenettopce.value)
 				assert_equal('PriceNetto * Quantity', position.pricenetto.value)
 				assert_equal('Discount', position.discountpce.value)
@@ -179,13 +179,50 @@ module XmlConv
 				assert_equal('Special Discount * Quantity', position.extradiscount.value)
 				assert_equal('PriceBrutto', position.pricebruttopce.value)
 				assert_equal('PriceBrutto * Quantity', position.pricebrutto.value)
-				assert_equal('VAT', position.vat.value)
+				#assert_equal('VAT', position.vat.value)
+				#assert_equal('OriginCountry', position.origin.value)
+				#assert_equal('Customs', position.customs.value)
+			end
+			def test_parse_position__invoice
+				src = <<-EOS
+"10" "EAN13" "IdBuyer" "Description 1" "Description 2" "Quantity" 
+"PriceNetto" "PriceNetto * Quantity" "Discount" "Discount * Quantity" 
+"Special Discount" "Special Discount * Quantity" "PriceBrutto" 
+"PriceBrutto * Quantity" "OriginCountry" "Customs"
+				EOS
+				# commented fields are not in the current version
+				ast = @parser.parse(src)
+				assert_instance_of(SyntaxTree, ast)
+				position = ast.records.first
+				assert_instance_of(SyntaxTree, position)
+				assert_equal('Position', position.name)
+				assert_equal('10', position.rtype.value)
+				#assert_equal('PositionNr', position.lineno.value)
+				assert_equal('EAN13', position.eancode.value)
+				#assert_equal('IdSeller', position.sellercode.value)
+				assert_equal('IdBuyer', position.buyercode.value)
+				assert_equal('Description 1', position.description1.value)
+				assert_equal('Description 2', position.description2.value)
+				assert_equal('Quantity', position.qty.value)
+				#assert_equal('Commission', position.commission.value)
+				#assert_equal('DeliveryDate', position.ddate.value)
+				#assert_equal('QuantityUnit', position.qtyunit.value)
+				#assert_equal('PriceUnit', position.priceunit.value)
+				assert_equal('PriceNetto', position.pricenettopce.value)
+				assert_equal('PriceNetto * Quantity', position.pricenetto.value)
+				assert_equal('Discount', position.discountpce.value)
+				assert_equal('Discount * Quantity', position.discount.value)
+				assert_equal('Special Discount', position.extradiscountpce.value)
+				assert_equal('Special Discount * Quantity', position.extradiscount.value)
+				assert_equal('PriceBrutto', position.pricebruttopce.value)
+				assert_equal('PriceBrutto * Quantity', position.pricebrutto.value)
+				#assert_equal('VAT', position.vat.value)
 				assert_equal('OriginCountry', position.origin.value)
 				assert_equal('Customs', position.customs.value)
 			end
 			def test_parse_incomplete_position
 				src = <<-EOS
-"10" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" ""
+"10" "" "" "" "" "" "" "" "" "" "" "" "" "" ""
 				EOS
 				ast = nil
 				assert_nothing_raised { 
@@ -244,6 +281,28 @@ module XmlConv
 				}
 				total = ast.records.first
 				assert_equal('Footer', total.name)
+			end
+			def test_parse
+				src = <<-EOS
+"00" "Plica" "Winterhalter&Fenner" "20040630" "1621" "INVOIC" "0"
+"01" "000" "00112327" "20040630" "PLVH-087/PLVH-087627" "D-473010 L" "OC" "SAD"
+"02" "SE" "PLICA AG  ***** TEST *********" "" "ZUERCHERSTRASSE 350" "FRAUENFELD" "8500" "CH"
+"02" "CU" "WINTERHALTER + FENNER AG" "" "BIRGISTRASSE 10" "WALLISELLEN" "8304" "CH"
+"02" "EP" "RUSSO GIOVANNI" "" "" "" "" ""
+"02" "BY" "WINTERHALTER + FENNER AG" "" "BIRGISTRASSE 10" "WALLISELLEN" "8304" "CH"
+"02" "DP" "WINTERHALTER + FENNER AG" "FILIALE LITTAU" "GROSSMATTE 11 / POSTFACH" "LITTAU" "6014" "CH"
+"10" "" "121.763.703" "PLICA-TEC KUNSTSTOFF LANGGEWINDE" "M32    11- 21 MM  20 STK  H'GRAU" "10" "0" "0" "0" "0" "0" "0" "0" "0" "" ""
+"10" "" "125.001.309" "ISOLIERROHR KIR PVC              32" "M25   60 M  HELLGRAU" "600" "115" "690" "21.85" "131.1" "0" "0" "93.15" "558.9" "CZ" "Z08151515"
+"10" "" "125.001.509" "ISOLIERROHR KIR PVC              32" "M40   30 M  HELLGRAU" "60" "275" "165" "27.5" "16.5" "0" "0" "247.5" "148.5" "" ""
+"10" "" "125.091.409" "KRH-ROHR STEIF PVC               43" "M32   45 M  DUNKELGRAU" "180" "420" "756" "0" "0" "0" "0" "420" "756" "" ""
+"10" "" "125.293.400" "WELLSCHLAUCH ROBOFLEX PA12       PI" "NW17  50 M  SCHWARZ" "50" "371" "185.5" "129.9" "64.95" "0" "0" "241.1" "120.55" "" ""
+"10" "" "125.293.600" "WELLSCHLAUCH ROBOFLEX PA12       PI" "NW29  25 M  SCHWARZ" "100" "773" "773" "270.55" "270.55" "0" "0" "502.45" "502.45" "" ""
+"10" "" "125.293.700" "WELLSCHLAUCH ROBOFLEX PA12       PI" "NW36  25 M  SCHWARZ" "100" "1082" "1082" "378.7" "378.7" "0" "0" "703.3" "703.3" "" ""
+"90" "2789.7" "7.60" "212" "3001.7" "10 Tage 3%, 30 Tage 2%, 60 Tage netto"
+				EOS
+				assert_nothing_raised {
+					@parser.parse(src)
+				}
 			end
 		end
 	end
