@@ -1,3 +1,7 @@
+2004-06-10 Zeno Davatz <zdavatz@ywesee.com>
+*	Copyright by ywesee mit Link auf unsere page 
+	-	Bitte nicht vergessen auf Login und allen anderen Seiten unten links.
+
 2004-08-04  Eugen Schaadt  <Eugen.Schaadt@circon.cc>
 * Klarstellung User-Story: Order
 	Die Felder 201 bis 230 gehören zu einem Loop für Adressen (ist in der
