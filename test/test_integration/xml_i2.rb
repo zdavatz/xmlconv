@@ -169,6 +169,11 @@ module XmlConv
 				}
 			end
 			def test_execute_transaction
+				storage = Mock.new('Storage')
+				storage.__next(:transaction) { |block|
+					block.call
+				}
+				ODBA.storage = storage
 				cache = Mock.new('Cache')
 				cache.__next(:store) { |persistable|
 					assert_instance_of(Util::DestinationDir, persistable)

@@ -30,6 +30,11 @@ module XmlConv
 				assert_respond_to(@app, :failed_transactions)
 			end
 			def test_execute
+				storage = Mock.new('Storage')
+				storage.__next(:transaction) { |block|
+					block.call
+				}
+				ODBA.storage = storage
 				transaction = Mock.new('Transaction')
 				cache = Mock.new('Cache')
 				cache.__next(:store) { |transactions|

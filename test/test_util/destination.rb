@@ -51,6 +51,11 @@ module XmlConv
 				assert_respond_to(@destination, :filename)
 			end
 			def test_deliver
+				storage = Mock.new('Storage')
+				storage.__next(:transaction) { |block|
+					block.call
+				}
+				ODBA.storage = storage
 				cache = Mock.new('Cache')
 				ODBA.cache_server = cache
 				cache.__next(:store) { |obj|
@@ -80,6 +85,11 @@ module XmlConv
 				assert_equal("file:/foo/bar/baz/test_file.dat", @destination.uri.to_s)
 			end
 			def test_status
+				storage = Mock.new('Storage')
+				storage.__next(:transaction) { |block|
+					block.call
+				}
+				ODBA.storage = storage
 				cache = Mock.new('Cache')
 				ODBA.cache_server = cache
 				cache.__next(:store) { |obj|
