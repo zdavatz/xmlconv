@@ -17,7 +17,7 @@ module XmlConv
 			CSS_CLASS = 'composite'
 			CSS_MAP = {
 				[0,0,2]	=>	'th',
-				[0,1,2]	=>	'helfti',
+				[0,1,2]	=>	'helfti preformatted',
 			}
 			DEFAULT_CLASS = View::Preformatted
 			LEGACY_INTERFACE = false
@@ -25,6 +25,7 @@ module XmlConv
 				if(@model.error)
 					components.store([0,2], :error_string)
 					colspan_map.store([0,2], 2)
+					css_map.store([0,2], 'preformatted')
 				end
 				super
 			end
