@@ -36,6 +36,7 @@ module XmlConv
 			rescue Exception => error
 				transaction.error = error
 			ensure
+				transaction.notify
 				@transactions.push(transaction)
 				@transactions.odba_store
 			end

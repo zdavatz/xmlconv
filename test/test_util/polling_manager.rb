@@ -81,6 +81,8 @@ reader: XmlBdd
 				source.__next(:reader) { 'Reader' }
 				source.__next(:writer) { 'Writer' }
 				source.__next(:destination) { 'http://foo.bar.baz:2345' }
+				source.__next(:debug_recipients) { }
+				source.__next(:error_recipients) { }
 				@sys.__next(:execute) { |transaction|
 					assert_instance_of(Util::Transaction, transaction)
 					assert_equal("File 1\n", transaction.input)

@@ -10,7 +10,8 @@ require 'util/transaction'
 module XmlConv
 	module Util
 		class PollingMission
-			attr_accessor :directory, :reader, :writer, :destination
+			attr_accessor :directory, :reader, :writer, :destination, 
+										:error_recipients, :debug_recipients
 		end
 		class PollingManager
 			PROJECT_ROOT = File.expand_path('../..', File.dirname(__FILE__))
@@ -51,6 +52,8 @@ module XmlConv
 						transaction.reader = source.reader
 						transaction.writer = source.writer
 						transaction.destination = destination(source.destination)
+						transaction.debug_recipients = source.debug_recipients
+						transaction.error_recipients = source.error_recipients
 						@system.execute(transaction)
 					ensure
 						File.delete(path)

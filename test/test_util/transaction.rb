@@ -20,6 +20,9 @@ module XmlConv
 		module_function :const_get
 	end
 	module Util
+		class Transaction
+			SMTP_HANDLER = Mock.new('SMTP-Handler')
+		end
 		class TestTransaction < Test::Unit::TestCase
 			def setup
 				@transaction = Util::Transaction.new
@@ -93,6 +96,33 @@ module XmlConv
 			end
 			def test_dumpable
 				assert_nothing_raised { Marshal.dump(@transaction) }
+			end
+			def test_notify
+				@transaction.instance_variable_set('@start_time', Time.now)
+				@transaction.error_recipients = ['bar']
+				smtp = Transaction::SMTP_HANDLER
+				@transaction.notify
+				@transaction.debug_recipients = ['foo']
+				mail = Mock.new('MailSession')
+				mail.__next(:sendmail) { |encoded, from, recipients| 
+					assert_equal(['foo'], recipients)
+				
+				}
+				smtp.__next(:start) { |block, server|
+					block.call(mail)
+				}
+				@transaction.notify
+				@transaction.error = 'error!'
+				mail.__next(:sendmail) { |encoded, from, recipients| 
+					assert_equal(['foo', 'bar'], recipients)
+				
+				}
+				smtp.__next(:start) { |block, server|
+					block.call(mail)
+				}
+				@transaction.notify
+				smtp.__verify
+				mail.__verify
 			end
 		end
 	end

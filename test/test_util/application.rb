@@ -40,6 +40,7 @@ module XmlConv
 					assert_equal(1, id)
 				}
 				transaction.__next(:execute) { }
+				transaction.__next(:notify) { }
 				assert_equal([], @app.transactions)
 				assert_equal(0, @app.transactions.size)
 				@app.execute(transaction)

@@ -7,28 +7,73 @@ require 'conversion/bdd_xml'
 require 'conversion/i2_bdd'
 require 'conversion/xml_bdd'
 require 'util/destination'
+require 'net/smtp'
+require 'tmail'
 
 module XmlConv
 	module Util
 		class Transaction
 			include ODBA::Persistable
+			MAIL_FROM = 'xmlconv@ywesee.com'
+			SMTP_HANDLER = Net::SMTP
 			attr_accessor :input, :reader, :writer, :destination, :origin, 
-										:transaction_id, :error
+										:transaction_id, :error, 
+										:error_recipients, :debug_recipients
 			attr_reader :output, :model, :start_time, :commit_time, 
 									:input_model, :output_model, :status
-			attr_accessor :transaction_id
 			def execute
 				reader_instance = Conversion.const_get(@reader)
 				writer_instance = Conversion.const_get(@writer)
-				input_model = reader_instance.parse(@input)
 				@start_time = Time.now
+				input_model = reader_instance.parse(@input)
 				@model = reader_instance.convert(input_model)
 				output_model = writer_instance.convert(@model)
-				@commit_time = Time.now
-				@destination.deliver(output_model)
 				@output = output_model.to_s
+				@destination.deliver(output_model)
+				@commit_time = Time.now
+				@output
 			ensure
 				@destination.forget_credentials!
+			end
+			def notify
+				recipients = [@debug_recipients]
+				subject = 'XmlConv2 - Debug-Notification'
+				if(@error)
+					recipients.push(@error_recipients)
+					subject = 'XmlConv2 - Error-Notification'
+				end
+				recipients.flatten!
+				recipients.compact!
+				recipients.uniq!
+				return if(recipients.empty?)
+				mail = TMail::Mail.new
+				mail.set_content_type('text', 'plain', 'charset'=>'ISO-8859-1')
+				mail.body = <<-EOS
+Date:   #{@start_time.strftime("%d.%m.%Y")}
+Time:   #{@start_time.strftime("%H:%M:%S")}
+Status: #{status}
+Error:  #{@error}
+Link:   http://janico.ywesee.com/de/transaction/transaction_id/#{@transaction_id}
+
+Input:
+# input start
+#{@input}
+# input end
+
+Output:
+# output start
+#{@output}
+# output end
+				EOS
+				mail.from = self::class::MAIL_FROM
+				mail.to = recipients
+				mail.subject = subject
+				mail.date = Time.now
+				mail['User-Agent'] = 'XmlConv::Util::Transaction'
+
+				self.class::SMTP_HANDLER.start('mail.ywesee.com') { |smtp|
+					smtp.sendmail(mail.encoded, self::class::MAIL_FROM, recipients)
+				}
 			end
 			def status
 				if(@error)
