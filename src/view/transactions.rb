@@ -77,7 +77,6 @@ module XmlConv
 			CSS_CLASS = 'composite'
 			LEGACY_INTERFACE = false
 			def pager(model)
-				puts "Pages: #{model.pages.size}"
 				Pager.new(model.pages, @session, self)
 			end
 			def transactions(page)

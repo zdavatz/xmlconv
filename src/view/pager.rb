@@ -67,7 +67,7 @@ module XmlConv
 				end
 			end
 			def page_number(model)
-				@lookandfeel.lookup(:page_number, @page, model.size)
+				@lookandfeel.lookup(:page_number, @page, @page.total)
 			end
 		end
 	end

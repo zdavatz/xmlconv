@@ -15,8 +15,15 @@ module XmlConv
 				def next
 					PageFacade.new(@int.next)
 				end
+				def pages
+					@pages[[[@int - (PAGER_SIZE / 2), total - PAGER_SIZE].min, 
+						0].max, PAGER_SIZE]
+				end
 				def previous
 					PageFacade.new(@int-1)
+				end
+				def total
+					@pages.size
 				end
 				def to_i
 					@int
@@ -27,6 +34,7 @@ module XmlConv
 			end
 			DIRECT_EVENT = :home
 			PAGE_SIZE = 20
+			PAGER_SIZE = 10
 			REVERSE_MAP = {
 				:commit_time => true,
 			}
