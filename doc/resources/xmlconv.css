@@ -65,8 +65,11 @@ table.navigation
 }
 td.helfti
 {
-	font-family: monospace, fixed;
 	width: 50%;
+}
+td.preformatted
+{
+	font-family: monospace, fixed;
 	vertical-align: top;
 	white-space: pre;
 }
