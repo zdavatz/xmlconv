@@ -24,6 +24,8 @@ module XmlConv
 				@commit_time = Time.now
 				@destination.deliver(output_model)
 				@output = output_model.to_s
+			ensure
+				@destination.forget_credentials!
 			end
 			def status
 				@destination.status if(@destination.respond_to?(:status))

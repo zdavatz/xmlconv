@@ -10,6 +10,9 @@ require 'mock'
 
 module XmlConv
 	module Util
+		class DestinationHttp < Destination
+			HTTP_CLASS = Mock.new('DestinationHttp::HTTP_CLASS')
+		end
 		class TestDestination < Test::Unit::TestCase
 			def setup
 				@destination = Destination.new
@@ -28,6 +31,9 @@ module XmlConv
 				assert_raises(RuntimeError) { 
 					@destination.deliver(delivery)
 				}
+			end
+			def test_forget_credentials
+				assert_respond_to(@destination, :forget_credentials!)
 			end
 		end
 		class TestDestinationDir < Test::Unit::TestCase
@@ -68,9 +74,10 @@ module XmlConv
 			end
 			def test_uri
 				@destination.path = '/foo/bar/baz'
-				assert_equal("file:/foo/bar/baz", @destination.uri)
+				assert_instance_of(URI::Generic, @destination.uri)
+				assert_equal("file:/foo/bar/baz", @destination.uri.to_s)
 				@destination.instance_variable_set('@filename', 'test_file.dat')
-				assert_equal("file:/foo/bar/baz/test_file.dat", @destination.uri)
+				assert_equal("file:/foo/bar/baz/test_file.dat", @destination.uri.to_s)
 			end
 			def test_status
 				cache = Mock.new('Cache')
@@ -96,6 +103,76 @@ module XmlConv
 				assert_equal(10, @destination.status_comparable)
 				@destination.instance_variable_set('@status', :picked_up)
 				assert_equal(20, @destination.status_comparable)
+			end
+		end
+		class TestDestinationHttp < Test::Unit::TestCase
+			class ToSMock < Mock
+				def to_s
+					true
+				end
+			end
+			def setup
+				@destination = DestinationHttp.new
+			end
+			def test_attr_accessors
+				assert_respond_to(@destination, :path)
+				assert_respond_to(@destination, :path=)
+				assert_respond_to(@destination, :uri)
+				assert_respond_to(@destination, :uri=)
+				assert_respond_to(@destination, :host)
+				assert_respond_to(@destination, :host=)
+			end
+			def test_path_writer
+				assert_equal('http:/', @destination.uri.to_s)
+				@destination.path = '/foo/bar'
+				assert_equal('http:/foo/bar', @destination.uri.to_s)
+			end
+			def test_host_writer
+				assert_equal('http:/', @destination.uri.to_s)
+				@destination.host = 'www.example.org'
+				assert_equal('http://www.example.org/', @destination.uri.to_s)
+			end
+			def test_uri_writer
+				uri = URI.parse('http://www.example.org/foo/bar')
+				assert_instance_of(URI::HTTP, @destination.uri)
+				assert_equal('http:/', @destination.uri.to_s)
+				@destination.uri = uri
+				assert_instance_of(URI::HTTP, @destination.uri)
+				assert_equal('http://www.example.org/foo/bar', @destination.uri.to_s)
+				@destination.uri = 'http://www.example.com/foo/bar'
+				assert_instance_of(URI::HTTP, @destination.uri)
+				assert_equal('http://www.example.com/foo/bar', @destination.uri.to_s)
+			end
+			def test_deliver
+				@destination.uri = 'http://testaccount:password@janico.ywesee.com:12345/test.rbx'
+				http_session = Mock.new('HttpSession')
+				delivery = ToSMock.new('Delivery')
+				response = Mock.new('Response')
+				response.__next(:message) { 'Status' }
+				delivery.__next(:to_s) { 'The Delivery' }
+				http_session.__next(:request) { |post_request, body| 
+					assert_instance_of(Net::HTTP::Post, post_request)
+					header = post_request.instance_variable_get('@header') 
+					assert(header.include?('authorization'), "Authorization-Headers not sent")
+					assert_equal('The Delivery', body)
+					response
+				}
+				DestinationHttp::HTTP_CLASS.__next(:start) { |block, host, port| 
+					assert_equal('janico.ywesee.com', host)
+					assert_equal(12345, port)
+					block.call(http_session)
+				}
+				@destination.deliver(delivery)
+				assert_equal(:http_status, @destination.status)
+				# When the delivery is delivered, forget username and Password
+				uri = @destination.uri
+				assert_nil(uri.user)
+				assert_nil(uri.password)
+				assert_equal('http://janico.ywesee.com:12345/test.rbx', uri.to_s)
+				DestinationHttp::HTTP_CLASS.__verify
+				http_session.__verify
+				delivery.__verify
+				response.__verify
 			end
 		end
 	end

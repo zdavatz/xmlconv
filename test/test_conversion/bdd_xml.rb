@@ -508,8 +508,6 @@ module XmlConv
 				item.__next(:qty) { 14 }
 				item.__next(:prices) { [price] }
 				item.__next(:free_text) { }
-				item.__next(:origin) { }
-				item.__next(:customs) {}
 				xml.__next(:add_element) { |xml_item|
 					assert_instance_of(REXML::Element, xml_item)
 					assert_equal('InvoiceItem', xml_item.name)

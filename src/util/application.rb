@@ -14,7 +14,6 @@ module XmlConv
 			attr_reader :transactions, :failed_transactions
 			include ODBA::Persistable
 			ODBA_EXCLUDE_VARS = ['@next_transaction_id']
-			PASSWORD = 
 			def initialize
 				@transactions = []
 				@failed_transactions = []
@@ -62,10 +61,22 @@ end
 class XmlConvApp < SBSM::DRbServer
 	SESSION = XmlConv::Util::Session
 	VALIDATOR = XmlConv::Util::Validator
+	POLLING = 60 #* 15
 	def initialize
 		@system = ODBA.cache_server.fetch_named('XmlConv', self) { 
 			XmlConv::Util::Application.new
 		}
+		if(self::class::POLLING_INTERVAL)
+			start_polling
+		end
 		super(@system)
+	end
+	def start_polling
+		@polling_thread = Thread.new {
+			loop {
+				PollingManager.new(@system).poll
+				sleep(self::class::POLLING_INTERVAL)
+			}
+		}
 	end
 end
