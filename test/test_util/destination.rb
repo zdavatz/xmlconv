@@ -153,6 +153,7 @@ module XmlConv
 				http_session.__next(:request) { |post_request, body| 
 					assert_instance_of(Net::HTTP::Post, post_request)
 					header = post_request.instance_variable_get('@header') 
+					assert_equal('text/xml', header['content-type'])
 					assert(header.include?('authorization'), "Authorization-Headers not sent")
 					assert_equal('The Delivery', body)
 					response

@@ -13,7 +13,7 @@ module XmlConv
 		class Transaction
 			include ODBA::Persistable
 			attr_accessor :input, :reader, :writer, :destination, :origin
-			attr_accessor :transaction_id
+			attr_accessor :transaction_id, :error
 			attr_reader :output, :model, :start_time, :commit_time
 			attr_reader :input_model, :output_model, :status
 			def execute

@@ -33,6 +33,8 @@ module XmlConv
 				assert_respond_to(@transaction, :writer=)
 				assert_respond_to(@transaction, :transaction_id)
 				assert_respond_to(@transaction, :transaction_id=)
+				assert_respond_to(@transaction, :error)
+				assert_respond_to(@transaction, :error=)
 			end
 			def test_attr_readers
 				assert_respond_to(@transaction, :output)
