@@ -16,6 +16,7 @@ module XmlConv
 										:transaction_id, :error
 			attr_reader :output, :model, :start_time, :commit_time, 
 									:input_model, :output_model, :status
+			attr_accessor :transaction_id
 			def execute
 				reader_instance = Conversion.const_get(@reader)
 				writer_instance = Conversion.const_get(@writer)
@@ -29,10 +30,14 @@ module XmlConv
 			ensure
 				@destination.forget_credentials!
 			end
+			def error_string
+				if(@error)
+					[@error.class, @error.message, @error.backtrace].join("\n")
+				end
+			end
 			def status
 				@destination.status if(@destination.respond_to?(:status))
 			end
-			attr_accessor :transaction_id
 			def status_comparable
 				if(@destination.respond_to?(:status_comparable))
 					@destination.status_comparable 
