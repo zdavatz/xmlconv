@@ -40,13 +40,17 @@ module XmlConv
 			end
 			def poll(source)
 				file_paths(source.directory).each { |path|
-					transaction = XmlConv::Util::Transaction.new
-					transaction.input = File.read(path)
-					transaction.origin = path
-					transaction.reader = source.reader
-					transaction.writer = source.writer
-					transaction.destination = destination(source.destination)
-					@system.execute(transaction)
+					begin
+						transaction = XmlConv::Util::Transaction.new
+						transaction.input = File.read(path)
+						transaction.origin = path
+						transaction.reader = source.reader
+						transaction.writer = source.writer
+						transaction.destination = destination(source.destination)
+						@system.execute(transaction)
+					ensure
+						File.delete(path)
+					end
 				}
 			end
 			def poll_sources

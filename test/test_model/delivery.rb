@@ -35,6 +35,9 @@ module XmlConv
 				assert_respond_to(@delivery, :customer_id)
 				assert_respond_to(@delivery, :prices)
 			end
+			def test_add_free_text
+				assert_respond_to(@delivery, :add_free_text)
+			end
 			def test_bsr_id
 				bsr = Mock.new('BSR')
 				bsr.__next(:bsr_id) { 'id_string' } 

@@ -75,7 +75,11 @@ class XmlConvApp < SBSM::DRbServer
 	def start_polling
 		@polling_thread = Thread.new {
 			loop {
-				PollingManager.new(@system).poll_sources
+				begin
+					XmlConv::Util::PollingManager.new(@system).poll_sources
+				rescue
+					puts $!
+				end
 				sleep(self::class::POLLING_INTERVAL)
 			}
 		}
