@@ -21,6 +21,8 @@ module XmlConv
 				assert_respond_to(@delivery, :bsr=)
 				assert_respond_to(@delivery, :agreement)
 				assert_respond_to(@delivery, :agreement=)
+				assert_respond_to(@delivery, :free_text)
+				assert_respond_to(@delivery, :free_text=)
 			end
 			def test_attr_readers
 				assert_respond_to(@delivery, :items)

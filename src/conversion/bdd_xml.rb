@@ -18,6 +18,9 @@ module XmlConv
 					bdd.deliveries.each { |delivery|
 						_xml_add_bdd_delivery(doc.root, delivery)
 					}
+					bdd.invoices.each { |invoice|
+						_xml_add_bdd_invoice(doc.root, invoice)
+					}
 					doc
 				end
 				def _xml_add_bdd_address(xml_elm, address)
@@ -40,6 +43,15 @@ module XmlConv
 					end
 					xml_elm.add_element(xml_addr)
 				end
+				def _xml_add_bdd_agreement(xml_elm, agreement)
+					if(terms_cond = agreement.terms_cond)
+						xml_agreement = REXML::Element.new('Agreement')
+						terms = REXML::Element.new('TermsCond')
+						terms.text = terms_cond
+						xml_agreement.add_element(terms)
+						xml_elm.add_element(xml_agreement)
+					end
+				end
 				def _xml_add_bdd_bsr(xml_bdd, bsr)
 					xml_bsr = REXML::Element.new('BSR')
 					timestamp = REXML::Element.new('Timestamp')
@@ -61,26 +73,17 @@ module XmlConv
 				end
 				def _xml_add_bdd_delivery(xml_bdd, delivery)
 					xml_delivery = REXML::Element.new('Delivery')
-					delivery.ids.each { |domain, id|
-						_xml_add_domain_id(xml_delivery, domain, id, 'DeliveryId')
-					}
-					delivery.parties.each { |party|
-						_xml_add_bdd_party(xml_delivery, party)
-					}
-					delivery.items.each { |item|
-						_xml_add_delivery_item(xml_delivery, item)
-					}
-					delivery.prices.each { |price|
-						_xml_add_item_price(xml_delivery, price)
-					}
-					if(agreement = delivery.agreement)
-						xml_agreement = REXML::Element.new('Agreement')
-						terms = REXML::Element.new('TermsCond')
-						terms.text = agreement.terms_cond
-						xml_agreement.add_element(terms)
-						xml_delivery.add_element(xml_agreement)
-					end
+					_xml_assemble_bdd_transaction(xml_delivery, delivery)
 					xml_bdd.add_element(xml_delivery)
+				end
+				def _xml_add_bdd_invoice(xml_bdd, invoice)
+					xml_invoice = REXML::Element.new('Invoice')
+					if(delivery_id = invoice.delivery_id)
+						domain, idstr = delivery_id
+						_xml_add_domain_id(xml_invoice, domain, idstr, 'DeliveryId')
+					end
+					_xml_assemble_bdd_transaction(xml_invoice, invoice)
+					xml_bdd.add_element(xml_invoice)
 				end
 				def _xml_add_bdd_name(xml_elm, name)
 					xml_name = REXML::Element.new('Name')
@@ -104,8 +107,8 @@ module XmlConv
 					xml_party = REXML::Element.new('Party')
 					xml_party.add_attribute('Version', '2')
 					xml_party.add_attribute('Role', party.role)
-					party.ids.each { |domain, id|
-						_xml_add_domain_id(xml_party, domain, id, 'PartyId')
+					party.ids.each { |domain, idstr|
+						_xml_add_domain_id(xml_party, domain, idstr, 'PartyId')
 					}
 					if(name = party.name)
 						_xml_add_bdd_name(xml_party, name)
@@ -119,28 +122,7 @@ module XmlConv
 					xml_elm.add_element(xml_party)
 				end
 				def _xml_add_delivery_item(xml_delivery, item)
-					xml_item = REXML::Element.new('DeliveryItem')
-					line_no = REXML::Element.new('LineNo')
-					line_no.text = item.line_no
-					xml_item.add_element(line_no)
-					ids = item.ids
-					unless(ids.empty?)
-						xml_id = REXML::Element.new('PartId')
-						ids.each { |domain, id|
-							_xml_add_domain_id(xml_id, domain, id, 'IdentNo')
-						}
-						xml_item.add_element(xml_id)
-					end
-					xml_qty = REXML::Element.new('Qty')
-					xml_qty.text = item.qty
-					xml_item.add_element(xml_qty)
-					item.prices.each { |price|
-						_xml_add_item_price(xml_item, price)
-					}
-					item.free_texts.each { |freetext|
-						_xml_add_freetext(xml_item, freetext)
-					}
-					xml_delivery.add_element(xml_item)
+					_xml_add_item(xml_delivery, item, 'DeliveryItem')
 				end
 				def _xml_add_domain_id(xml_elm, domain, idstr, idname)
 					xml_id = REXML::Element.new(idname)
@@ -148,17 +130,86 @@ module XmlConv
 					xml_id.text = idstr
 					xml_elm.add_element(xml_id)
 				end
-				def _xml_add_freetext(xml_elm, freetext)
+				def _xml_add_free_text(xml_elm, free_text)
 					xml_text = REXML::Element.new('FreeText')
-					xml_text.add_attribute('Type', freetext.type)
-					xml_text.text = freetext.to_s
+					if(type = free_text.type)
+						xml_text.add_attribute('Type', type)
+					end
+					xml_text.text = free_text.to_s
 					xml_elm.add_element(xml_text)
+				end
+				def _xml_add_invoice_item(xml_invoice, item)
+					_xml_add_item(xml_invoice, item, 'InvoiceItem')
+				end
+				def _xml_add_item(xml_elm, item, tag)
+					xml_item = REXML::Element.new(tag)
+					_xml_add_item_line_no(xml_item, item.line_no)
+					_xml_add_item_part_id(xml_item, item)
+					xml_qty = REXML::Element.new('Qty')
+					xml_qty.text = item.qty
+					xml_item.add_element(xml_qty)
+					item.prices.each { |price|
+						_xml_add_item_price(xml_item, price)
+					}
+					item.free_texts.each { |free_text|
+						_xml_add_free_text(xml_item, free_text)
+					}
+					xml_elm.add_element(xml_item)
+				end
+				def _xml_add_item_line_no(xml_item, line_no)
+					if(line_no)
+						xml_line_no = REXML::Element.new('LineNo')
+						xml_line_no.text = line_no
+						xml_item.add_element(xml_line_no)
+					end
+				end
+				def _xml_add_item_part_id(xml_item, item)
+					ids = item.ids
+					part_infos = item.part_infos
+					unless(ids.empty? && part_infos.empty?)
+						xml_id = REXML::Element.new('PartId')
+						ids.each { |domain, idstr|
+							_xml_add_domain_id(xml_id, domain, idstr, 'IdentNo')
+						}
+						unless(part_infos.empty?)
+							xml_info = REXML::Element.new('PartInfo')
+							part_infos.each { |part_info|
+								xml_value = REXML::Element.new('Value')
+								xml_value.add_attribute('Dimension', part_info.dimension)
+								xml_value.text = part_info.value
+								xml_info.add_element(xml_value)
+							}
+							xml_id.add_element(xml_info)
+						end
+						xml_item.add_element(xml_id)
+					end
 				end
 				def _xml_add_item_price(xml_item, price)
 					xml_price = REXML::Element.new('Price')
 					xml_price.add_attribute('Purpose', price.purpose)
 					xml_price.text = sprintf('%2.2f', price.amount / 100.0)
 					xml_item.add_element(xml_price)
+				end
+				def _xml_assemble_bdd_transaction(xml_trans, trans)
+					name = xml_trans.name
+					trans.ids.each { |domain, idstr|
+						_xml_add_domain_id(xml_trans, domain, idstr, name + 'Id')
+					}
+					trans.parties.each { |party|
+						_xml_add_bdd_party(xml_trans, party)
+					}
+					trans.items.each { |item|
+						_xml_add_item(xml_trans, item, name + 'Item')
+					}
+					trans.prices.each { |price|
+						_xml_add_item_price(xml_trans, price)
+					}
+					if(free_text = trans.free_text)
+						_xml_add_free_text(xml_trans, free_text)
+					end
+					if(agreement = trans.agreement)
+						_xml_add_bdd_agreement(xml_trans, agreement)
+					end
 				end
 			end
 		end

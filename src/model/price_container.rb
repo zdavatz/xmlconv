@@ -5,7 +5,7 @@ module XmlConv
 	module Model
 		module PriceContainer
 			def add_price(price)
-				@prices.push(price)
+				self.prices.push(price)
 			end
 			def prices
 				@prices ||= []

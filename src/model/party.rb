@@ -8,13 +8,15 @@ module XmlConv
 	module Model
 		class Party
 			attr_accessor :role, :address, :name
-			attr_reader :acc_id
 			include PartyContainer
 			include IdContainer
 			def party_id
 				sorted = self.ids.sort
 				domain, value = sorted.first
 				value
+			end
+			def acc_id
+				self.ids['ACC']
 			end
 		end
 	end
