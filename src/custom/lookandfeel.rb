@@ -29,7 +29,7 @@ module XmlConv
 					:status_picked_up					=>	'Abgeholt',
 					:th_commit_time						=>	'Zeit',
 					:th_input									=>	'Input',
-					:th_uri										=>	'Empfänger',
+					:th_uri_comparable				=>	'Empfänger',
 					:th_filename							=>	'Filename',
 					:th_transaction_id				=>	'ID',
 					:th_origin								=>	'Absender',
