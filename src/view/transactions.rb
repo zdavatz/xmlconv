@@ -4,6 +4,7 @@
 require 'htmlgrid/list'
 require 'htmlgrid/value'
 require 'view/template'
+require 'view/pager'
 
 module XmlConv
 	module View
@@ -26,7 +27,7 @@ module XmlConv
 			}
 			DEFAULT_CLASS = HtmlGrid::Value
 			LEGACY_INTERFACE = false
-			SORT_DEFAULT = :commit_time
+			SORT_DEFAULT = nil #:commit_time
 			SORT_REVERSE = true
 			def commit_time(model)
 				time_format(model.commit_time)
@@ -68,17 +69,24 @@ module XmlConv
 				link
 			end
 		end
-=begin
 		class TransactionsComposite < HtmlGrid::Composite
 			COMPONENTS = {
-				#[0,0]	=>	Pager,
-				[0,1]	=>	TransactionsList,
+				[0,0]	=>	:pager,
+				[0,1]	=>	:transactions,
 			}
+			CSS_CLASS = 'composite'
+			LEGACY_INTERFACE = false
+			def pager(model)
+				puts "Pages: #{model.pages.size}"
+				Pager.new(model.pages, @session, self)
+			end
+			def transactions(page)
+				TransactionsList.new(page.model, @session, self)
+			end
 		end
-=end
 		class Transactions < Template
-			#CONTENT = TransactionsComposite
-			CONTENT = TransactionsList
+			CONTENT = TransactionsComposite
+			#CONTENT = TransactionsList
 		end
 	end
 end

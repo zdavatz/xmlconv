@@ -70,3 +70,24 @@ td.helfti
 	vertical-align: top;
 	white-space: pre;
 }
+table.pager
+{
+	float: right;
+}
+table.pager td
+{
+	font-weight: bold;
+	color: black;
+	padding: 1px;
+	width: 16px;
+}
+table.pager td.head
+{
+	width: auto;
+	padding-right: 6px; 
+}
+table.pager a
+{
+	text-decoration: none;
+	color: #3b5c7f;
+}
