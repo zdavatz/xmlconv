@@ -172,11 +172,13 @@ module XmlConv
 					if(buyercode = _value(ast.buyercode))
 						item.add_id('ET-Nummer', buyercode)
 					end
+=begin
 					[:description1, :description2].collect { |symbol|
 						_value(ast.send(symbol))
 					}.compact.each { |descr|
 						_bdd_add_free_text(item, descr, 'Bezeichnung')
 					}
+=end
 					item.qty = _value(ast.qty)
 					_item_add_price(item, ast.pricenettopce, 'NettoPreis')
 					_item_add_price(item, ast.pricenetto, 'NettoPreisME')

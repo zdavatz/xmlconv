@@ -27,15 +27,15 @@ module XmlConv
 "02" "DP" "Name1" "Name2" "Street" "City" "AddressCode" "Country"
 "05" "A single Header-Text"
 "05" "Another single Header-Text"
-"10" "LineNo" "EAN13" "IdBuyer" "Description 1" "Description 2" "Quantity" 
+"10" "LineNo" "EAN13" "IdBuyer" "Quantity" 
 	"DeliveryDate" "PriceNetto" "PriceNetto * Quantity" "Discount" 
 	"Discount * Quantity" "Special Discount" "Special Discount * Quantity"
 	"PriceBrutto" "PriceBrutto * Quantity" 
-"10" "LineNo" "EAN13" "IdBuyer" "Description 1" "Description 2" "Quantity" 
+"10" "LineNo" "EAN13" "IdBuyer" "Quantity" 
 	"DeliveryDate" "PriceNetto" "PriceNetto * Quantity" "Discount" 
 	"Discount * Quantity" "Special Discount" "Special Discount * Quantity"
 	"PriceBrutto" "PriceBrutto * Quantity"
-"10" "LineNo" "EAN13" "IdBuyer" "Description 1" "Description 2" "Quantity" 
+"10" "LineNo" "EAN13" "IdBuyer" "Quantity" 
 	"DeliveryDate" "PriceNetto" "PriceNetto * Quantity" "Discount" 
 	"Discount * Quantity" "Special Discount" "Special Discount * Quantity"
 	"PriceBrutto" "PriceBrutto * Quantity"
@@ -531,8 +531,8 @@ module XmlConv
 				eancode = ast_mock('EanCode', '1234567890987')
 				#sellercode = ast_mock('SellerCode', 'Seller-Code')
 				buyercode = ast_mock('BuyerCode', 'Buyer-Code')
-				description1 = ast_mock('Description1', 'Description 1')
-				description2 = ast_mock('Description2', 'Description 2')
+				#description1 = ast_mock('Description1', 'Description 1')
+				#description2 = ast_mock('Description2', 'Description 2')
 				quantity = ast_mock('Quantity', '100')
 				price1 = ast_mock('Price1', '123.45')
 				price2 = ast_mock('Price2', '246.90')
@@ -547,8 +547,8 @@ module XmlConv
 				position.__next(:eancode) { eancode }
 				#position.__next(:sellercode) { sellercode }
 				position.__next(:buyercode) { buyercode }
-				position.__next(:description1) { description1 }
-				position.__next(:description2) { description2 }
+				#position.__next(:description1) { description1 }
+				#position.__next(:description2) { description2 }
 				position.__next(:qty) { quantity }
 				position.__next(:pricenettopce) { price1 }
 				position.__next(:pricenetto) { price2 }
@@ -570,10 +570,11 @@ module XmlConv
 					assert_equal('1234567890987', item.ids['EAN-Nummer'])
 					#assert_equal('Seller-Code', item.ids['Lieferantenartikel'])
 					assert_equal('Buyer-Code', item.ids['ET-Nummer'])
-					free_text = item.free_text
-					assert_instance_of(Model::FreeText, free_text)
-					assert_equal('Bezeichnung', free_text.type)
-					assert_equal("Description 1\nDescription 2", free_text)
+					assert_nil(item.free_text)
+					#free_text = item.free_text
+					#assert_instance_of(Model::FreeText, free_text)
+					#assert_equal('Bezeichnung', free_text.type)
+					#assert_equal("Description 1\nDescription 2", free_text)
 					assert_equal('100', item.qty)
 					assert_equal(8, item.prices.size)
 					assert_equal('NettoPreis', item.prices.at(0).purpose)
@@ -606,8 +607,8 @@ module XmlConv
 				eancode.__verify
 				#sellercode.__verify
 				buyercode.__verify
-				description1.__verify
-				description2.__verify
+				#description1.__verify
+				#description2.__verify
 				price1.__verify
 				price2.__verify
 				price3.__verify
@@ -627,8 +628,8 @@ module XmlConv
 				eancode = ast_mock('EanCode', '1234567890987')
 				#sellercode = ast_mock('SellerCode', 'Seller-Code')
 				buyercode = ast_mock('BuyerCode', 'Buyer-Code')
-				description1 = ast_mock('Description1', 'Description 1')
-				description2 = ast_mock('Description2', 'Description 2')
+				#description1 = ast_mock('Description1', 'Description 1')
+				#description2 = ast_mock('Description2', 'Description 2')
 				quantity = ast_mock('Quantity', '100')
 				price1 = ast_mock('Price1', '123.45')
 				price2 = ast_mock('Price2', '246.90')
@@ -644,8 +645,8 @@ module XmlConv
 				position.__next(:eancode) { eancode }
 				#position.__next(:sellercode) { sellercode }
 				position.__next(:buyercode) { buyercode }
-				position.__next(:description1) { description1 }
-				position.__next(:description2) { description2 }
+				#position.__next(:description1) { description1 }
+				#position.__next(:description2) { description2 }
 				position.__next(:qty) { quantity }
 				position.__next(:pricenettopce) { price1 }
 				position.__next(:pricenetto) { price2 }
@@ -668,10 +669,11 @@ module XmlConv
 					assert_equal('1234567890987', item.ids['EAN-Nummer'])
 					#assert_equal('Seller-Code', item.ids['Lieferantenartikel'])
 					assert_equal('Buyer-Code', item.ids['ET-Nummer'])
-					free_text = item.free_text
-					assert_instance_of(Model::FreeText, free_text)
-					assert_equal('Bezeichnung', free_text.type)
-					assert_equal("Description 1\nDescription 2", free_text)
+					assert_nil(item.free_text)
+					#free_text = item.free_text
+					#assert_instance_of(Model::FreeText, free_text)
+					#assert_equal('Bezeichnung', free_text.type)
+					#assert_equal("Description 1\nDescription 2", free_text)
 					assert_equal('100', item.qty)
 					assert_equal(8, item.prices.size)
 					assert_equal('NettoPreis', item.prices.at(0).purpose)
@@ -712,8 +714,8 @@ module XmlConv
 				eancode.__verify
 				#sellercode.__verify
 				buyercode.__verify
-				description1.__verify
-				description2.__verify
+				#description1.__verify
+				#description2.__verify
 				price1.__verify
 				price2.__verify
 				price3.__verify
