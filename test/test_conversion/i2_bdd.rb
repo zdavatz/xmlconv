@@ -20,31 +20,25 @@ module XmlConv
 				@src = <<-EOS
 "00" "Sender Identification" "Recipient Identification" 
 	"20040628" "1159" "CONFIRM" "1"
-"01" "456" "Receipt-Number" "20040627" "20040629" "Order Number" 
-	"Commission Number" "OC" "Employee" "TE" "0041 1 350 85 87" 
+"01" "456" "Receipt-Number" "20040627" "Order Number" "Commission"
+	"OC" "Employee" 
 "02" "BY" "Name1" "Name2" "Street" "City" "AddressCode" "Country"
 "02" "SE" "Name1" "Name2" "Street" "City" "AddressCode" "Country"
 "02" "DP" "Name1" "Name2" "Street" "City" "AddressCode" "Country"
 "05" "A single Header-Text"
 "05" "Another single Header-Text"
-"10" "10" "EAN13" "IdSeller" "IdBuyer" "Description 1" 
-	"Description 2" "Quantity" "Commission" "DeliveryDate" "QuantityUnit"
-	"PriceUnit" "PriceNetto" "PriceNetto * Quantity" "Discount" 
+"10" "EAN13" "IdBuyer" "Description 1" "Description 2" "Quantity" 
+	"DeliveryDate" "PriceNetto" "PriceNetto * Quantity" "Discount" 
 	"Discount * Quantity" "Special Discount" "Special Discount * Quantity"
-	"PriceBrutto" "PriceBrutto * Quantity" "VAT" "OriginCountry" "Customs"
-"15" "A single Position-Text"
-"15" "Another single Position-Text"
-"10" "20" "EAN13" "IdSeller" "IdBuyer" "Description 1" 
-	"Description 2" "Quantity" "Commission" "DeliveryDate" "QuantityUnit"
-	"PriceUnit" "PriceNetto" "PriceNetto * Quantity" "Discount" 
+	"PriceBrutto" "PriceBrutto * Quantity" 
+"10" "EAN13" "IdBuyer" "Description 1" "Description 2" "Quantity" 
+	"DeliveryDate" "PriceNetto" "PriceNetto * Quantity" "Discount" 
 	"Discount * Quantity" "Special Discount" "Special Discount * Quantity"
-	"PriceBrutto" "PriceBrutto * Quantity" "VAT" "OriginCountry" "Customs"
-"15" "Yet Another single Position-Text"
-"10" "30" "EAN13" "IdSeller" "IdBuyer" "Description 1" 
-	"Description 2" "Quantity" "Commission" "DeliveryDate" "QuantityUnit"
-	"PriceUnit" "PriceNetto" "PriceNetto * Quantity" "Discount" 
+	"PriceBrutto" "PriceBrutto * Quantity"
+"10" "EAN13" "IdBuyer" "Description 1" "Description 2" "Quantity" 
+	"DeliveryDate" "PriceNetto" "PriceNetto * Quantity" "Discount" 
 	"Discount * Quantity" "Special Discount" "Special Discount * Quantity"
-	"PriceBrutto" "PriceBrutto * Quantity" "VAT" "OriginCountry" "Customs"
+	"PriceBrutto" "PriceBrutto * Quantity"
 "90" "Price Netto" "VAT %" "VAT Amount" "Price Brutto" "Agreement"
 				EOS
 			end
@@ -529,9 +523,9 @@ module XmlConv
 				bsr = Mock.new('Bsr')
 				delivery = IsAMock.new('Delivery')
 				position = Mock.new('Position')
-				lineno = ast_mock('LineNo', '10')
+				#lineno = ast_mock('LineNo', '10')
 				eancode = ast_mock('EanCode', '1234567890987')
-				sellercode = ast_mock('SellerCode', 'Seller-Code')
+				#sellercode = ast_mock('SellerCode', 'Seller-Code')
 				buyercode = ast_mock('BuyerCode', 'Buyer-Code')
 				description1 = ast_mock('Description1', 'Description 1')
 				description2 = ast_mock('Description2', 'Description 2')
@@ -545,9 +539,9 @@ module XmlConv
 				price7 = ast_mock('Price7', '119.45')
 				price8 = ast_mock('Price8', '238.90')
 				ddate = ast_mock('DDate', '20040629')
-				position.__next(:lineno) { lineno }
+				#position.__next(:lineno) { lineno }
 				position.__next(:eancode) { eancode }
-				position.__next(:sellercode) { sellercode }
+				#position.__next(:sellercode) { sellercode }
 				position.__next(:buyercode) { buyercode }
 				position.__next(:description1) { description1 }
 				position.__next(:description2) { description2 }
@@ -567,10 +561,10 @@ module XmlConv
 				}
 				delivery.__next(:add_item) { |item|
 					assert_instance_of(Model::DeliveryItem, item)
-					assert_equal('10', item.line_no)
-					assert_equal(3, item.ids.size)
+					#assert_equal('10', item.line_no)
+					assert_equal(2, item.ids.size)
 					assert_equal('1234567890987', item.ids['ET-Nummer'])
-					assert_equal('Seller-Code', item.ids['Lieferantenartikel'])
+					#assert_equal('Seller-Code', item.ids['Lieferantenartikel'])
 					assert_equal('Buyer-Code', item.ids['ACC'])
 					free_text = item.free_text
 					assert_instance_of(Model::FreeText, free_text)
@@ -604,9 +598,9 @@ module XmlConv
 				bsr.__verify
 				delivery.__verify
 				position.__verify
-				lineno.__verify
+				#lineno.__verify
 				eancode.__verify
-				sellercode.__verify
+				#sellercode.__verify
 				buyercode.__verify
 				description1.__verify
 				description2.__verify
@@ -625,9 +619,9 @@ module XmlConv
 				bsr = Mock.new('Bsr')
 				invoice = IsAMock.new('Invoice')
 				position = Mock.new('Position')
-				lineno = ast_mock('LineNo', '10')
+				#lineno = ast_mock('LineNo', '10')
 				eancode = ast_mock('EanCode', '1234567890987')
-				sellercode = ast_mock('SellerCode', 'Seller-Code')
+				#sellercode = ast_mock('SellerCode', 'Seller-Code')
 				buyercode = ast_mock('BuyerCode', 'Buyer-Code')
 				description1 = ast_mock('Description1', 'Description 1')
 				description2 = ast_mock('Description2', 'Description 2')
@@ -642,9 +636,9 @@ module XmlConv
 				price8 = ast_mock('Price8', '238.90')
 				origin = ast_mock('Origin', 'CH')
 				customs = ast_mock('Customs', 'Customs-Number')
-				position.__next(:lineno) { lineno }
+				#position.__next(:lineno) { lineno }
 				position.__next(:eancode) { eancode }
-				position.__next(:sellercode) { sellercode }
+				#position.__next(:sellercode) { sellercode }
 				position.__next(:buyercode) { buyercode }
 				position.__next(:description1) { description1 }
 				position.__next(:description2) { description2 }
@@ -665,10 +659,10 @@ module XmlConv
 				}
 				invoice.__next(:add_item) { |item|
 					assert_instance_of(Model::InvoiceItem, item)
-					assert_equal('10', item.line_no)
-					assert_equal(3, item.ids.size)
+					#assert_equal('10', item.line_no)
+					assert_equal(2, item.ids.size)
 					assert_equal('1234567890987', item.ids['ET-Nummer'])
-					assert_equal('Seller-Code', item.ids['Lieferantenartikel'])
+					#assert_equal('Seller-Code', item.ids['Lieferantenartikel'])
 					assert_equal('Buyer-Code', item.ids['ACC'])
 					free_text = item.free_text
 					assert_instance_of(Model::FreeText, free_text)
@@ -710,9 +704,9 @@ module XmlConv
 				bsr.__verify
 				invoice.__verify
 				position.__verify
-				lineno.__verify
+				#lineno.__verify
 				eancode.__verify
-				sellercode.__verify
+				#sellercode.__verify
 				buyercode.__verify
 				description1.__verify
 				description2.__verify
@@ -794,7 +788,7 @@ module XmlConv
 			def test_parse
 				ast = I2Bdd.parse(@src)
 				assert_instance_of(SyntaxTree, ast)
-				assert_equal(14, ast.records.size)
+				assert_equal(11, ast.records.size)
 			end
 		end
 	end
