@@ -21,6 +21,12 @@ module XmlConv
 			}
 			DEFAULT_CLASS = View::Preformatted
 			LEGACY_INTERFACE = false
+			def init
+				if(@model.error)
+					components.store([0,2], :error_string)
+					colspan_map.store([0,2], 2)
+				end
+			end
 		end
 		class Transaction < Template
 			CONTENT = TransactionComposite
