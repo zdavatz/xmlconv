@@ -21,6 +21,7 @@ module XmlConv
 					:page_number1							=>	"&nbsp;von&nbsp;",
 					:page_number2							=>	"",
 					:pass											=>	'Passwort',
+					:status_error							=>	'Fehler',
 					:status_http_ok						=>	'&Uuml;bertragung erfolgreich',
 					:status_http_not_found		=>	'URI nicht gefunden',
 					:status_http_unauthorized	=>	'Keine Berechtigung',
