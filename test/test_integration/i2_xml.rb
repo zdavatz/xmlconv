@@ -53,7 +53,7 @@ module XmlConv
       <Verb>Return</Verb>
       <Noun>Status</Noun>
       <Party Role='Customer' Version='2'>
-        <PartyId Domain='ACC'>Sender Identification</PartyId>
+        <Name>Recipient Identification</Name>
       </Party>
     </BSR>
     <Delivery>
@@ -94,8 +94,8 @@ module XmlConv
       </Party>
       <DeliveryItem>
         <PartId>
-          <IdentNo Domain='ET-Nummer'>EAN13</IdentNo>
-          <IdentNo Domain='ACC'>IdBuyer</IdentNo>
+          <IdentNo Domain='ET-Nummer'>IdBuyer</IdentNo>
+          <IdentNo Domain='EAN-Nummer'>EAN13</IdentNo>
         </PartId>
         <Qty>2</Qty>
         <Price Purpose='NettoPreis'>1.00</Price>
@@ -112,8 +112,8 @@ Description 2</FreeText>
       </DeliveryItem>
       <DeliveryItem>
         <PartId>
-          <IdentNo Domain='ET-Nummer'>EAN13</IdentNo>
-          <IdentNo Domain='ACC'>IdBuyer</IdentNo>
+          <IdentNo Domain='ET-Nummer'>IdBuyer</IdentNo>
+          <IdentNo Domain='EAN-Nummer'>EAN13</IdentNo>
         </PartId>
         <Qty>2</Qty>
         <Price Purpose='NettoPreis'>1.00</Price>
@@ -130,8 +130,8 @@ Description 2</FreeText>
       </DeliveryItem>
       <DeliveryItem>
         <PartId>
-          <IdentNo Domain='ET-Nummer'>EAN13</IdentNo>
-          <IdentNo Domain='ACC'>IdBuyer</IdentNo>
+          <IdentNo Domain='ET-Nummer'>IdBuyer</IdentNo>
+          <IdentNo Domain='EAN-Nummer'>EAN13</IdentNo>
         </PartId>
         <Qty>2</Qty>
         <Price Purpose='NettoPreis'>1.00</Price>

@@ -34,7 +34,7 @@ module XmlConv
 		class DestinationDir < Destination
 			attr_reader :filename
 			def deliver(delivery)
-				#FileUtils.mkdir_p(@path)
+				FileUtils.mkdir_p(@path)
 				@filename = delivery.filename
 				path = File.expand_path(@filename, @path)
 				@status = :pending_pickup
@@ -69,7 +69,8 @@ module XmlConv
 					end
 					response = http.request(request, delivery.to_s)	
 					forget_credentials!
-					@status = "http_#{response.message.downcase}".intern
+					status_str = response.message.downcase.gsub(/\s+/, "_")
+					@status = "http_#{status_str}".intern
 				}
 			end
 			def forget_credentials!

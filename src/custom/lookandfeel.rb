@@ -25,6 +25,7 @@ module XmlConv
 					:pager_entries1						=>	"&nbsp;Eintr&auml;ge&nbsp;gefunden",
 					:pass											=>	'Passwort',
 					:status_http_ok						=>	'&Uuml;bertragung erfolgreich',
+					:status_http_not_found		=>	'URI nicht gefunden',
 					:status_http_unauthorized	=>	'Keine Berechtigung',
 					:status_open							=>	'Offen',
 					:status_pending_pickup		=>	'Bereit zum Abholen',

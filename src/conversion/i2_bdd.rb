@@ -116,10 +116,12 @@ module XmlConv
 						bsr.verb = 'Return'
 						bsr.noun = 'Invoice'
 					end
-					if(customer_id = _value(ast.sender))
+					if(customer_name = _value(ast.recipient))
 						customer = Model::Party.new
 						customer.role = 'Customer'
-						customer.add_id('ACC', customer_id)
+						name = Model::Name.new
+						name.text = customer_name
+						customer.name = name
 						bsr.add_party(customer)
 					end
 					bdd.bsr = bsr
@@ -160,7 +162,7 @@ module XmlConv
 				def _bdd_assemble_item(item, ast)
 					#item.line_no = _value(ast.lineno)
 					if(etnr = _value(ast.eancode))
-						item.add_id('ET-Nummer', etnr)
+						item.add_id('EAN-Nummer', etnr)
 					end
 =begin
 					if(sellercode = _value(ast.sellercode))
@@ -168,7 +170,7 @@ module XmlConv
 					end
 =end
 					if(buyercode = _value(ast.buyercode))
-						item.add_id('ACC', buyercode)
+						item.add_id('ET-Nummer', buyercode)
 					end
 					[:description1, :description2].collect { |symbol|
 						_value(ast.send(symbol))
