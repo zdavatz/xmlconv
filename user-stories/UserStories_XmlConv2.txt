@@ -1,3 +1,8 @@
+2004-06-03 Zeno Davatz <zdavatz@ywesee.com>
+* Bemerkung: 
+	Bitte jeweils erwähnen an wen die Frage gerichtet ist. In diesem Fall Circon
+	oder WF.
+
 2004-06-03  Hannes Wyss  <hwyss@ywesee.com>
 * Fragen zu User-Story: Order 
 	Welche Edifakt-Felder sind für FirstName (Employee) und LastName vorgesehen?
