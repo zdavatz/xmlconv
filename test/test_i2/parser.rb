@@ -148,8 +148,8 @@ module XmlConv
 			end
 			def test_parse_position__delivery
 				src = <<-EOS
-"10" "EAN13" "IdBuyer" "Description 1" "Description 2" "Quantity" 
-"DeliveryDate" "PriceNetto" "PriceNetto * Quantity" "Discount" 
+"10" "PositionNr" "EAN13" "IdBuyer" "Description 1" "Description 2" 
+"Quantity" "DeliveryDate" "PriceNetto" "PriceNetto * Quantity" "Discount" 
 "Discount * Quantity" "Special Discount" "Special Discount * Quantity"
 "PriceBrutto" "PriceBrutto * Quantity"
 				EOS
@@ -160,7 +160,7 @@ module XmlConv
 				assert_instance_of(SyntaxTree, position)
 				assert_equal('Position', position.name)
 				assert_equal('10', position.rtype.value)
-				#assert_equal('PositionNr', position.lineno.value)
+				assert_equal('PositionNr', position.lineno.value)
 				assert_equal('EAN13', position.eancode.value)
 				#assert_equal('IdSeller', position.sellercode.value)
 				assert_equal('IdBuyer', position.buyercode.value)
@@ -185,10 +185,10 @@ module XmlConv
 			end
 			def test_parse_position__invoice
 				src = <<-EOS
-"10" "EAN13" "IdBuyer" "Description 1" "Description 2" "Quantity" 
-"PriceNetto" "PriceNetto * Quantity" "Discount" "Discount * Quantity" 
-"Special Discount" "Special Discount * Quantity" "PriceBrutto" 
-"PriceBrutto * Quantity" "OriginCountry" "Customs"
+"10" "PositionNr" "EAN13" "IdBuyer" "Description 1" "Description 2" 
+"Quantity" "PriceNetto" "PriceNetto * Quantity" "Discount" 
+"Discount * Quantity" "Special Discount" "Special Discount * Quantity" 
+"PriceBrutto" "PriceBrutto * Quantity" "OriginCountry" "Customs"
 				EOS
 				# commented fields are not in the current version
 				ast = @parser.parse(src)
@@ -197,7 +197,7 @@ module XmlConv
 				assert_instance_of(SyntaxTree, position)
 				assert_equal('Position', position.name)
 				assert_equal('10', position.rtype.value)
-				#assert_equal('PositionNr', position.lineno.value)
+				assert_equal('PositionNr', position.lineno.value)
 				assert_equal('EAN13', position.eancode.value)
 				#assert_equal('IdSeller', position.sellercode.value)
 				assert_equal('IdBuyer', position.buyercode.value)
@@ -222,7 +222,7 @@ module XmlConv
 			end
 			def test_parse_incomplete_position
 				src = <<-EOS
-"10" "" "" "" "" "" "" "" "" "" "" "" "" "" ""
+"10" "" "" "" "" "" "" "" "" "" "" "" "" "" "" ""
 				EOS
 				ast = nil
 				assert_nothing_raised { 
@@ -291,13 +291,13 @@ module XmlConv
 "02" "EP" "RUSSO GIOVANNI" "" "" "" "" ""
 "02" "BY" "WINTERHALTER + FENNER AG" "" "BIRGISTRASSE 10" "WALLISELLEN" "8304" "CH"
 "02" "DP" "WINTERHALTER + FENNER AG" "FILIALE LITTAU" "GROSSMATTE 11 / POSTFACH" "LITTAU" "6014" "CH"
-"10" "" "121.763.703" "PLICA-TEC KUNSTSTOFF LANGGEWINDE" "M32    11- 21 MM  20 STK  H'GRAU" "10" "0" "0" "0" "0" "0" "0" "0" "0" "" ""
-"10" "" "125.001.309" "ISOLIERROHR KIR PVC              32" "M25   60 M  HELLGRAU" "600" "115" "690" "21.85" "131.1" "0" "0" "93.15" "558.9" "CZ" "Z08151515"
-"10" "" "125.001.509" "ISOLIERROHR KIR PVC              32" "M40   30 M  HELLGRAU" "60" "275" "165" "27.5" "16.5" "0" "0" "247.5" "148.5" "" ""
-"10" "" "125.091.409" "KRH-ROHR STEIF PVC               43" "M32   45 M  DUNKELGRAU" "180" "420" "756" "0" "0" "0" "0" "420" "756" "" ""
-"10" "" "125.293.400" "WELLSCHLAUCH ROBOFLEX PA12       PI" "NW17  50 M  SCHWARZ" "50" "371" "185.5" "129.9" "64.95" "0" "0" "241.1" "120.55" "" ""
-"10" "" "125.293.600" "WELLSCHLAUCH ROBOFLEX PA12       PI" "NW29  25 M  SCHWARZ" "100" "773" "773" "270.55" "270.55" "0" "0" "502.45" "502.45" "" ""
-"10" "" "125.293.700" "WELLSCHLAUCH ROBOFLEX PA12       PI" "NW36  25 M  SCHWARZ" "100" "1082" "1082" "378.7" "378.7" "0" "0" "703.3" "703.3" "" ""
+"10" "5" "" "121.763.703" "PLICA-TEC KUNSTSTOFF LANGGEWINDE" "M32    11- 21 MM  20 STK  H'GRAU" "10" "0" "0" "0" "0" "0" "0" "0" "0" "" ""
+"10" "10" "" "125.001.309" "ISOLIERROHR KIR PVC              32" "M25   60 M  HELLGRAU" "600" "115" "690" "21.85" "131.1" "0" "0" "93.15" "558.9" "CZ" "Z08151515"
+"10" "15" "" "125.001.509" "ISOLIERROHR KIR PVC              32" "M40   30 M  HELLGRAU" "60" "275" "165" "27.5" "16.5" "0" "0" "247.5" "148.5" "" ""
+"10" "20" "" "125.091.409" "KRH-ROHR STEIF PVC               43" "M32   45 M  DUNKELGRAU" "180" "420" "756" "0" "0" "0" "0" "420" "756" "" ""
+"10" "25" "" "125.293.400" "WELLSCHLAUCH ROBOFLEX PA12       PI" "NW17  50 M  SCHWARZ" "50" "371" "185.5" "129.9" "64.95" "0" "0" "241.1" "120.55" "" ""
+"10" "30" "" "125.293.600" "WELLSCHLAUCH ROBOFLEX PA12       PI" "NW29  25 M  SCHWARZ" "100" "773" "773" "270.55" "270.55" "0" "0" "502.45" "502.45" "" ""
+"10" "90" "" "125.293.700" "WELLSCHLAUCH ROBOFLEX PA12       PI" "NW36  25 M  SCHWARZ" "100" "1082" "1082" "378.7" "378.7" "0" "0" "703.3" "703.3" "" ""
 "90" "2789.7" "7.60" "212" "3001.7" "10 Tage 3%, 30 Tage 2%, 60 Tage netto"
 				EOS
 				assert_nothing_raised {

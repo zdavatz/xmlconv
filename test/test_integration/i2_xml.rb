@@ -30,11 +30,11 @@ module XmlConv
 "02" "DP" "Name1" "Name2" "Street" "City" "AddressCode" "Country"
 "05" "A single Header-Text"
 "05" "Another single Header-Text"
-"10" "EAN13" "IdBuyer" "Description 1" "Description 2" "2" "20040630"
+"10" "10" "EAN13" "IdBuyer" "Description 1" "Description 2" "2" "20040630"
 	"1" "2" "0.1" "0.2" "0.2" "0.4" "0.7" "1.4"
-"10" "EAN13" "IdBuyer" "Description 1" "Description 2" "2" "20040630" 
+"10" "10" "EAN13" "IdBuyer" "Description 1" "Description 2" "2" "20040630" 
 	"1" "2" "0.1" "0.2" "0.2" "0.4" "0.7" "1.4" 
-"10" "EAN13" "IdBuyer" "Description 1" "Description 2" "2" "20040630" 
+"10" "10" "EAN13" "IdBuyer" "Description 1" "Description 2" "2" "20040630" 
 	"1" "2" "0.1" "0.2" "0.2" "0.4" "0.7" "1.4" 
 "90" "4.2" "7.6" "0.32" "4.52" "Agreement"
 				EOS
@@ -93,6 +93,7 @@ module XmlConv
         </Party>
       </Party>
       <DeliveryItem>
+        <LineNo>10</LineNo>
         <PartId>
           <IdentNo Domain='ET-Nummer'>IdBuyer</IdentNo>
           <IdentNo Domain='EAN-Nummer'>EAN13</IdentNo>
@@ -111,6 +112,7 @@ Description 2</FreeText>
         <DeliveryDate>20040630</DeliveryDate>
       </DeliveryItem>
       <DeliveryItem>
+        <LineNo>10</LineNo>
         <PartId>
           <IdentNo Domain='ET-Nummer'>IdBuyer</IdentNo>
           <IdentNo Domain='EAN-Nummer'>EAN13</IdentNo>
@@ -129,6 +131,7 @@ Description 2</FreeText>
         <DeliveryDate>20040630</DeliveryDate>
       </DeliveryItem>
       <DeliveryItem>
+        <LineNo>10</LineNo>
         <PartId>
           <IdentNo Domain='ET-Nummer'>IdBuyer</IdentNo>
           <IdentNo Domain='EAN-Nummer'>EAN13</IdentNo>
