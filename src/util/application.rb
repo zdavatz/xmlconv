@@ -62,7 +62,7 @@ end
 class XmlConvApp < SBSM::DRbServer
 	SESSION = XmlConv::Util::Session
 	VALIDATOR = XmlConv::Util::Validator
-	POLLING = 60 #* 15
+	POLLING_INTERVAL = 60 #* 15
 	def initialize
 		@system = ODBA.cache_server.fetch_named('XmlConv', self) { 
 			XmlConv::Util::Application.new
