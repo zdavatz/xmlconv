@@ -50,7 +50,8 @@ reader: XmlBdd
 				block2 = Proc.new { |source|
 					assert_instance_of(PollingMission, source)
 					assert_equal('XmlBdd', source.reader)
-					assert_equal('./test/test_util/data/xml', source.directory)
+					expected = File.expand_path('data/xml', File.dirname(__FILE__))
+					assert_equal(expected, source.directory)
 					assert_equal('BddI2', source.writer)
 					assert_equal('http://user:pass@foo.bar.baz', source.destination)
 					block = block3
@@ -58,7 +59,8 @@ reader: XmlBdd
 				block1 = Proc.new { |source|
 					assert_instance_of(PollingMission, source)
 					assert_equal('I2Bdd', source.reader)
-					assert_equal('./test/test_util/data/i2', source.directory)
+					expected = File.expand_path('data/i2', File.dirname(__FILE__))
+					assert_equal(expected, source.directory)
 					assert_equal('BddXml', source.writer)
 					assert_equal('http://example.com:12345', source.destination)
 					block = block2

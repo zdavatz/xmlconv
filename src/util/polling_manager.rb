@@ -13,8 +13,8 @@ module XmlConv
 			attr_accessor :directory, :reader, :writer, :destination
 		end
 		class PollingManager
-			CONFIG_PATH = File.expand_path('../../etc/polling.yaml', 
-				File.dirname(__FILE__))
+			PROJECT_ROOT = File.expand_path('../..', File.dirname(__FILE__))
+			CONFIG_PATH = File.expand_path('etc/polling.yaml', PROJECT_ROOT)
 			def initialize(system)
 				@system = system
 			end
@@ -29,7 +29,11 @@ module XmlConv
 			end
 			def load_sources(&block)
 				file = File.open(self::class::CONFIG_PATH)
-				YAML.load_documents(file, &block)
+				YAML.load_documents(file) { |mission|
+					path = File.expand_path(mission.directory, PROJECT_ROOT)
+					mission.directory = path
+					block.call(mission)
+				}
 			ensure
 				file.close
 			end
@@ -43,7 +47,7 @@ module XmlConv
 					begin
 						transaction = XmlConv::Util::Transaction.new
 						transaction.input = File.read(path)
-						transaction.origin = path
+						transaction.origin = 'file:' << path
 						transaction.reader = source.reader
 						transaction.writer = source.writer
 						transaction.destination = destination(source.destination)

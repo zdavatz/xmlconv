@@ -54,13 +54,16 @@ module XmlConv
 		end
 		class DestinationHttp < Destination
 			HTTP_CLASS = Net::HTTP # replaceable for testing purposes
+			HTTP_HEADERS = {
+				'content-type'	=>	'text/xml',
+			}
 			def initialize
 				super
 				@uri = URI.parse('http:/')
 			end
 			def deliver(delivery)
 				self.class::HTTP_CLASS.start(@uri.host, @uri.port) { |http|
-					request = Net::HTTP::Post.new(@uri.path)
+					request = Net::HTTP::Post.new(@uri.path, HTTP_HEADERS)
 					if(@uri.user || @uri.password)
 						request.basic_auth(@uri.user, @uri.password)
 					end
