@@ -14,7 +14,7 @@ module XmlConv
 				[0,0]	=>	:transaction_id,
 				[1,0]	=>	:origin,
 				[2,0]	=>	:commit_time,
-				[3,0]	=>	:uri,
+				[3,0]	=>	:uri_comparable,
 				[5,0]	=>	:status_comparable,
 			}
 			CSS_CLASS = 'composite'
@@ -28,14 +28,14 @@ module XmlConv
 			DEFAULT_CLASS = HtmlGrid::Value
 			LEGACY_INTERFACE = false
 			SORT_DEFAULT = nil #:commit_time
-			SORT_REVERSE = true
+			SORT_REVERSE = false
 			def commit_time(model)
 				time_format(model.commit_time)
 			end
 			def origin(model)
 				uri_fmt(model.origin)
 			end
-			def uri(model)
+			def uri_comparable(model)
 				uri_fmt(model.uri)
 			end
 			def uri_fmt(uri)

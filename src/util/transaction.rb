@@ -46,6 +46,9 @@ module XmlConv
 			def uri
 				@destination.uri if(@destination.respond_to?(:uri))
 			end
+			def uri_comparable
+				self.uri.to_s
+			end
 		end
 	end
 end

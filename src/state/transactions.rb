@@ -26,7 +26,7 @@ module XmlConv
 				end
 			end
 			DIRECT_EVENT = :home
-			PAGE_SIZE = 30
+			PAGE_SIZE = 20
 			REVERSE_MAP = {
 				:commit_time => true,
 			}
