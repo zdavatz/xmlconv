@@ -23,6 +23,7 @@
 	ein striktes 'CCYYMMDD'-Format vorgesehen.
 	Status Quo fürs Datumshandling: wenn das XML-Datum geparst werden kann, gilt
 	die geparste Version. Andernfalls wird jeweils das aktuelle Datum verwendet.
+
 2004-05-06  Zeno Davatz  <zdavatz@ywesee.com>
 * User-Story: Ablauf / External Interfaces
 	DESCRIPTION:
