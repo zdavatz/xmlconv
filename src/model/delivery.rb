@@ -7,7 +7,6 @@ module XmlConv
 	module Model
 		class Delivery < Transaction
 			attr_accessor :bsr
-			attr_reader :seller, :customer
 			def bsr_id
 				@bsr.bsr_id unless(@bsr.nil?)
 			end

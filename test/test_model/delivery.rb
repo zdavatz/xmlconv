@@ -23,6 +23,10 @@ module XmlConv
 				assert_respond_to(@delivery, :agreement=)
 				assert_respond_to(@delivery, :free_text)
 				assert_respond_to(@delivery, :free_text=)
+				assert_respond_to(@delivery, :status)
+				assert_respond_to(@delivery, :status=)
+				assert_respond_to(@delivery, :status_date)
+				assert_respond_to(@delivery, :status_date=)
 			end
 			def test_attr_readers
 				assert_respond_to(@delivery, :items)
@@ -39,11 +43,19 @@ module XmlConv
 				assert_equal('id_string', @delivery.bsr_id)
 				bsr.__verify
 			end
-			def test_add_party
+			def test_add_party__customer
 				party = Mock.new('Customer')
 				party.__next(:role) { 'Customer' }
 				@delivery.add_party(party)
 				assert_equal(party, @delivery.customer)
+				assert_equal([party], @delivery.parties)
+				party.__verify
+			end
+			def test_add_party__seller
+				party = Mock.new('Seller')
+				party.__next(:role) { 'Seller' }
+				@delivery.add_party(party)
+				assert_equal(party, @delivery.seller)
 				assert_equal([party], @delivery.parties)
 				party.__verify
 			end

@@ -13,7 +13,8 @@ module XmlConv
 			include ItemContainer
 			include PartyContainer
 			include PriceContainer
-			attr_accessor :agreement, :free_text
+			attr_accessor :agreement, :free_text, :status, :status_date
+			attr_accessor :customer, :seller
 		end
 	end
 end

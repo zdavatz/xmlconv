@@ -26,7 +26,7 @@ module XmlConv
 				assert_respond_to(@item, :ids)
 				assert_respond_to(@item, :et_nummer_id)
 				assert_respond_to(@item, :prices)
-				assert_respond_to(@item, :free_texts)
+				assert_respond_to(@item, :free_text)
 				assert_respond_to(@item, :part_infos)
 			end
 			def test_add_id

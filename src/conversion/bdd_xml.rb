@@ -37,7 +37,8 @@ module XmlConv
 					end
 					if(zip_code = address.zip_code)
 						xml_zip = REXML::Element.new('ZipCode')
-						xml_zip.add_attribute('Domain', 'CH')
+						domain = address.country || 'CH'
+						xml_zip.add_attribute('Domain', domain)
 						xml_zip.text = zip_code
 						xml_addr.add_element(xml_zip)
 					end
@@ -55,16 +56,16 @@ module XmlConv
 				def _xml_add_bdd_bsr(xml_bdd, bsr)
 					xml_bsr = REXML::Element.new('BSR')
 					timestamp = REXML::Element.new('Timestamp')
-					time = Time.now
+					time = bsr.timestamp || Time.now
 					zone = sprintf("%+i", time.gmtoff / 3600)
 					timestamp.add_attribute('Zone', zone)
 					timestamp.text = time.strftime('%Y%m%d%H%M%S')
 					xml_bsr.add_element(timestamp)
 					verb = REXML::Element.new('Verb')
-					verb.text = 'Return'	
+					verb.text = bsr.verb || 'Return'	
 					xml_bsr.add_element(verb)
 					noun = REXML::Element.new('Noun')
-					noun.text = 'Status'
+					noun.text = bsr.noun || 'Status'
 					xml_bsr.add_element(noun)
 					bsr.parties.each { |party|
 						_xml_add_bdd_party(xml_bsr, party)
@@ -122,7 +123,12 @@ module XmlConv
 					xml_elm.add_element(xml_party)
 				end
 				def _xml_add_delivery_item(xml_delivery, item)
-					_xml_add_item(xml_delivery, item, 'DeliveryItem')
+					xml_item = _xml_add_item(xml_delivery, item, 'DeliveryItem')
+					if((date = item.delivery_date) && date.respond_to?(:strftime))
+						xml_date = REXML::Element.new('DeliveryDate')
+						xml_date.text = date.strftime('%Y%m%d')
+						xml_item.add_element(xml_date)
+					end
 				end
 				def _xml_add_domain_id(xml_elm, domain, idstr, idname)
 					xml_id = REXML::Element.new(idname)
@@ -151,10 +157,11 @@ module XmlConv
 					item.prices.each { |price|
 						_xml_add_item_price(xml_item, price)
 					}
-					item.free_texts.each { |free_text|
+					if(free_text = item.free_text)
 						_xml_add_free_text(xml_item, free_text)
-					}
+					end
 					xml_elm.add_element(xml_item)
+					xml_item
 				end
 				def _xml_add_item_line_no(xml_item, line_no)
 					if(line_no)
@@ -190,7 +197,20 @@ module XmlConv
 					xml_price.text = sprintf('%2.2f', price.amount / 100.0)
 					xml_item.add_element(xml_price)
 				end
+				def _xml_add_item_status(xml_item, trans)
+					status = REXML::Element.new('Status')
+					status.text = trans.status
+					if((date = trans.status_date) && date.respond_to?(:strftime))
+						fmt = "%Y%m%d"
+						if(date.is_a?(Time))
+							fmt << "%H%M%S"
+						end
+						status.add_attribute('Date', date.strftime(fmt))
+					end
+					xml_item.add_element(status)
+				end
 				def _xml_assemble_bdd_transaction(xml_trans, trans)
+					_xml_add_item_status(xml_trans, trans)
 					name = xml_trans.name
 					trans.ids.each { |domain, idstr|
 						_xml_add_domain_id(xml_trans, domain, idstr, name + 'Id')
@@ -198,8 +218,9 @@ module XmlConv
 					trans.parties.each { |party|
 						_xml_add_bdd_party(xml_trans, party)
 					}
+					method = "_xml_add_#{name}_item".downcase
 					trans.items.each { |item|
-						_xml_add_item(xml_trans, item, name + 'Item')
+						self.send(method, xml_trans, item)
 					}
 					trans.prices.each { |price|
 						_xml_add_item_price(xml_trans, price)

@@ -17,6 +17,14 @@ module XmlConv
 			def test_attr_readers
 				assert_respond_to(@bsr, :parties)
 			end
+			def test_attr_accessors
+				assert_respond_to(@bsr, :timestamp)
+				assert_respond_to(@bsr, :timestamp=)
+				assert_respond_to(@bsr, :noun)
+				assert_respond_to(@bsr, :noun=)
+				assert_respond_to(@bsr, :verb)
+				assert_respond_to(@bsr, :verb=)
+			end
 			def test_bsr_id
 				party = Mock.new('Party')
 				party.__next(:role) { 'Customer' }

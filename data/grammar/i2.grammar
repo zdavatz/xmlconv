@@ -1,0 +1,63 @@
+Grammar I2
+	Tokens
+		BLANK				=	/\s+/						[:Skip]
+		QUOTE				= /"/
+		CHAR				= /[^"]+/
+	Productions
+		Document		->	Record+
+										[: records]
+		Record			->	Header
+										[^: record]
+								|		Commission
+										[^: record]
+								|		Address
+										[^: record]
+								|		HeaderText
+										[^: record]
+								|		Position
+										[^: record]
+								|		PositionText
+										[^: record]
+								|		Footer
+										[^: record]
+		Header			->	QUOTE "00" QUOTE 
+											Field Field Field Field Field Field
+										[: _, rtype, _, 
+											sender, recipient, date, time, mtype, test]
+		Commission	->	QUOTE "01" QUOTE
+											Field Field Field Field Field Field
+											Field Field Field Field
+										[: _, rtype, _,
+											btype, receipt, rdate, ddate, reference, commission,
+											contact, employee, medium, number]
+		Address			->	QUOTE "02" QUOTE
+											Field Field Field Field Field Field Field
+										[: _, rtype, _, 
+											atype, name1, name2, street, city, code, country]
+		HeaderText	->	QUOTE "05" QUOTE Field
+										[: _, rtype, _, text]
+		Position		->	QUOTE "10" QUOTE
+											Field Field Field Field
+											Field Field Field Field
+											Field Field Field 
+											Field Field Field Field
+											Field Field 
+											Field Field Field Field Field
+										[: _, rtype, _, 
+											lineno, eancode, sellercode, buyercode, 
+											description1, description2, qty, commission,
+											ddate, qtyunit, priceunit, 
+											pricenettopce, pricenetto, discountpce, discount,
+											extradiscountpce, extradiscount, 
+											pricebruttopce, pricebrutto, vat, origin, customs]
+		PositionText->	QUOTE "15" QUOTE Field
+										[: _, rtype, _, text]
+		Footer			->	QUOTE "90" QUOTE 
+											Field Field Field 
+											Field Field 
+										[: _, rtype, _, 
+											pricenetto, vatpercent, vatamount, 
+											pricebrutto, agreement]
+		Field				->	QUOTE CHAR QUOTE
+										[^: _, field, _]
+								|		QUOTE QUOTE

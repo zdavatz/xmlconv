@@ -23,6 +23,7 @@ module XmlConv
 			def test_attr_readers
 				assert_respond_to(@item, :part_infos)
 				assert_respond_to(@item, :ids)
+				assert_respond_to(@item, :free_text)
 			end
 			def test_add_id
 				assert_equal({}, @item.ids)

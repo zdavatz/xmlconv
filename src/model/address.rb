@@ -4,7 +4,7 @@
 module XmlConv
 	module Model
 		class Address
-			attr_accessor :city, :zip_code
+			attr_accessor :city, :zip_code, :country
 			attr_reader :lines
 			def initialize
 				@lines = []

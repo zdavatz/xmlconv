@@ -5,16 +5,21 @@ module XmlConv
 	module Model
 		class FreeText < String
 			attr_accessor :type
+			def <<(other)
+				if(empty? || other.empty?)
+					super
+				else
+					super("\n" << other)
+				end
+			end
 		end
 		module FreeTextContainer
+			attr_reader :free_text
 			def add_free_text(type, text)
-				freetext = FreeText.new
-				freetext.type = type
-				freetext << text.to_s
-				self.free_texts.push(freetext)
-			end
-			def free_texts
-				@free_texts ||= []
+				@free_text ||= FreeText.new
+				@free_text.type = type
+				@free_text << text.to_s
+				@free_text
 			end
 		end
 	end

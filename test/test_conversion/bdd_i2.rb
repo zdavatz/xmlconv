@@ -1,5 +1,5 @@
 #!/usr/bin/env ruby
-# TestBddEdi -- xmlconv2 -- 02.06.2004 -- hwyss@ywesee.com
+# TestBddI2 -- xmlconv2 -- 02.06.2004 -- hwyss@ywesee.com
 
 $: << File.dirname(__FILE__)
 $: << File.expand_path('../../src', File.dirname(__FILE__))

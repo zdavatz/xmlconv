@@ -6,6 +6,7 @@ $: << File.expand_path('../../src', File.dirname(__FILE__))
 
 require 'test/unit'
 require 'conversion/bdd_xml'
+require 'date'
 require 'mock'
 
 module XmlConv
@@ -25,18 +26,25 @@ module XmlConv
 				delivery = Mock.new('Delivery')
 				invoice = Mock.new('Invoice')
 				invoice.__next(:delivery_id) { }
+				invoice.__next(:status) { 'Invoiced' }
+				invoice.__next(:status_date) { }
 				invoice.__next(:ids) { [] }
 				invoice.__next(:parties) { [] }
 				invoice.__next(:items) { [] }
 				invoice.__next(:prices) { [] }
 				invoice.__next(:free_text) { } 
 				invoice.__next(:agreement) { }
+				delivery.__next(:status) { 'Confirmed' }
+				delivery.__next(:status_date) { }
 				delivery.__next(:ids) { [] }
 				delivery.__next(:parties) { [] }
 				delivery.__next(:items) { [] }
 				delivery.__next(:prices) { [] }
 				delivery.__next(:free_text) { } 
 				delivery.__next(:agreement) { }
+				bsr.__next(:timestamp) { }
+				bsr.__next(:verb) { }
+				bsr.__next(:noun) { }
 				bsr.__next(:parties) { [] }
 				bdd.__next(:bsr) { bsr }
 				bdd.__next(:deliveries) { [delivery] }
@@ -72,6 +80,9 @@ module XmlConv
 				name = ToSMock.new('Name')
 				name.__next(:text) { 'NameText' }
 				name.__next(:to_s) { 'NameString' }
+				bsr.__next(:timestamp) { Time.now }
+				bsr.__next(:verb) { 'Return' }
+				bsr.__next(:noun) { 'Status' }
 				bsr.__next(:parties) { [party] }
 				party.__next(:role) { 'Customer' }
 				party.__next(:ids) { {'ACC'	=>	'ACC-Id'} }
@@ -124,6 +135,8 @@ module XmlConv
 				party.__next(:name)	{ name }
 				party.__next(:address) { }
 				party.__next(:parties) { [] }
+				delivery.__next(:status) { 'Confirmed' }
+				delivery.__next(:status_date) { Time.local(2004, 6, 29, 9, 45, 11) }
 				delivery.__next(:ids) { {'ACC' => 54321} }
 				delivery.__next(:parties) { [party] }
 				delivery.__next(:items) { [] } 
@@ -134,18 +147,23 @@ module XmlConv
 				BddXml._xml_add_bdd_delivery(bdd, delivery)
 				assert_equal(1, bdd.elements.size)
 				xml_delivery = bdd.elements[1]
-				assert_equal(3, xml_delivery.elements.size)
-				del_id = xml_delivery.elements[1]
+				assert_equal(4, xml_delivery.elements.size)
+				del_status = xml_delivery.elements[1]
+				assert_equal('Status', del_status.name)
+				assert_equal('Confirmed', del_status.text)
+				assert_equal(1, del_status.attributes.size)
+				assert_equal('20040629094511', del_status.attributes['Date'])
+				del_id = xml_delivery.elements[2]
 				assert_equal('DeliveryId', del_id.name)
 				assert_equal(1, del_id.attributes.size)
 				assert_equal('ACC', del_id.attributes['Domain'])
 				assert_equal('54321', del_id.text)
-				seller = xml_delivery.elements[2]
+				seller = xml_delivery.elements[3]
 				assert_equal('Party', seller.name)
 				assert_equal(2, seller.attributes.size)
 				assert_equal('2', seller.attributes['Version'])
 				assert_equal('Seller', seller.attributes['Role'])
-				xml_agreement = xml_delivery.elements[3]
+				xml_agreement = xml_delivery.elements[4]
 				assert_equal('Agreement', xml_agreement.name)
 				assert_equal(1, xml_agreement.elements.size)
 				xml_terms = xml_agreement.elements[1]
@@ -176,6 +194,7 @@ module XmlConv
 				address.__next(:lines) { ['Address Line'] }
 				address.__next(:city)	{ 'City' }
 				address.__next(:zip_code)	{ 'Zip Code' }
+				address.__next(:country) { 'CH' } 
 				party.__next(:role) { 'Customer' }
 				party.__next(:ids) {
 					{
@@ -261,6 +280,7 @@ module XmlConv
 				address.__next(:lines) { [ 'Line 1', 'Line 2' ] }
 				address.__next(:city) { 'The City' }
 				address.__next(:zip_code) { 'The ZipCode' }
+				address.__next(:country) { 'CH' }
 				xml = Mock.new('Xml')
 				xml.__next(:add_element) { |xml_addr|
 					assert_instance_of(REXML::Element, xml_addr)
@@ -302,7 +322,9 @@ module XmlConv
 				item.__next(:part_infos) { [] }
 				item.__next(:qty) { 'Quantity' }
 				item.__next(:prices) { [price1, price2] }
-				item.__next(:free_texts) { [freetext] }
+				item.__next(:free_text) { freetext }
+				item.__next(:delivery_date) { Date.new(2004,6,29) }
+				xml_item = nil
 				xml.__next(:add_element) { |xml_item|
 					assert_instance_of(REXML::Element, xml_item)
 					assert_equal('DeliveryItem', xml_item.name)
@@ -332,6 +354,10 @@ module XmlConv
 					assert_equal('The FreeText', xml_freetext.text)
 				}
 				BddXml._xml_add_delivery_item(xml, item)
+				#assert_equal(7, xml_item.elements.size)
+				#xml_date = xml_item.elements[7]
+				#assert_equal('DeliveryDate', xml_date.name)
+				#assert_equal('20040629', xml_date.text)
 				xml.__verify
 				item.__verify
 			end
@@ -389,19 +415,21 @@ module XmlConv
 				item2.__next(:part_infos) { [] }
 				item2.__next(:qty) { }
 				item2.__next(:prices) { [] }
-				item2.__next(:free_texts) { [] }
+				item2.__next(:free_text) { }
 				item1.__next(:line_no) { 1 }
 				item1.__next(:ids) { {} }
 				item1.__next(:part_infos) { [] }
 				item1.__next(:qty) { }
 				item1.__next(:prices) { [] }
-				item1.__next(:free_texts) { [] }
+				item1.__next(:free_text) { }
 				party.__next(:role) { 'Seller' }
 				party.__next(:ids) { [] }
 				party.__next(:name)	{ }
 				party.__next(:address) { }
 				party.__next(:parties) { [] }
 				invoice.__next(:delivery_id) { ['ACC', '54321'] }
+				invoice.__next(:status) { 'Invoiced' }
+				invoice.__next(:status_date) { Date.new(2004, 6, 29) }
 				invoice.__next(:ids) { {'ACC' => '12345'} }
 				invoice.__next(:parties) { [party] }
 				invoice.__next(:items) { [item1, item2] }
@@ -411,38 +439,43 @@ module XmlConv
 				xml.__next(:add_element) { |xml_invoice|
 					assert_instance_of(REXML::Element, xml_invoice)
 					assert_equal('Invoice', xml_invoice.name)
-					assert_equal(9, xml_invoice.elements.size)
+					assert_equal(10, xml_invoice.elements.size)
 					delivery_id = xml_invoice.elements[1]
 					assert_equal('DeliveryId', delivery_id.name)
 					assert_equal(1, delivery_id.attributes.size)
 					assert_equal('ACC', delivery_id.attributes['Domain'])
 					assert_equal('54321', delivery_id.text)
-					invoice_id = xml_invoice.elements[2]
+					invoice_status = xml_invoice.elements[2]
+					assert_equal('Status', invoice_status.name)
+					assert_equal('Invoiced', invoice_status.text)
+					assert_equal(1, invoice_status.attributes.size)
+					assert_equal('20040629', invoice_status.attributes['Date'])
+					invoice_id = xml_invoice.elements[3]
 					assert_equal('InvoiceId', invoice_id.name)
 					assert_equal(1, invoice_id.attributes.size)
 					assert_equal('ACC', invoice_id.attributes['Domain'])
 					assert_equal('12345', invoice_id.text)
-					xml_party = xml_invoice.elements[3]
+					xml_party = xml_invoice.elements[4]
 					assert_equal('Party', xml_party.name)
-					xml_item1 = xml_invoice.elements[4]
+					xml_item1 = xml_invoice.elements[5]
 					assert_equal('InvoiceItem', xml_item1.name)
-					xml_item2 = xml_invoice.elements[5]
+					xml_item2 = xml_invoice.elements[6]
 					assert_equal('InvoiceItem', xml_item2.name)
-					xml_price1 = xml_invoice.elements[6]
+					xml_price1 = xml_invoice.elements[7]
 					assert_equal('Price', xml_price1.name)
 					assert_equal(1, xml_price1.attributes.size)
 					assert_equal('Purpose1', xml_price1.attributes['Purpose'])
 					assert_equal('12.34', xml_price1.text)
-					xml_price2 = xml_invoice.elements[7]
+					xml_price2 = xml_invoice.elements[8]
 					assert_equal('Price', xml_price1.name)
 					assert_equal(1, xml_price2.attributes.size)
 					assert_equal('Purpose2', xml_price2.attributes['Purpose'])
 					assert_equal('23.45', xml_price2.text)
-					xml_txt = xml_invoice.elements[8]
+					xml_txt = xml_invoice.elements[9]
 					assert_equal('FreeText', xml_txt.name)
 					assert_equal(0, xml_txt.attributes.size)
 					assert_equal('Free Text', xml_txt.text)
-					xml_agreement = xml_invoice.elements[9]
+					xml_agreement = xml_invoice.elements[10]
 					assert_equal('Agreement', xml_agreement.name)
 					assert_equal(1, xml_agreement.elements.size)
 					terms = xml_agreement.elements[1]
@@ -474,7 +507,9 @@ module XmlConv
 				item.__next(:part_infos) { [part_info] }
 				item.__next(:qty) { 14 }
 				item.__next(:prices) { [price] }
-				item.__next(:free_texts) { [] }
+				item.__next(:free_text) { }
+				item.__next(:origin) { }
+				item.__next(:customs) {}
 				xml.__next(:add_element) { |xml_item|
 					assert_instance_of(REXML::Element, xml_item)
 					assert_equal('InvoiceItem', xml_item.name)
