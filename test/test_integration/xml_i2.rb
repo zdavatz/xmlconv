@@ -124,7 +124,7 @@ module XmlConv
 				i2_doc = Conversion::BddI2.convert(bdd)
 				result = i2_doc.to_s.split("\n")
 				expected = <<-EOS
-001:EPIN_PLICA
+001:EPIN_PL
 002:ORDERX
 003:220
 010:#{i2_doc.filename}
@@ -189,7 +189,7 @@ module XmlConv
 				output = transaction.execute
 				result = output.to_s.split("\n")
 				expected = <<-EOS
-001:EPIN_PLICA
+001:EPIN_PL
 002:ORDERX
 003:220
 010:#{transaction.destination.filename}
@@ -239,6 +239,9 @@ module XmlConv
 				path = File.expand_path(entry, @target_dir)
 				content = File.read(path)
 				assert_equal(expected, content)
+			ensure
+				ODBA.storage = nil
+				ODBA.cache_server = nil
 			end
 		end
 	end

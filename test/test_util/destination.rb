@@ -76,6 +76,9 @@ module XmlConv
 				assert_equal(:pending_pickup, @destination.status)
 				cache.__verify
 				delivery.__verify
+			ensure
+				ODBA.storage = nil
+				ODBA.cache_server = nil
 			end
 			def test_uri
 				@destination.path = '/foo/bar/baz'
@@ -106,6 +109,9 @@ module XmlConv
 				@destination.update_status
 				assert_equal(:picked_up, @destination.status)
 				cache.__verify
+			ensure
+				ODBA.storage = nil
+				ODBA.cache_server = nil
 			end
 			def test_status_comparable
 				assert_equal(0, @destination.status_comparable)

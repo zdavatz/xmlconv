@@ -37,9 +37,6 @@ module XmlConv
 				ODBA.storage = storage
 				transaction = Mock.new('Transaction')
 				cache = Mock.new('Cache')
-				cache.__next(:batch) { |block| 
-					block.call	
-				}
 				cache.__next(:store) { |transactions|
 					assert_equal(@app.transactions, transactions)
 				}
@@ -55,6 +52,9 @@ module XmlConv
 				assert_equal([transaction], @app.transactions)
 				transaction.__verify
 				cache.__verify
+			ensure
+				ODBA.storage = nil
+				ODBA.cache_server = nil
 			end
 			def test_dumpable
 				assert_nothing_raised { Marshal.dump(@app) }

@@ -19,8 +19,8 @@ module XmlConv
 				header = i2.header
 				assert_instance_of(I2::Header, header)
 				# test filename... -> ???
-				assert_equal("EPIN_PLICA", header.recipient_id)
-				expected = Time.now.strftime("EPIN_PLICA_%Y%m%d%H%M%S")
+				assert_equal("EPIN_PL", header.recipient_id)
+				expected = Time.now.strftime("EPIN_PL_%Y%m%d%H%M%S")
 				assert_match(/#{expected}\d{3}.dat/, header.filename)
 			end
 			def test__doc_add_delivery
