@@ -15,6 +15,9 @@ module XmlConv
 			def add_order(order)
 				@orders.push(order)
 			end
+			def filename
+				@header.filename
+			end
 			def to_s
 				([@header] + @orders).join
 			end

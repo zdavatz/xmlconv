@@ -16,7 +16,7 @@ module XmlConv
 	module Conversion
 		class XmlBdd
 			class << self
-				def xml2bdd(xml_document)
+				def convert(xml_document)
 					bdd = Model::Bdd.new
 					if(xml_bsr = REXML::XPath.first(xml_document, 'BDD/BSR'))
 						_bdd_add_xml_bsr(bdd, xml_bsr)
@@ -25,6 +25,9 @@ module XmlConv
 						_bdd_add_xml_delivery(bdd, xml_delivery)
 					}
 					bdd
+				end
+				def parse(xml_src)
+					REXML::Document.new(xml_src)
 				end
 				def _bdd_add_xml_bsr(bdd, xml_bsr)
 					bsr = Model::Bsr.new

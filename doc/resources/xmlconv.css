@@ -1,0 +1,68 @@
+table.template
+{
+	border: 1px solid green;
+}
+body
+{
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12px;
+}
+table.composite, table.template 
+{
+	width: 100%;
+}
+th, td.th
+{
+	padding: 4px;
+	font-weight: bold;
+	text-align: left;
+}
+th, th a, td.th, table.foot, 
+table.navigation a:link, table.navigation a:visited
+{
+	background-color: #abcdef;
+	color: black;
+	text-decoration: none;
+}
+table.navigation a, table.navigation a:hover,
+td.list a:link, td.list a:visited
+{
+	/*background-color: #abcdef;*/
+	color: #3b5c7f;
+	text-decoration: none;
+}
+td.list a:hover
+{
+	color: green;
+	text-decoration: none;
+}
+table.component td, td.list, table.navigation td
+{
+	padding: 4px;
+}
+.bg
+{
+	background-color: #cfdfff;
+}
+.right
+{
+	text-align: right;
+}
+label
+{
+	font-weight: bold;
+}
+form
+{
+	margin: 0px;
+	padding: 0px;
+}
+table.navigation
+{
+	float: right;
+}
+td.helfti
+{
+	width: 50%;
+	vertical-align: top;
+}

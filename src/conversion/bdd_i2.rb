@@ -14,7 +14,7 @@ module XmlConv
 				'ShipTo'		=>	:delivery,
 			}
 			class << self
-				def bdd2i2(bdd)
+				def convert(bdd)
 					doc = I2::Document.new
 					header = I2::Header.new
 					doc.header = header

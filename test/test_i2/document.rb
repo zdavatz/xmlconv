@@ -50,6 +50,13 @@ module XmlConv
 				order1.__verify
 				order2.__verify
 			end
+			def test_filename
+				header = Mock.new
+				header.__next(:filename) { 'result.dat' }
+				@document.header = header
+				assert_equal('result.dat', @document.filename)
+				header.__verify
+			end
 		end
 	end
 end

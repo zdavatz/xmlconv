@@ -11,7 +11,7 @@ module XmlConv
 	module Conversion
 		class TestXmlBdd < Test::Unit::TestCase
 			def setup
-				src = <<-EOS
+				@src = <<-EOS
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <!DOCTYPE BDD SYSTEM "ABB BDD.dtd">
 <BDD Version="2">
@@ -102,10 +102,10 @@ module XmlConv
   </Delivery>
 </BDD>
 				EOS
-				@xml_doc = REXML::Document.new(src)
+				@xml_doc = REXML::Document.new(@src)
 			end
 			def test_xml2bdd
-				bdd = XmlBdd.xml2bdd(@xml_doc)
+				bdd = XmlBdd.convert(@xml_doc)
 				assert_instance_of(Model::Bdd, bdd)
 				bsr = bdd.bsr
 				assert_instance_of(Model::Bsr, bsr)
@@ -193,6 +193,10 @@ module XmlConv
 				assert_equal('125301607', item2.et_nummer_id)
 				assert_equal(900, item2.qty)
 				assert_equal(Date.today, item2.delivery_date)
+			end
+			def test_parse
+				document = XmlBdd.parse(@src)
+				assert_instance_of(REXML::Document, document)
 			end
 		end
 	end

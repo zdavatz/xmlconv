@@ -11,10 +11,10 @@ require 'mock'
 module XmlConv
 	module Conversion
 		class TestBddI2 < Test::Unit::TestCase
-			def test_bdd2i2
+			def test_convert
 				bdd = Mock.new
 				bdd.__next(:deliveries) { [] }
-				i2 = BddI2.bdd2i2(bdd)
+				i2 = BddI2.convert(bdd)
 				assert_instance_of(I2::Document, i2)
 				header = i2.header
 				assert_instance_of(I2::Header, header)
