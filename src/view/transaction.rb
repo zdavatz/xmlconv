@@ -25,9 +25,14 @@ module XmlConv
 				if(@model.error)
 					components.store([0,2], :error_string)
 					colspan_map.store([0,2], 2)
-					css_map.store([0,2], 'preformatted')
+					css_map.store([0,2], 'list preformatted bg')
 				end
 				super
+			end
+			def error_string(model)
+				if(err = model.error)
+					[err.class, err.message, err.backtrace].join("\n")
+				end
 			end
 		end
 		class Transaction < Template

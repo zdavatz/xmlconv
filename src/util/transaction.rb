@@ -30,11 +30,6 @@ module XmlConv
 			ensure
 				@destination.forget_credentials!
 			end
-			def error_string
-				if(@error)
-					[@error.class, @error.message, @error.backtrace].join("\n")
-				end
-			end
 			def status
 				@destination.status if(@destination.respond_to?(:status))
 			end
