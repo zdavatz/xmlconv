@@ -2,6 +2,7 @@
 # XmlConv -- xmlconv2 -- 07.06.2004 -- hwyss@ywesee.com
 
 $: << File.expand_path('..', File.dirname(__FILE__))
+$: << File.expand_path('../..', File.dirname(__FILE__))
 
 require 'drb/drb'
 require 'util/application'

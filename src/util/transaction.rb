@@ -10,10 +10,10 @@ module XmlConv
 	module Util
 		class Transaction
 			include ODBA::Persistable
-			attr_accessor :input, :reader, :writer, :destination, :origin
-			attr_accessor :transaction_id
-			attr_reader :output, :model, :start_time, :commit_time
-			attr_reader :input_model, :output_model, :status
+			attr_accessor :input, :reader, :writer, :destination, :origin, 
+										:transaction_id, :error
+			attr_reader :output, :model, :start_time, :commit_time, 
+									:input_model, :output_model, :status
 			def execute
 				reader_instance = Conversion.const_get(@reader)
 				writer_instance = Conversion.const_get(@writer)

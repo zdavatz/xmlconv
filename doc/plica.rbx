@@ -12,20 +12,27 @@ begin
 	request = Apache.request
 	connection = request.connection
 
+	request.server.log_notice("Received Request #{request.request_method}")
 	#=begin
 	if(request.request_method != 'POST')
 		request.status = 405 # Method not allowed
 		exit
 	end
 	allowed = XmlConv::Access::ALLOWED_HOSTS[File.basename(request.filename)]
+	request.server.log_notice("from #{connection.remote_ip}")
+=begin
 	unless(allowed && allowed.include?(connection.remote_ip))
 		request.status = 403 # Forbidden
+		request.server.log_error("remote_ip not in ALLOWED_HOSTS")
 		exit
 	end
-	#=end
+=end
 
 	content_length = request.headers_in['Content-Length'].to_i
+	request.server.log_notice("content-length: #{content_length}")
 	if(content_length <= 0)
+		request.status = 500 # Server Error
+		request.server.log_error("zero length input")
 		exit
 	end
 
@@ -47,9 +54,11 @@ begin
 	xmlconv.execute(transaction)
 
 rescue StandardError => err
-	puts err.class
-	puts err.message
-	puts err.backtrace
+	request.server.log_error(err.class)
+	request.server.log_error(err.message)
+	request.server.log_error(err.backtrace.join("\n"))
 	request.status = 500
+ensure
+	request.send_http_header
 end
 
