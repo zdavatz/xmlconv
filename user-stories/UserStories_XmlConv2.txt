@@ -1,3 +1,11 @@
+2004-08-04  Eugen Schaadt  <Eugen.Schaadt@circon.cc>
+* Klarstellung User-Story: Order
+	Die Felder 201 bis 230 gehören zu einem Loop für Adressen (ist in der
+	Dokumentation falsch beschrieben). Feld 201 dient zur Identifikation 
+	("EP" = Employee / "DP" = Lieferadresse / "BY = Rechnungsadresse) für die
+	Felder 202 bis 226. Die Prosaadresse kann also mit jeder Id. mitgegeben
+	werden.
+
 2004-06-03 Zeno Davatz <zdavatz@ywesee.com>
 * Bemerkung: 
 	Bitte jeweils erwähnen an wen die Frage gerichtet ist. In diesem Fall Circon
@@ -189,10 +197,10 @@
 		491 Texte pro Kopf/Fuss 40 Zeilen
 
 		Bemerkungen zu obigen Feldern:
-		Feld 201 / 202: Können mehrfach vorhanden sein, einmal für den Übermittler (Käufer) und einmal für den Auftraggeber (Kunde). Die Nummern müssen im Kundenstamm Plica vorhanden sein.
+		Feld 201 - 230: Können mehrfach vorhanden sein, einmal für den Übermittler (Käufer) und einmal für den Auftraggeber (Kunde). Die Nummern müssen im Kundenstamm Plica vorhanden sein.
 		Feld 300 / 301: Können mehrfach vorhanden sein, einmal für das Bestelldatum und einmal für das Lieferdatum.
 		Feld 201: Ist für die normale Auftragübergabe unter 'BY' die Auftragsteuerung hinterlegt. 'CU' entspricht der Kundennummer. Da der Käufer die Auftragsteuerung hinterlegt hat, ist für Edifakt der Adresscode 'CU' nicht aktiv.
-		Feld 201 / 220-290: Für die Verwendung der Lieferadresse in "prosa" (Feld 220 - 229) muss das Feld 201 'DP' beinhalten. Das Feld 202 darf nicht vorhanden sein!
+		Feld 201 / 220-230: Für die Verwendung der Lieferadresse in "prosa" (Feld 220 - 229) muss das Feld 201 'DP' beinhalten. Das Feld 202 darf nicht vorhanden sein!
 		Feld 242: Über das Merkmal im Kundenstamm (EDI-PartnerNr), NUPR" wird gesteuert, ob ein Wert 0.00 als Versandkosten übernommen wird.
 		Feld 243 / 244: Bei fehlenden Werten werden diejenigen aus dem EDI-Stamm aktiviert.
 		
