@@ -29,13 +29,19 @@ module XmlConv
 =end
 			def execute(transaction)
 				transaction.transaction_id = next_transaction_id
+				#puts "transaction_id #{transaction.transaction_id}"
 				transaction.execute
+				#puts "exectuded"
 				@transactions.push(transaction)
 				@transactions.odba_store
-			rescue StandardError => error
+			rescue Exception => error
+				#puts "rescue #{error}"
 				transaction.error = error
+				#puts "in transaction"
 				@failed_transactions.push(transaction)
+				#puts "in transactions"
 				@failed_transactions.odba_store
+				#puts "persistent"
 			end
 			def next_transaction_id
 				@next_transaction_id ||= @transactions.collect { |transaction|
@@ -77,9 +83,11 @@ class XmlConvApp < SBSM::DRbServer
 		@polling_thread = Thread.new {
 			loop {
 				begin
+					#puts "polling"
 					XmlConv::Util::PollingManager.new(@system).poll_sources
-				rescue
-					puts $!
+					#puts "done"
+				rescue Exception => exc
+					puts exc
 				end
 				sleep(self::class::POLLING_INTERVAL)
 			}
