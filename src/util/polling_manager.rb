@@ -26,6 +26,10 @@ module XmlConv
 					dest = DestinationHttp.new
 					dest.uri = uri
 					dest
+				else
+					dest = DestinationDir.new
+					dest.path = str
+					dest
 				end
 			end
 			def load_sources(&block)
@@ -56,8 +60,9 @@ module XmlConv
 						transaction.error_recipients = source.error_recipients
 						@system.execute(transaction)
 					ensure
-						FileUtils.mkdir_p(source.backup_dir)
-						FileUtils.mv(path, source.backup_dir)
+						backup_dir = source.backup_dir
+						FileUtils.mkdir_p(backup_dir)
+						FileUtils.mv(path, backup_dir)
 					end
 				}
 			end

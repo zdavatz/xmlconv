@@ -127,7 +127,7 @@ module XmlConv
 001:EPIN_PLICA
 002:ORDERX
 003:220
-010:#{Time.now.strftime('EPIN_PLICA_%Y%m%d%H%M%S.dat')}
+010:#{i2_doc.filename}
 100:%%%99999%%% Kundennummer ElectroLAN
 101:B-465178 W
 201:EP
@@ -192,7 +192,7 @@ module XmlConv
 001:EPIN_PLICA
 002:ORDERX
 003:220
-010:#{Time.now.strftime('EPIN_PLICA_%Y%m%d%H%M%S.dat')}
+010:#{transaction.destination.filename}
 100:%%%99999%%% Kundennummer ElectroLAN
 101:B-465178 W
 201:EP

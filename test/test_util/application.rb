@@ -37,6 +37,9 @@ module XmlConv
 				ODBA.storage = storage
 				transaction = Mock.new('Transaction')
 				cache = Mock.new('Cache')
+				cache.__next(:batch) { |block| 
+					block.call	
+				}
 				cache.__next(:store) { |transactions|
 					assert_equal(@app.transactions, transactions)
 				}

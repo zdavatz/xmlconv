@@ -38,7 +38,9 @@ module XmlConv
 			ensure
 				transaction.notify
 				@transactions.push(transaction)
-				@transactions.odba_store
+				ODBA.batch {
+					@transactions.odba_store
+				}
 			end
 			def next_transaction_id
 				@id_mutex.synchronize {

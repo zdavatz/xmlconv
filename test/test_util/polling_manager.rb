@@ -76,6 +76,7 @@ reader: XmlBdd
 				assert_equal([@file1, file2], @polling.file_paths(@dir).sort)
 			end
 			def test_poll
+				backup_dir = File.expand_path('../data', File.dirname(__FILE__))
 				source = Mock.new('Source')
 				source.__next(:directory) { @dir }
 				source.__next(:reader) { 'Reader' }
@@ -83,6 +84,7 @@ reader: XmlBdd
 				source.__next(:destination) { 'http://foo.bar.baz:2345' }
 				source.__next(:debug_recipients) { }
 				source.__next(:error_recipients) { }
+				source.__next(:backup_dir) { backup_dir }
 				@sys.__next(:execute) { |transaction|
 					assert_instance_of(Util::Transaction, transaction)
 					assert_equal("File 1\n", transaction.input)

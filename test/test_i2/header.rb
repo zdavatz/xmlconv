@@ -31,8 +31,8 @@ module XmlConv
 				assert_equal(expected, @header.to_s)
 			end
 			def test_filename
-				expected = Time.now.strftime("#{@header.recipient_id}_%Y%m%d%H%M%S.dat")
-				assert_equal(expected, @header.filename)
+				expected = Time.now.strftime("#{@header.recipient_id}_%Y%m%d%H%M%S")
+				assert_match(/#{expected}\d{3}.dat/, @header.filename)
 			end
 		end
 	end

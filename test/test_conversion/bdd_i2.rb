@@ -20,8 +20,8 @@ module XmlConv
 				assert_instance_of(I2::Header, header)
 				# test filename... -> ???
 				assert_equal("EPIN_PLICA", header.recipient_id)
-				expected = Time.now.strftime("EPIN_PLICA_%Y%m%d%H%M%S.dat")
-				assert_equal(expected, header.filename)
+				expected = Time.now.strftime("EPIN_PLICA_%Y%m%d%H%M%S")
+				assert_match(/#{expected}\d{3}.dat/, header.filename)
 			end
 			def test__doc_add_delivery
 				doc = I2::Document.new

@@ -7,7 +7,9 @@ module XmlConv
 			attr_accessor :recipient_id, :filename
 			def initialize
 				@recipient_id = 'EPIN_PLICA'
-				@filename = Time.now.strftime("#{@recipient_id}_%Y%m%d%H%M%S.dat")
+				time = Time.now
+				msec = sprintf('%03i', (time.to_f * 1000).to_i % 100)
+				@filename = time.strftime("#{@recipient_id}_%Y%m%d%H%M%S#{msec}.dat")
 			end
 			def to_s
 				<<-EOS
