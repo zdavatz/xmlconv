@@ -6,13 +6,18 @@
 		'221:LastName' (AddressName2)
 	- Im Address-Record '201:BY', als '231:FirstName LastName' (Ihr Zeichen)
 		aber das geht beides nicht, weil:
-		"Feld 201 / 220-290: Für die Verwendung der Lieferadresse in "prosa" 
+		"Feld 201 / 220-290: Für die Verwendung der Lieferadresse in 'prosa' 
 		(Feld 220 - 229) muss das Feld 201 'DP' beinhalten. Das Feld 202 darf
 		nicht vorhanden sein!", d.h. ich kann nur die Lieferadresse in 'prosa'
 		aufführen, also die XML-Node 'ShipTo'
 
 	Welche Edifakt-Felder sind für die XML-Node 'BillTo' vorgesehen?
 
+* Bemerkung zum Datumsformat
+	Das Datumsformat im BDD.DTD ist als CDATA definiert. Für Edifakt ist aber
+	ein striktes 'CCYYMMDD'-Format vorgesehen.
+	Status Quo fürs Datumshandling: wenn das XML-Datum geparst werden kann, gilt
+	die geparste Version. Andernfalls wird jeweils das aktuelle Datum verwendet.
 2004-05-06  Zeno Davatz  <zdavatz@ywesee.com>
 * User-Story: Ablauf / External Interfaces
 	DESCRIPTION:
