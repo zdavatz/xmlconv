@@ -113,7 +113,7 @@ module XmlConv
 				sender.__next(:attributes) { 'value' }
 				sender.__next(:value) { 'ACC-ID' }
 				mtype.__next(:attributes) { 'value' }
-				mtype.__next(:value) { 'INVOICE' }
+				mtype.__next(:value) { 'INVOIC' }
 				time.__next(:attributes) { 'value' }
 				time.__next(:value) { '1754' }
 				date.__next(:attributes) { 'value' }
