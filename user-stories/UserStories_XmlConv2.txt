@@ -1,4 +1,11 @@
 2004-06-03 Zeno Davatz <zdavatz@ywesee.com>
+*	Kommentar Eugen Schaadt <Eugen.Schaadt@circon.cc>
+	- Die Felder 201 bis 230 gehören zu einem Loop für Adressen (ist in der
+		Dokumentation falsch beschrieben). Feld 201 dient zur Identifikation ("EP"
+		= Employee / "DP" = Lieferadresse / "BY = Rechnungsadresse) für die Felder
+		202 bis 226. Die Prosaadresse kann also mit jeder Id. mitgegeben werden.
+		
+2004-06-03 Zeno Davatz <zdavatz@ywesee.com>
 * Bemerkung: 
 	Bitte jeweils erwähnen an wen die Frage gerichtet ist. In diesem Fall Circon
 	oder WF.
