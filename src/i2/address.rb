@@ -4,28 +4,29 @@
 module XmlConv
 	module I2
 		class Address
-			attr_accessor :code, :buyer_id
+			attr_accessor :code, :party_id
 			attr_accessor :name1, :name2, :street1, :city, :zip_code, :street2
+			I2_ADDR_CODES = {
+				:buyer		=>	'BY',
+				:delivery	=>	'DP',
+				:employee	=>	'EP',
+			}
 			def initialize
 				@code = :buyer
 			end
 			def to_s
-				if(@code == :delivery)
-					<<-EOS
-201:DP
-220:#{@name1}
-221:#{@name2}
-222:#{@street1}
-223:#{@city}
-225:#{@zip_code}
-226:#{@street2}
-					EOS
-				else
-					<<-EOS
-201:BY
-202:#{@buyer_id}
-					EOS
-				end
+				output = []
+				numerals = [ 201, 202, 220, 221, 222, 223, 225, 226 ]
+				[
+					I2_ADDR_CODES[@code],
+					@party_id, @name1, @name2, @street1,
+					@city, @zip_code, @street2,
+				].each_with_index { |value, idx|
+					unless(value.nil?)
+						output << "#{numerals[idx]}:#{value}"
+					end
+				}
+				output.join("\n") << "\n"
 			end
 		end
 	end

@@ -8,6 +8,11 @@ require 'i2/position'
 module XmlConv
 	module Conversion
 		class BddI2
+			I2_ADDR_CODES = {
+				'BillTo'		=>	:buyer,
+				'Employee'	=>	:employee,
+				'ShipTo'		=>	:delivery,
+			}
 			class << self
 				def bdd2i2(bdd)
 					doc = I2::Document.new
@@ -48,18 +53,23 @@ module XmlConv
 					address.zip_code = bdd_addr.zip_code
 				end
 				def _order_add_customer(order, customer)
-					if((bill_to = customer.bill_to) && (acc_id = bill_to.acc_id))
-						address = I2::Address.new
-						address.buyer_id = acc_id
-						order.add_address(address)
+					customer.parties.each { |party|
+						_order_add_party(order, party)
+					}
+				end
+				def _order_add_party(order, party)
+					address = I2::Address.new
+					address.party_id = party.acc_id
+					if(name = party.name)
+						address.name1 = name.to_s
 					end
-					if((ship_to = customer.ship_to) && (bdd_addr = ship_to.address))
-						address = I2::Address.new
-						address.code = :delivery
-						address.name1 = ship_to.name.to_s
+					if(code = I2_ADDR_CODES[party.role])
+						address.code = code
+					end
+					if(bdd_addr = party.address)
 						_address_add_bdd_addr(address, bdd_addr)
-						order.add_address(address)
 					end
+					order.add_address(address)
 				end
 				def _order_add_item(order, item)
 					position = I2::Position.new

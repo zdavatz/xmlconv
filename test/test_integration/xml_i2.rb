@@ -113,15 +113,21 @@ module XmlConv
 010:#{Time.now.strftime('EPIN_PLICA_%Y%m%d%H%M%S.dat')}
 100:%%%99999%%% Kundennummer ElectroLAN
 101:B-465178 W
-201:BY
-202:%%%99999%%% Rechnungsadressnummer
+201:EP
+220:Russo Giovanni
 201:DP
+202:%%%99999%%% Lieferadressnummer
 220:Winterhalter + Fenner AG
 221:Filiale Wallisellen
 222:Hertistrasse 31
 223:Wallisellen
 225:8304
-226:
+201:BY
+202:%%%99999%%% Rechnungsadressnummer
+220:Winterhalter + Fenner AG
+222:Birgistrasse 10
+223:Wallisellen
+225:8304
 237:61
 300:4
 301:#{Date.today.strftime('%Y%m%d')}
