@@ -31,6 +31,9 @@ module XmlConv
 				assert_respond_to(@invoice, :status_date)
 				assert_respond_to(@invoice, :status_date=)
 			end
+			def test_add_free_text
+				assert_respond_to(@invoice, :add_free_text)
+			end
 			def test_add_item
 				item = Mock.new
 				@invoice.add_item(item)	
