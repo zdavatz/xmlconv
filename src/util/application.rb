@@ -3,8 +3,9 @@
 
 require 'sbsm/drbserver'
 require 'state/global'
-require 'util/transaction'
+require 'util/polling_manager'
 require 'util/session'
+require 'util/transaction'
 require 'util/validator'
 require 'odba'
 
