@@ -30,11 +30,11 @@ module XmlConv
 "02" "DP" "Name1" "Name2" "Street" "City" "AddressCode" "Country"
 "05" "A single Header-Text"
 "05" "Another single Header-Text"
-"10" "10" "EAN13" "IdBuyer" "Description 1" "Description 2" "2" "20040630"
+"10" "10" "EAN13" "IdBuyer" "2" "20040630"
 	"1" "2" "0.1" "0.2" "0.2" "0.4" "0.7" "1.4"
-"10" "10" "EAN13" "IdBuyer" "Description 1" "Description 2" "2" "20040630" 
+"10" "10" "EAN13" "IdBuyer" "2" "20040630" 
 	"1" "2" "0.1" "0.2" "0.2" "0.4" "0.7" "1.4" 
-"10" "10" "EAN13" "IdBuyer" "Description 1" "Description 2" "2" "20040630" 
+"10" "10" "EAN13" "IdBuyer" "2" "20040630" 
 	"1" "2" "0.1" "0.2" "0.2" "0.4" "0.7" "1.4" 
 "90" "4.2" "7.6" "0.32" "4.52" "Agreement"
 				EOS
@@ -107,8 +107,6 @@ module XmlConv
         <Price Purpose='SonderrabattME'>0.40</Price>
         <Price Purpose='BruttoPreis'>0.70</Price>
         <Price Purpose='BruttoPreisME'>1.40</Price>
-        <FreeText Type='Bezeichnung'>Description 1
-Description 2</FreeText>
         <DeliveryDate>20040630</DeliveryDate>
       </DeliveryItem>
       <DeliveryItem>
@@ -126,8 +124,6 @@ Description 2</FreeText>
         <Price Purpose='SonderrabattME'>0.40</Price>
         <Price Purpose='BruttoPreis'>0.70</Price>
         <Price Purpose='BruttoPreisME'>1.40</Price>
-        <FreeText Type='Bezeichnung'>Description 1
-Description 2</FreeText>
         <DeliveryDate>20040630</DeliveryDate>
       </DeliveryItem>
       <DeliveryItem>
@@ -145,8 +141,6 @@ Description 2</FreeText>
         <Price Purpose='SonderrabattME'>0.40</Price>
         <Price Purpose='BruttoPreis'>0.70</Price>
         <Price Purpose='BruttoPreisME'>1.40</Price>
-        <FreeText Type='Bezeichnung'>Description 1
-Description 2</FreeText>
         <DeliveryDate>20040630</DeliveryDate>
       </DeliveryItem>
       <Price Purpose='SummePositionen'>4.20</Price>
