@@ -1,4 +1,27 @@
-2004-08-04  Eugen Schaadt  <Eugen.Schaadt@circon.cc>
+2004-06-10  Hannes Wyss  <hwyss@ywesee.com>
+* Synopsis
+	xmlconv empfängt momentan nur Bestellungen. Diese müssen an
+	http://janico.ywesee.com/plica.rbx
+	gesendet werden. Dabei gelten die Standard-HTTP Response-Codes, d.h. 
+	200 - OK
+	403 - Forbidden
+	405 - Method not allowed
+	500 - Server Error
+
+	xmlconv liefert die Files in ein Ftp-lesbares Verzeichnis.
+	ftp://janico:test@janico.ywesee.com/
+	Wird ein File aus diesem Verzeichnis gelöscht, erhält die damit verbundene
+	Transaktion den Status 'abgeholt'
+
+* Backward-Compatibility
+	Die REXML-Library braucht einen Upgrade, damit die neue version von xmlconv
+	auf dem whitie läuft:
+	1. Test auf dem Oldie: funktioniert die alte version von xmlconv noch
+	mit der neuen REXML-Library? 
+	2. ev. Anpassungen, so wenig wie möglich
+	3. Upgrade auf dem Whitie
+
+2004-06-04  Eugen Schaadt  <Eugen.Schaadt@circon.cc>
 * Klarstellung User-Story: Order
 	Die Felder 201 bis 230 gehören zu einem Loop für Adressen (ist in der
 	Dokumentation falsch beschrieben). Feld 201 dient zur Identifikation 
