@@ -8,6 +8,8 @@ module XmlConv
 		class Lookandfeel < SBSM::Lookandfeel
 			DICTIONARIES = {
 				'de'	=>	{
+					:copyright0							=>	'&copy;ywesee.com&nbsp;',
+					:copyright1							=>	'',
 					:home										=>	'Home',
 					:login									=>	'Anmelden',
 					:login_welcome					=>	'Willkommen bei XmlConv',

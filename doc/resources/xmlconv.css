@@ -18,14 +18,16 @@ th, td.th
 	text-align: left;
 }
 th, th a, td.th, table.foot, 
-table.navigation a:link, table.navigation a:visited
+/*table.navigation a, table.navigation a:hover,*/
+table.foot a, table.foot.a:hover
 {
 	background-color: #abcdef;
 	color: black;
 	text-decoration: none;
 }
-table.navigation a, table.navigation a:hover,
-td.list a:link, td.list a:visited
+/*table.navigation a:link, table.navigation a:visited,*/
+td.list a:link, td.list a:visited,
+table.foot a:link, table.foot a:visited
 {
 	/*background-color: #abcdef;*/
 	color: #3b5c7f;
@@ -36,7 +38,7 @@ td.list a:hover
 	color: green;
 	text-decoration: none;
 }
-table.component td, td.list, table.navigation td
+table.component td, td.list, table.navigation td, a.foot
 {
 	padding: 4px;
 }

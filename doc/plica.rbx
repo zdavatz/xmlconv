@@ -2,8 +2,8 @@
 # plica.rbx -- xmlconv2 -- 07.06.2004 -- hwyss@ywesee.com
 
 require 'drb/drb'
-require 'rexml/document'
-require 'util/application'
+#require 'rexml/document'
+#require 'util/application'
 require 'util/destination'
 require 'util/transaction'
 require 'etc/config'
@@ -52,4 +52,3 @@ rescue StandardError => err
 	puts err.backtrace
 	request.status = 500
 end
-

@@ -3,15 +3,25 @@
 
 require 'htmlgrid/composite'
 require 'view/navigation'
+require 'date'
 
 module XmlConv
 	module View
 		class Foot < HtmlGrid::Composite
 			COMPONENTS = {
-				[0,0]	=>	Navigation,
+				[0,0]	=>	:copyright,
+				[1,0]	=>	Navigation,
 			}
 			CSS_CLASS = 'foot composite'
 			LEGACY_INTERFACE = false
+			def copyright(model)
+				link = HtmlGrid::Link.new(:copyright, model, @session, self)
+				link.href = 'http://www.ywesee.com'
+				link.value = @lookandfeel.lookup(:copyright, Date.today.strftime('%Y'))
+				link.css_class = 'foot'
+				link.target = '_blank'
+				link
+			end
 		end
 	end
 end
