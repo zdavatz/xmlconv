@@ -31,7 +31,11 @@ module XmlConv
 				@destination.forget_credentials!
 			end
 			def status
-				@destination.status if(@destination.respond_to?(:status))
+				if(@error)
+					:error
+				elsif(@destination.respond_to?(:status))
+					@destination.status
+				end
 			end
 			def status_comparable
 				if(@destination.respond_to?(:status_comparable))
