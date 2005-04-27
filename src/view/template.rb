@@ -13,7 +13,7 @@ module XmlConv
 				[0,0]	=>	:content,
 				[0,1]	=>	:foot,
 			}
-			CSS_CLASS = 'template'
+			#CSS_CLASS = 'template'
 			FOOT = Foot
 			#HEAD = Head
 		end
