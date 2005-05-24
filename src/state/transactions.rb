@@ -102,7 +102,8 @@ module XmlConv
 			def setup_pages
 				@pages = []
 				@page = nil
-				(@model.size / PAGE_SIZE.to_f).ceil.times { |pnum|
+				pages = [(@model.size / PAGE_SIZE.to_f).ceil, 1].max
+				pages.times { |pnum|
 					page = PageFacade.new(pnum)
 					page.model = @model[pnum * PAGE_SIZE, PAGE_SIZE]
 					page.pages = @pages
