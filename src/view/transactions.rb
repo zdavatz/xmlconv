@@ -61,7 +61,6 @@ module XmlConv
 			def transaction_id(model)
 				link = HtmlGrid::Link.new(:transaction_id, model, @session, self)
 				args = {
-					'state_id'				=>	@session.state.id,
 					'transaction_id'	=>	model.transaction_id,
 				}
 				link.href = @lookandfeel.event_url(:transaction, args)

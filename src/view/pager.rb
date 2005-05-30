@@ -58,7 +58,6 @@ module XmlConv
 					#link.set_attribute("class", "pager")
 					values = {
 						:page	=>	page.to_i.to_s,
-						:state_id	=>	@session.state.id,
 					}
 					link.href = @lookandfeel.event_url(:self, values)
 					link
