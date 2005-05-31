@@ -4,7 +4,8 @@
 require 'sbsm/request'
 require 'etc/config'
 
-DRb.start_service()
+DRb.start_service('druby://localhost:0')
+
 begin
 	SBSM::Request.new(XmlConv::SERVER_URI).process
 rescue Exception => e
