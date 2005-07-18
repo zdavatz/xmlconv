@@ -34,12 +34,12 @@ module XmlConv
 			def execute(transaction)
 				transaction.transaction_id = next_transaction_id
 				transaction.execute
+				transaction.notify
 			rescue Exception => error
 				transaction.error = error
 			ensure
-				transaction.notify
 				@transactions.push(transaction)
-				ODBA.batch {
+				ODBA.transaction {
 					@transactions.odba_store
 				}
 			end

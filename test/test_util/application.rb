@@ -2,6 +2,7 @@
 # XmlConv::TestApplication -- xmlconv2 -- 07.06.2004 -- hwyss@ywesee.com
 
 $: << File.dirname(__FILE__)
+$: << File.expand_path('..', File.dirname(__FILE__))
 $: << File.expand_path('../../src', File.dirname(__FILE__))
 
 require 'test/unit'
@@ -46,6 +47,36 @@ module XmlConv
 				}
 				transaction.__next(:execute) { }
 				transaction.__next(:notify) { }
+				assert_equal([], @app.transactions)
+				assert_equal(0, @app.transactions.size)
+				@app.execute(transaction)
+				assert_equal([transaction], @app.transactions)
+				transaction.__verify
+				cache.__verify
+			ensure
+				ODBA.storage = nil
+				ODBA.cache_server = nil
+			end
+			def test_execute__survive_notification_failure
+				storage = Mock.new('Storage')
+				storage.__next(:transaction) { |block|
+					block.call
+				}
+				ODBA.storage = storage
+				transaction = Mock.new('Transaction')
+				cache = Mock.new('Cache')
+				cache.__next(:store) { |transactions|
+					assert_equal(@app.transactions, transactions)
+				}
+				ODBA.cache_server = cache
+				transaction.__next(:transaction_id=) { |id|
+					assert_equal(1, id)
+				}
+				transaction.__next(:execute) { }
+				transaction.__next(:notify) { 
+					raise Net::SMTPFatalError, 'could not send email'
+				}
+				transaction.__next(:error=) { }
 				assert_equal([], @app.transactions)
 				assert_equal(0, @app.transactions.size)
 				@app.execute(transaction)
