@@ -99,7 +99,7 @@ class XmlConvApp < SBSM::DRbServer
 	end
 	def start_dispatcher
 		@dispatcher_thread = Thread.new {
-			Thread.current.abort_on_exception = false
+			Thread.current.abort_on_exception = true
 			loop { 
 				Thread.stop
 				while(!@dispatch_queue.empty?)

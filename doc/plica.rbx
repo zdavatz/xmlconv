@@ -1,9 +1,9 @@
 #!/usr/bin/env ruby
 # plica.rbx -- xmlconv2 -- 07.06.2004 -- hwyss@ywesee.com
 
+$: << File.expand_path('../src', File.dirname(__FILE__))
+
 require 'drb/drb'
-#require 'rexml/document'
-#require 'util/application'
 require 'util/destination'
 require 'util/transaction'
 require 'etc/config'
@@ -18,9 +18,9 @@ begin
 		request.status = 405 # Method not allowed
 		exit
 	end
-	allowed = XmlConv::Access::ALLOWED_HOSTS[File.basename(request.filename)]
 	request.server.log_notice("from #{connection.remote_ip}")
 =begin
+	allowed = XmlConv::Access::ALLOWED_HOSTS[File.basename(request.filename)]
 	unless(allowed && allowed.include?(connection.remote_ip))
 		request.status = 403 # Forbidden
 		request.server.log_error("remote_ip not in ALLOWED_HOSTS")
