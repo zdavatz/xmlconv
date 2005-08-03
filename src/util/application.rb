@@ -32,9 +32,14 @@ module XmlConv
 				transaction.destination = destination
 =end
 			def execute(transaction)
+				_execute(transaction)
+				transaction.notify
+			rescue Exception => error
+				## survive notification failure
+			end
+			def _execute(transaction)
 				transaction.transaction_id = next_transaction_id
 				transaction.execute
-				transaction.notify
 			rescue Exception => error
 				transaction.error = error
 			ensure
