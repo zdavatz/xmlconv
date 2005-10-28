@@ -68,8 +68,8 @@ class Mock
 private
     # Dispatches aribtrary method calls to the next mocked behaviour
     # 
-    def method_missing( name, *args )
-        __mock_call( name, args, (block_given? ? proc : nil) )
+    def method_missing( name, *args, &block )
+        __mock_call( name, args, (block_given? ? block : nil) )
     end
     
     # Implements a method call using the next mocked behaviour and asserts

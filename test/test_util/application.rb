@@ -31,13 +31,11 @@ module XmlConv
 				assert_respond_to(@app, :failed_transactions)
 			end
 			def test_execute
-				storage = Mock.new('Storage')
-				storage.__next(:transaction) { |block|
-					block.call
-				}
-				ODBA.storage = storage
 				transaction = Mock.new('Transaction')
 				cache = Mock.new('Cache')
+				cache.__next(:transaction) { |block|
+					block.call
+				}
 				cache.__next(:store) { |transactions|
 					assert_equal(@app.transactions, transactions)
 				}
@@ -54,17 +52,14 @@ module XmlConv
 				transaction.__verify
 				cache.__verify
 			ensure
-				ODBA.storage = nil
 				ODBA.cache_server = nil
 			end
 			def test_execute__survive_notification_failure
-				storage = Mock.new('Storage')
-				storage.__next(:transaction) { |block|
-					block.call
-				}
-				ODBA.storage = storage
 				transaction = Mock.new('Transaction')
 				cache = Mock.new('Cache')
+				cache.__next(:transaction) { |block|
+					block.call
+				}
 				cache.__next(:store) { |transactions|
 					assert_equal(@app.transactions, transactions)
 				}
@@ -83,17 +78,14 @@ module XmlConv
 				transaction.__verify
 				cache.__verify
 			ensure
-				ODBA.storage = nil
 				ODBA.cache_server = nil
 			end
 			def test_execute__notify_errors
-				storage = Mock.new('Storage')
-				storage.__next(:transaction) { |block|
-					block.call
-				}
-				ODBA.storage = storage
 				transaction = Mock.new('Transaction')
 				cache = Mock.new('Cache')
+				cache.__next(:transaction) { |block|
+					block.call
+				}
 				cache.__next(:store) { |transactions|
 					assert_equal(@app.transactions, transactions)
 				}
@@ -113,7 +105,6 @@ module XmlConv
 				transaction.__verify
 				cache.__verify
 			ensure
-				ODBA.storage = nil
 				ODBA.cache_server = nil
 			end
 			def test_dumpable
