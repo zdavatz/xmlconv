@@ -79,7 +79,7 @@ class XmlConvApp < SBSM::DRbServer
 	POLLING_INTERVAL = 60 #* 15
 	attr_reader :polling_thread, :dispatch_queue, :dispatcher_thread
 	def initialize
-		@system = ODBA.cache_server.fetch_named('XmlConv', self) { 
+		@system = ODBA.cache.fetch_named('XmlConv', self) { 
 			XmlConv::Util::Application.new
 		}
 		@system.init

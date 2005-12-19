@@ -178,7 +178,7 @@ module XmlConv
 				cache.__next(:store) { |persistable|
 					assert_instance_of(Util::DestinationDir, persistable)
 				}
-				ODBA.cache_server = cache
+				ODBA.cache = cache
 				destination = Util::DestinationDir.new
 				destination.path = @target_dir
 				transaction = Util::Transaction.new
@@ -241,7 +241,7 @@ module XmlConv
 				assert_equal(expected, content)
 			ensure
 				ODBA.storage = nil
-				ODBA.cache_server = nil
+				ODBA.cache = nil
 			end
 		end
 	end

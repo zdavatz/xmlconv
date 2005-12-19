@@ -39,7 +39,7 @@ module XmlConv
 				cache.__next(:store) { |transactions|
 					assert_equal(@app.transactions, transactions)
 				}
-				ODBA.cache_server = cache
+				ODBA.cache = cache
 				transaction.__next(:transaction_id=) { |id|
 					assert_equal(1, id)
 				}
@@ -52,7 +52,7 @@ module XmlConv
 				transaction.__verify
 				cache.__verify
 			ensure
-				ODBA.cache_server = nil
+				ODBA.cache = nil
 			end
 			def test_execute__survive_notification_failure
 				transaction = Mock.new('Transaction')
@@ -63,7 +63,7 @@ module XmlConv
 				cache.__next(:store) { |transactions|
 					assert_equal(@app.transactions, transactions)
 				}
-				ODBA.cache_server = cache
+				ODBA.cache = cache
 				transaction.__next(:transaction_id=) { |id|
 					assert_equal(1, id)
 				}
@@ -78,7 +78,7 @@ module XmlConv
 				transaction.__verify
 				cache.__verify
 			ensure
-				ODBA.cache_server = nil
+				ODBA.cache = nil
 			end
 			def test_execute__notify_errors
 				transaction = Mock.new('Transaction')
@@ -89,7 +89,7 @@ module XmlConv
 				cache.__next(:store) { |transactions|
 					assert_equal(@app.transactions, transactions)
 				}
-				ODBA.cache_server = cache
+				ODBA.cache = cache
 				transaction.__next(:transaction_id=) { |id|
 					assert_equal(1, id)
 				}
@@ -105,7 +105,7 @@ module XmlConv
 				transaction.__verify
 				cache.__verify
 			ensure
-				ODBA.cache_server = nil
+				ODBA.cache = nil
 			end
 			def test_dumpable
 				assert_nothing_raised { Marshal.dump(@app) }

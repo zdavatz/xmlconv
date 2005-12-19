@@ -58,7 +58,7 @@ module XmlConv
 				}
 				ODBA.storage = storage
 				cache = Mock.new('Cache')
-				ODBA.cache_server = cache
+				ODBA.cache = cache
 				cache.__next(:store) { |obj|
 					assert_equal(@destination, obj)
 				}
@@ -79,7 +79,7 @@ module XmlConv
 				delivery.__verify
 			ensure
 				ODBA.storage = nil
-				ODBA.cache_server = nil
+				ODBA.cache = nil
 			end
 			def test_uri
 				@destination.path = '/foo/bar/baz'
@@ -95,7 +95,7 @@ module XmlConv
 				}
 				ODBA.storage = storage
 				cache = Mock.new('Cache')
-				ODBA.cache_server = cache
+				ODBA.cache = cache
 				cache.__next(:store) { |obj|
 					assert_equal(@destination, obj)
 				}
@@ -112,7 +112,7 @@ module XmlConv
 				cache.__verify
 			ensure
 				ODBA.storage = nil
-				ODBA.cache_server = nil
+				ODBA.cache = nil
 			end
 			def test_status_comparable
 				assert_equal(0, @destination.status_comparable)
