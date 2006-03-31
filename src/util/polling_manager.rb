@@ -40,7 +40,7 @@ module XmlConv
 					block.call(mission)
 				}
 			ensure
-				file.close
+				file.close if(file)
 			end
 			def file_paths(dir_path)
 				Dir.entries(dir_path).collect { |entry|

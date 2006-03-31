@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 # IntegrationTestI2Xml -- xmlconv2 -- 30.06.2004 -- hwyss@ywesee.com
 
-$: << File.dirname(__FILE__)
+$: << File.expand_path('..', File.dirname(__FILE__))
 $: << File.expand_path('../../src', File.dirname(__FILE__))
 
 require 'test/unit'
@@ -19,8 +19,8 @@ module XmlConv
 	end
 	module Integration
 		class TestI2Xml < Test::Unit::TestCase
-			def setup
-				@src = <<-EOS
+			def test_i2_xml_confirm
+				src = <<-EOS
 "00" "Sender Identification" "Recipient Identification" 
 	"20040628" "1159" "CONFIRM" "1"
 "01" "456" "Receipt-Number" "20040627" "Order Number" 
@@ -38,10 +38,8 @@ module XmlConv
 	"1" "2" "0.1" "0.2" "0.2" "0.4" "0.7" "1.4" 
 "90" "4.2" "7.6" "0.32" "4.52" "Agreement"
 				EOS
-				@ast = Conversion::I2Bdd.parse(@src)
-			end
-			def test_i2_xml
-				bdd = Conversion::I2Bdd.convert(@ast)
+				ast = Conversion::I2Bdd.parse(src)
+				bdd = Conversion::I2Bdd.convert(ast)
 				xml = Conversion::BddXml.convert(bdd)
 				assert_instance_of(REXML::Document, xml)
 				expected = <<-EOS

@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 # TestBddXml -- xmlconv2 -- 21.06.2004 -- hwyss@ywesee.com
 
-$: << File.dirname(__FILE__)
+$: << File.expand_path('..', File.dirname(__FILE__))
 $: << File.expand_path('../../src', File.dirname(__FILE__))
 
 require 'test/unit'
@@ -25,6 +25,7 @@ module XmlConv
 				bsr = Mock.new('Bsr')
 				delivery = Mock.new('Delivery')
 				invoice = Mock.new('Invoice')
+				invoice.__next(:invoice_id) { }
 				invoice.__next(:delivery_id) { }
 				invoice.__next(:status) { 'Invoiced' }
 				invoice.__next(:status_date) { }
@@ -427,6 +428,7 @@ module XmlConv
 				party.__next(:name)	{ }
 				party.__next(:address) { }
 				party.__next(:parties) { [] }
+				invoice.__next(:invoice_id) { ['Invoice', '12345'] }
 				invoice.__next(:delivery_id) { ['ACC', '54321'] }
 				invoice.__next(:status) { 'Invoiced' }
 				invoice.__next(:status_date) { Date.new(2004, 6, 29) }
@@ -439,43 +441,48 @@ module XmlConv
 				xml.__next(:add_element) { |xml_invoice|
 					assert_instance_of(REXML::Element, xml_invoice)
 					assert_equal('Invoice', xml_invoice.name)
-					assert_equal(10, xml_invoice.elements.size)
-					delivery_id = xml_invoice.elements[1]
+					assert_equal(11, xml_invoice.elements.size)
+					invoice_id = xml_invoice.elements[1]
+					assert_equal('InvoiceId', invoice_id.name)
+					assert_equal(1, invoice_id.attributes.size)
+					assert_equal('Invoice', invoice_id.attributes['Domain'])
+					assert_equal('12345', invoice_id.text)
+					delivery_id = xml_invoice.elements[2]
 					assert_equal('DeliveryId', delivery_id.name)
 					assert_equal(1, delivery_id.attributes.size)
 					assert_equal('ACC', delivery_id.attributes['Domain'])
 					assert_equal('54321', delivery_id.text)
-					invoice_status = xml_invoice.elements[2]
+					invoice_status = xml_invoice.elements[3]
 					assert_equal('Status', invoice_status.name)
 					assert_equal('Invoiced', invoice_status.text)
 					assert_equal(1, invoice_status.attributes.size)
 					assert_equal('20040629', invoice_status.attributes['Date'])
-					invoice_id = xml_invoice.elements[3]
+					invoice_id = xml_invoice.elements[4]
 					assert_equal('InvoiceId', invoice_id.name)
 					assert_equal(1, invoice_id.attributes.size)
 					assert_equal('ACC', invoice_id.attributes['Domain'])
 					assert_equal('12345', invoice_id.text)
-					xml_party = xml_invoice.elements[4]
+					xml_party = xml_invoice.elements[5]
 					assert_equal('Party', xml_party.name)
-					xml_item1 = xml_invoice.elements[5]
+					xml_item1 = xml_invoice.elements[6]
 					assert_equal('InvoiceItem', xml_item1.name)
-					xml_item2 = xml_invoice.elements[6]
+					xml_item2 = xml_invoice.elements[7]
 					assert_equal('InvoiceItem', xml_item2.name)
-					xml_price1 = xml_invoice.elements[7]
+					xml_price1 = xml_invoice.elements[8]
 					assert_equal('Price', xml_price1.name)
 					assert_equal(1, xml_price1.attributes.size)
 					assert_equal('Purpose1', xml_price1.attributes['Purpose'])
 					assert_equal('12.34', xml_price1.text)
-					xml_price2 = xml_invoice.elements[8]
+					xml_price2 = xml_invoice.elements[9]
 					assert_equal('Price', xml_price1.name)
 					assert_equal(1, xml_price2.attributes.size)
 					assert_equal('Purpose2', xml_price2.attributes['Purpose'])
 					assert_equal('23.45', xml_price2.text)
-					xml_txt = xml_invoice.elements[9]
+					xml_txt = xml_invoice.elements[10]
 					assert_equal('FreeText', xml_txt.name)
 					assert_equal(0, xml_txt.attributes.size)
 					assert_equal('Free Text', xml_txt.text)
-					xml_agreement = xml_invoice.elements[10]
+					xml_agreement = xml_invoice.elements[11]
 					assert_equal('Agreement', xml_agreement.name)
 					assert_equal(1, xml_agreement.elements.size)
 					terms = xml_agreement.elements[1]

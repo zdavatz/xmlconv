@@ -6,9 +6,12 @@ require 'model/transaction'
 module XmlConv
 	module Model
 		class Invoice < Transaction
-			attr_reader :delivery_id
+			attr_reader :delivery_id, :invoice_id
 			def add_delivery_id(domain, idstr)
 				@delivery_id = [domain, idstr]
+			end
+			def add_invoice_id(domain, idstr)
+				@invoice_id = [domain, idstr]
 			end
 		end
 	end

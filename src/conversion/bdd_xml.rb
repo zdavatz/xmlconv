@@ -79,6 +79,10 @@ module XmlConv
 				end
 				def _xml_add_bdd_invoice(xml_bdd, invoice)
 					xml_invoice = REXML::Element.new('Invoice')
+					if(invoice_id = invoice.invoice_id)
+						domain, idstr = invoice_id
+						_xml_add_domain_id(xml_invoice, domain, idstr, 'InvoiceId')
+					end
 					if(delivery_id = invoice.delivery_id)
 						domain, idstr = delivery_id
 						_xml_add_domain_id(xml_invoice, domain, idstr, 'DeliveryId')

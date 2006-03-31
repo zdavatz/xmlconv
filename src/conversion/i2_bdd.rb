@@ -135,6 +135,7 @@ module XmlConv
 				def _bdd_add_invoice(bdd, ast)
 					invoice = Model::Invoice.new
 					invoice.status = 'Invoiced'
+					invoice.add_invoice_id('Invoice', _value(ast.receipt))
 					invoice.add_delivery_id('ACC', _value(ast.reference))
 					_bdd_assemble_transaction(invoice, ast)
 					bdd.add_invoice(invoice)

@@ -128,7 +128,7 @@ module XmlConv
 			end
 			def test_odba_exclude_vars
 				@app.instance_variable_set('@next_transaction_id', 10)
-				@app.instance_eval('self.odba_replace_excluded!')	
+				@app.instance_eval('odba_replace_excluded!')	
 				assert_nil(@app.instance_variable_get('@next_transaction_id'))
 			end
 			def test_transaction

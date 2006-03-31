@@ -9,13 +9,24 @@ require 'etc/config'
 require 'readline'
 include Readline
 
+Kernel.trap('INT') {
+	if($current.respond_to?(:exit))
+		$current.exit
+		$current = nil
+	else
+		puts "<ctrl-c> is used to kill admin-threads."
+		puts "Type <quit> or <exit> to exit."
+	end
+}
+
 prompt = 'xmlconv> '
 DRb.start_service
 xmlconv = DRbObject.new(nil, XmlConv::SERVER_URI)
 last_error = nil
 priority = -1
-$stdout.puts "->" + xmlconv.to_s + "<-"
 while(line = readline(prompt, true))
+	result = ''
+	result.extend(DRb::DRbUndumped)
 	line.strip!
 	$stdout.print "-> "
 	case line.downcase
@@ -39,10 +50,16 @@ while(line = readline(prompt, true))
 		$stdout.puts "setting Priority to #{priority}"
 	else
 		begin
-			$stdout.puts xmlconv.admin(line, priority)
-		rescue StandardError => last_error
+			bgflag = line.slice!(/\s*\&\s*$/)
+			$current = xmlconv._admin(line, result, priority)
+			unless(bgflag)
+				$current.join
+			end
+			$stdout.puts result
+		rescue Exception => last_error
 			$stdout.puts last_error
 		end
 	end
+	$current = nil
 	$stdout.flush
 end

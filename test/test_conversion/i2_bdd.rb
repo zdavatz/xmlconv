@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 # TestI2Bdd -- xmlconv2 -- 02.06.2004 -- hwyss@ywesee.com
 
-$: << File.dirname(__FILE__)
+$: << File.expand_path('..', File.dirname(__FILE__))
 $: << File.expand_path('../../src', File.dirname(__FILE__))
 
 require 'test/unit'
@@ -227,9 +227,11 @@ module XmlConv
 				bdd = Mock.new('Bdd')
 				ast = Mock.new('AST')
 				reference = ast_mock('Reference', 'Reference-Id')
+				receipt = ast_mock('Invoice', 'Receipt-Number')
 				commission = ast_mock('Commission', 'Commission-Id')
 				rdate = ast_mock('RDate', '20040629')
 				empl = ast_mock('Employee', 'Employee Name')
+				ast.__next(:receipt) { receipt }
 				ast.__next(:reference) { reference }
 				ast.__next(:rdate) { rdate }
 				ast.__next(:commission) { commission }
@@ -237,6 +239,7 @@ module XmlConv
 				bdd.__next(:add_invoice) { |invoice|
 					assert_instance_of(Model::Invoice, invoice)
 					assert_equal(['ACC', 'Reference-Id'], invoice.delivery_id)
+					assert_equal(['Invoice', 'Receipt-Number'], invoice.invoice_id)
 					assert_equal('Invoiced', invoice.status)
 					assert_equal(1, invoice.ids.size)
 					assert_equal(Date.new(2004, 6, 29), invoice.status_date)
