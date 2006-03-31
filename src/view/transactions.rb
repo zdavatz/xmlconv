@@ -15,7 +15,7 @@ module XmlConv
 				[1,0]	=>	:origin,
 				[2,0]	=>	:commit_time,
 				[3,0]	=>	:uri_comparable,
-				[5,0]	=>	:status_comparable,
+				[4,0]	=>	:status_comparable,
 			}
 			CSS_CLASS = 'composite'
 			CSS_HEAD_MAP = {
@@ -23,7 +23,7 @@ module XmlConv
 			}
 			CSS_MAP = {
 				[0,0]		=>	'list right',
-				[1,0,5]	=>	'list',
+				[1,0,4]	=>	'list',
 			}
 			DEFAULT_CLASS = HtmlGrid::Value
 			LEGACY_INTERFACE = false
