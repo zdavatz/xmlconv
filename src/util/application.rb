@@ -23,14 +23,6 @@ module XmlConv
 			def init
 				@id_mutex = Mutex.new
 			end
-=begin
-			def convert(input, reader, writer, destination, request)
-				transaction = Util::Transaction.new
-				transaction.input = input
-				transaction.reader = reader
-				transaction.writer = writer
-				transaction.destination = destination
-=end
 			def execute(transaction)
 				_execute(transaction)
 				transaction.notify

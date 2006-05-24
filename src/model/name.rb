@@ -6,13 +6,13 @@ module XmlConv
 		class Name
 			attr_reader :first, :last, :text
 			def first=(arg)
-				set_attr('@first', arg)
+				set_attr('@first', arg && arg.strip)
 			end
 			def last=(arg)
-				set_attr('@last', arg)
+				set_attr('@last', arg && arg.strip)
 			end
 			def text=(arg)
-				set_attr('@text', arg)
+				set_attr('@text', arg && arg.strip)
 			end
 			def to_s
 				[@first, @text, @last].compact.join(' ')

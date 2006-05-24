@@ -7,6 +7,9 @@ module XmlConv
 			def add_price(price)
 				self.prices.push(price)
 			end
+      def get_price(purpose)
+        self.prices.find { |price| price.purpose == purpose }
+      end
 			def prices
 				@prices ||= []
 			end

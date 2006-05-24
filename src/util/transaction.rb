@@ -2,8 +2,10 @@
 # Util::Transaction -- xmlconv2 -- 04.06.2004 -- hwyss@ywesee.com
 
 require 'odba'
+require 'conversion/bdd_geh'
 require 'conversion/bdd_i2'
 require 'conversion/bdd_xml'
+require 'conversion/geh_bdd'
 require 'conversion/i2_bdd'
 require 'conversion/xml_bdd'
 require 'util/destination'

@@ -50,7 +50,7 @@ module XmlConv
 						transaction.customer.add_party(delivery_party)
 					when 'EP'
 						employee = transaction.customer.employee \
-							or _customer_add_employee(customer)
+							|| _customer_add_employee(customer)
 						employee.address = _bdd_assemble_address(address)
 					end
 				end
