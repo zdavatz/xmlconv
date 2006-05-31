@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 # TestBddI2 -- xmlconv2 -- 02.06.2004 -- hwyss@ywesee.com
 
-$: << File.dirname(__FILE__)
+$: << File.expand_path('..', File.dirname(__FILE__))
 $: << File.expand_path('../../src', File.dirname(__FILE__))
 
 require 'test/unit'
@@ -256,6 +256,7 @@ module XmlConv
 				item = Mock.new('Item')
 				item.__next(:line_no) { 'LineNo' }
 				item.__next(:et_nummer_id) { 'EtNummerId' }
+				item.__next(:customer_id) { '12345' }
 				item.__next(:qty) { 17 }
 				item.__next(:delivery_date) { }
 				order.__next(:add_position) { |position|
@@ -275,6 +276,7 @@ module XmlConv
 				a_date = Date.new(1975,8,21)
 				item.__next(:line_no) { 'LineNo' }
 				item.__next(:et_nummer_id) { 'EtNummerId' }
+				item.__next(:customer_id) { '12345' }
 				item.__next(:qty) { 17 }
 				item.__next(:delivery_date) { a_date }
 				order.__next(:add_position) { |position|

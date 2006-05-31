@@ -7,22 +7,29 @@ module XmlConv
   module Conversion
     class BddGeh
 class << self
+  SELLER_ID = 667 # DTSTTCPW-approach. Could also be passed in, e.g. from the
+                  # PollingMission
   def convert(bdd)
-    skeleton = <<-EOS
-<?xml version="1.0" encoding="UTF-8"?>
-<#{_status(bdd)} />
-    EOS
-    doc = REXML::Document.new(skeleton)
+    docs = []
     bdd.deliveries.each { |delivery|
+      skeleton = <<-EOS
+<?xml version="1.0" encoding="UTF-8"?>
+<OrderResponse />
+      EOS
+      doc = REXML::Document.new(skeleton)
       _xml_add_bdd_delivery(doc.root, delivery)
+      docs.push(doc)
     }
     bdd.invoices.each { |invoice|
+      skeleton = <<-EOS
+<?xml version="1.0" encoding="UTF-8"?>
+<Invoice />
+      EOS
+      doc = REXML::Document.new(skeleton)
       _xml_add_bdd_invoice(doc.root, invoice)
+      docs.push(doc)
     }
-    doc
-  end
-  def _status(bdd)
-    bdd.deliveries.empty? ? 'Invoice' : 'OrderResponse'
+    docs
   end
   def _utf8(str)
     Iconv.iconv('UTF8', 'ISO-8859-1', str).first.strip
@@ -107,6 +114,9 @@ class << self
     if(date = delivery.status_date)
       str = date.strftime('%Y%m%d%H%M%S')
       xml_header.add_element(_xml_nested_text(str, 'OrderResponseIssueDate'))
+    end
+    if((seller = delivery.seller) && !seller.party_id)
+      seller.add_id('ACC', SELLER_ID)
     end
     delivery.parties.each { |party|
       _xml_add_bdd_party(xml_header, party)

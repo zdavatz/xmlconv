@@ -6,6 +6,7 @@ $: << File.expand_path('../../src', File.dirname(__FILE__))
 
 require 'test/unit'
 require 'conversion/bdd_geh'
+require 'date'
 require 'flexmock'
 require 'mock'
 
@@ -24,6 +25,7 @@ module XmlConv
         delivery.mock_handle(:prices) { [] }
         delivery.mock_handle(:free_text) { } 
         delivery.mock_handle(:agreement) { }
+        delivery.mock_handle(:seller) { }
         bsr.mock_handle(:timestamp) { }
         bsr.mock_handle(:verb) { }
         bsr.mock_handle(:noun) { }
@@ -31,7 +33,7 @@ module XmlConv
         bdd.mock_handle(:bsr) { bsr }
         bdd.mock_handle(:deliveries) { [delivery] }
         bdd.mock_handle(:invoices) { [] }
-        xml_doc = BddGeh.convert(bdd)
+        xml_doc = BddGeh.convert(bdd).first
         assert_instance_of(REXML::Document, xml_doc)
         decl = "<?xml version='1.0' encoding='UTF-8'?>"
         assert_equal(decl, xml_doc.xml_decl.to_s)
@@ -69,6 +71,7 @@ module XmlConv
         delivery.mock_handle(:items) { [] } 
         delivery.mock_handle(:prices) { [] }
         delivery.mock_handle(:free_text) { }
+        delivery.mock_handle(:seller) { }
         delivery.mock_handle(:agreement) { agreement }
         response = REXML::Element.new('OrderResponse')
         BddGeh._xml_add_bdd_delivery(response, delivery)
@@ -82,10 +85,11 @@ module XmlConv
         party2 = FlexMock.new
         party3 = FlexMock.new
         name = FlexMock.new
+        seller_id = nil
         name.mock_handle(:text) { 'NameText' }
         name.mock_handle(:to_s) { 'NameString' }
         party1.mock_handle(:role)  { 'Seller' }
-        party1.mock_handle(:party_id) { '12345' }
+        party1.mock_handle(:party_id) { seller_id }
         party1.mock_handle(:name)  { name }
         party1.mock_handle(:address) { }
         party1.mock_handle(:employee) { }
@@ -107,6 +111,12 @@ module XmlConv
         delivery.mock_handle(:status_date) { Time.local(2006, 5, 11, 2, 7, 19) }
         delivery.mock_handle(:reference_id) { 'B-1299545' }
         delivery.mock_handle(:parties) { [party1, party2] }
+        delivery.mock_handle(:seller) { party1 }
+        party1.mock_handle(:add_id, 1) { |domain, id| 
+          assert_equal('ACC', domain)
+          assert_equal(667, id) 
+          seller_id = id
+        }
         response = REXML::Element.new('OrderResponse')
         BddGeh._xml_add_delivery_header(response, delivery)
         assert_equal(1, response.elements.size)
@@ -119,11 +129,16 @@ module XmlConv
         assert_equal(expected, xml_reference_id.to_s)
         xml_issue_date = xml_header.elements[3]
         expected = '<OrderResponseIssueDate>20060511020719</OrderResponseIssueDate>'
+        assert_equal(expected, xml_issue_date.to_s)
         xml_party1 = xml_header.elements[4]
         assert_equal('SellerParty', xml_party1.name)
+        seller_id = xml_party1.elements[1]
+        expected = '<Party><PartyID><Identifier><Ident>667</Ident></Identifier></PartyID></Party>'
+        assert_equal(expected, seller_id.to_s)
         xml_party2 = xml_header.elements[5]
         assert_equal('BuyerParty', xml_party2.name)
         assert_equal(5, xml_header.elements.size)
+        party1.mock_verify
       end
       def test__xml_add_bdd_party
         party1 = FlexMock.new
@@ -154,6 +169,32 @@ module XmlConv
         xml.mock_handle(:add_element, 1) { |xml_party|
           assert_instance_of(REXML::Element, xml_party)
           expected = '<ShipToParty><Party><PartyID><Identifier><Ident>105446</Ident></Identifier></PartyID><NameAddress><Name1>Grossauer Elektro-Handels AG</Name1><Street>Address Line</Street><PostalCode>9410</PostalCode><City>Heiden</City></NameAddress><OrderContact><Contact><ContactName>Danilo Lanzafame</ContactName></Contact></OrderContact></Party></ShipToParty>'
+          assert_equal(expected, xml_party.to_s)
+        }
+        BddGeh._xml_add_bdd_party(xml, party1)
+        xml.mock_verify
+      end
+      def test__xml_add_bdd_party__seller
+        party1 = FlexMock.new
+        xml = FlexMock.new
+        address = FlexMock.new
+        name = FlexMock.new
+        name.mock_handle(:first) { }
+        name.mock_handle(:last) { }
+        address.mock_handle(:lines) { ['Test AG', 'TestName2', 
+         'Brunnengasse 3'] }
+        address.mock_handle(:city)  { 'Kloten' }
+        address.mock_handle(:zip_code)  { '8302' }
+        address.mock_handle(:country) { 'CH' } 
+        party1.mock_handle(:role) { 'Seller' }
+        party1.mock_handle(:parties) { [] }
+        party1.mock_handle(:name) { name }
+        party1.mock_handle(:employee) {  }
+        party1.mock_handle(:address) { address }
+        party1.mock_handle(:party_id) { 667 }
+        xml.mock_handle(:add_element, 1) { |xml_party|
+          assert_instance_of(REXML::Element, xml_party)
+          expected = '<SellerParty><Party><PartyID><Identifier><Ident>667</Ident></Identifier></PartyID><NameAddress><Name1>Test AG</Name1><Name2>TestName2</Name2><Street>Brunnengasse 3</Street><PostalCode>8302</PostalCode><City>Kloten</City></NameAddress></Party></SellerParty>'
           assert_equal(expected, xml_party.to_s)
         }
         BddGeh._xml_add_bdd_party(xml, party1)
@@ -285,7 +326,7 @@ module XmlConv
         bdd.mock_handle(:bsr) { bsr }
         bdd.mock_handle(:deliveries) { [] }
         bdd.mock_handle(:invoices) { [ invoice ] }
-        xml_doc = BddGeh.convert(bdd)
+        xml_doc = BddGeh.convert(bdd).first
         assert_instance_of(REXML::Document, xml_doc)
         decl = "<?xml version='1.0' encoding='UTF-8'?>"
         assert_equal(decl, xml_doc.xml_decl.to_s)

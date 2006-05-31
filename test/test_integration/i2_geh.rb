@@ -40,7 +40,10 @@ module XmlConv
 				EOS
 				ast = Conversion::I2Bdd.parse(src)
 				bdd = Conversion::I2Bdd.convert(ast)
-				xml = Conversion::BddGeh.convert(bdd)
+				conversion = Conversion::BddGeh.convert(bdd)
+				assert_instance_of(Array, conversion)
+				assert_equal(1, conversion.size)
+        xml = conversion.first
 				assert_instance_of(REXML::Document, xml)
         expected = <<-EOS
   <?xml version='1.0' encoding='UTF-8'?>
@@ -57,6 +60,11 @@ module XmlConv
       <OrderResponseIssueDate>20040627000000</OrderResponseIssueDate>
       <SellerParty>
         <Party>
+          <PartyID>
+            <Identifier>
+              <Ident>667</Ident>
+            </Identifier>
+          </PartyID>
           <NameAddress>
             <Name1>Name1</Name1>
             <Name2>Name2</Name2>
@@ -282,7 +290,10 @@ module XmlConv
 				EOS
 				ast = Conversion::I2Bdd.parse(src)
 				bdd = Conversion::I2Bdd.convert(ast)
-				xml = Conversion::BddGeh.convert(bdd)
+				conversion = Conversion::BddGeh.convert(bdd)
+				assert_instance_of(Array, conversion)
+				assert_equal(1, conversion.size)
+        xml = conversion.first
 				assert_instance_of(REXML::Document, xml)
         expected = <<-EOS
   <?xml version='1.0' encoding='UTF-8'?>

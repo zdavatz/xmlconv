@@ -34,12 +34,19 @@ module XmlConv
 		class DestinationDir < Destination
 			attr_reader :filename
 			def deliver(delivery)
-				FileUtils.mkdir_p(@path)
-				@filename = delivery.filename
-				path = File.expand_path(@filename, @path)
-				@status = :pending_pickup
-				File.open(path, 'w') { |fh| fh << delivery.to_s }
+        do_deliver(delivery)
+        @status = :pending_pickup
 				odba_store
+      end
+      def do_deliver(delivery)
+        if(delivery.is_a?(Array))
+          delivery.each { |part| do_deliver(part) }
+        else
+          FileUtils.mkdir_p(@path)
+          @filename = delivery.filename
+          path = File.expand_path(@filename, @path)
+          File.open(path, 'w') { |fh| fh << delivery.to_s }
+        end
 			end
 			def update_status
 				if(@status == :pending_pickup \
@@ -62,16 +69,34 @@ module XmlConv
 				@uri = URI.parse('http:/')
 			end
 			def deliver(delivery)
-				self.class::HTTP_CLASS.start(@uri.host, @uri.port) { |http|
-					request = Net::HTTP::Post.new(@uri.path, HTTP_HEADERS)
-					if(@uri.user || @uri.password)
-						request.basic_auth(@uri.user, @uri.password)
-					end
-					response = http.request(request, delivery.to_s)	
-					forget_credentials!
-					status_str = response.message.downcase.gsub(/\s+/, "_")
-					@status = "http_#{status_str}".intern
-				}
+        do_deliver(delivery)
+      ensure
+        forget_credentials!
+      end
+      def do_deliver(delivery)
+        if(delivery.is_a?(Array))
+           worst_status = ''
+           delivery.each { |part| 
+             do_deliver(part) 
+             ## bogostatus: assume that the more information in the string, 
+             ##             the worse the status is (ok < not found)
+             ##             rationale: DTSTTCPW
+             if(@status > worst_status)
+               worst_status = @status
+             end
+           }
+           @status = worst_status
+        else
+          self.class::HTTP_CLASS.start(@uri.host, @uri.port) { |http|
+            request = Net::HTTP::Post.new(@uri.path, HTTP_HEADERS)
+            if(@uri.user || @uri.password)
+              request.basic_auth(@uri.user, @uri.password)
+            end
+            response = http.request(request, delivery.to_s)	
+            status_str = response.message.downcase.gsub(/\s+/, "_")
+            @status = "http_#{status_str}".intern
+          }
+        end
 			end
 			def forget_credentials!
 				@uri = URI::HTTP.new(@uri.scheme, nil, @uri.host, @uri.port, 

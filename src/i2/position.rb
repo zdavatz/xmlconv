@@ -6,7 +6,7 @@ require 'i2/date'
 module XmlConv
 	module I2
 		class Position
-			attr_accessor :number, :article_ean, :qty
+			attr_accessor :number, :article_ean, :qty, :customer_id
 			attr_reader :delivery_date
 			def delivery_date=(date)
 				date.code = :delivery
@@ -16,8 +16,11 @@ module XmlConv
 				output = <<-EOS
 500:#{@number}
 501:#{@article_ean}
-520:#{@qty}
-				EOS
+        EOS
+        if(@customer_id)
+          output << sprintf("502:%s\n", @customer_id)
+        end
+        output << sprintf("520:%s\n", @qty)
 				if(@delivery_date.is_a?(I2::Date))
 					output << @delivery_date.to_s
 				end

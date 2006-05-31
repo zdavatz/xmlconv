@@ -10,6 +10,9 @@ module XmlConv
 			def et_nummer_id
 				self.ids['ET-NUMMER']
 			end
+			def customer_id
+				self.ids['Customer']
+			end
 		end
 	end
 end

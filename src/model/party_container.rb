@@ -4,7 +4,7 @@
 module XmlConv
 	module Model
 		module PartyContainer
-			attr_accessor :employee, :ship_to, :bill_to
+			attr_accessor :employee, :ship_to, :bill_to, :seller
 			def add_party(party)
 				if((role = party.role) && !role.empty?)
 					role = role.gsub(/\B[A-Z]/, '_\&')

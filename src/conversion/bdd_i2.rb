@@ -75,6 +75,9 @@ module XmlConv
 					position = I2::Position.new
 					position.number = item.line_no
 					position.article_ean = item.et_nummer_id
+          if(id = item.customer_id)
+            position.customer_id = id
+          end
 					position.qty = item.qty
 					if(date = item.delivery_date)
 						position.delivery_date = I2::Date.from_date(date)
