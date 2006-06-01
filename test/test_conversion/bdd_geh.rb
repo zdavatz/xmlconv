@@ -275,8 +275,8 @@ module XmlConv
         item.mock_handle(:qty) { 3 }
         item.mock_handle(:get_price) { |purpose|
           {
-            'BruttoPreisME' => price1, 
-            'BruttoPreis'   => price2,
+            'NettoPreis'   => price1, 
+            'NettoPreisME' => price2,
           }[purpose] 
         }
         item.mock_handle(:free_text) { }
@@ -467,8 +467,8 @@ module XmlConv
         item.mock_handle(:qty) { 3 }
         item.mock_handle(:get_price) { |purpose|
           {
-            'BruttoPreisME' => price1, 
-            'BruttoPreis'   => price2,
+            'NettoPreisME' => price1, 
+            'NettoPreis'   => price2,
           }[purpose] 
         }
         item.mock_handle(:free_text) { }

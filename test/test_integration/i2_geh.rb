@@ -144,13 +144,13 @@ module XmlConv
                   <Currency>
                     <CurrencyCoded>CHF</CurrencyCoded>
                   </Currency>
-                  <UnitPriceValue>1.40</UnitPriceValue>
+                  <UnitPriceValue>1.00</UnitPriceValue>
                 </UnitPrice>
               </Price>
             </ListOfPrice>
             <TotalValue>
               <MonetaryValue>
-                <MonetaryAmount>0.70</MonetaryAmount>
+                <MonetaryAmount>2.00</MonetaryAmount>
               </MonetaryValue>
             </TotalValue>
           </PricingDetail>
@@ -197,13 +197,13 @@ module XmlConv
                   <Currency>
                     <CurrencyCoded>CHF</CurrencyCoded>
                   </Currency>
-                  <UnitPriceValue>1.40</UnitPriceValue>
+                  <UnitPriceValue>1.00</UnitPriceValue>
                 </UnitPrice>
               </Price>
             </ListOfPrice>
             <TotalValue>
               <MonetaryValue>
-                <MonetaryAmount>0.70</MonetaryAmount>
+                <MonetaryAmount>2.00</MonetaryAmount>
               </MonetaryValue>
             </TotalValue>
           </PricingDetail>
@@ -250,13 +250,13 @@ module XmlConv
                   <Currency>
                     <CurrencyCoded>CHF</CurrencyCoded>
                   </Currency>
-                  <UnitPriceValue>1.40</UnitPriceValue>
+                  <UnitPriceValue>1.00</UnitPriceValue>
                 </UnitPrice>
               </Price>
             </ListOfPrice>
             <TotalValue>
               <MonetaryValue>
-                <MonetaryAmount>0.70</MonetaryAmount>
+                <MonetaryAmount>2.00</MonetaryAmount>
               </MonetaryValue>
             </TotalValue>
           </PricingDetail>
@@ -357,13 +357,13 @@ module XmlConv
                   <Currency>
                     <CurrencyCoded>CHF</CurrencyCoded>
                   </Currency>
-                  <UnitPriceValue>60.20</UnitPriceValue>
+                  <UnitPriceValue>86.00</UnitPriceValue>
                 </UnitPrice>
               </Price>
             </ListOfPrice>
             <InvoiceCurrencyTotalValue>
               <MonetaryValue>
-                <MonetaryAmount>60.20</MonetaryAmount>
+                <MonetaryAmount>86.00</MonetaryAmount>
               </MonetaryValue>
             </InvoiceCurrencyTotalValue>
           </InvoicePricingDetail>
@@ -398,13 +398,13 @@ module XmlConv
                   <Currency>
                     <CurrencyCoded>CHF</CurrencyCoded>
                   </Currency>
-                  <UnitPriceValue>80.40</UnitPriceValue>
+                  <UnitPriceValue>268.00</UnitPriceValue>
                 </UnitPrice>
               </Price>
             </ListOfPrice>
             <InvoiceCurrencyTotalValue>
               <MonetaryValue>
-                <MonetaryAmount>268.00</MonetaryAmount>
+                <MonetaryAmount>80.40</MonetaryAmount>
               </MonetaryValue>
             </InvoiceCurrencyTotalValue>
           </InvoicePricingDetail>

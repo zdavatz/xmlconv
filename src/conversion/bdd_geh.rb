@@ -240,7 +240,7 @@ class << self
       total = 'InvoiceCurrencyTotalValue'
     end
     xml_base = _xml_element(tag)
-    if(price = item.get_price('BruttoPreisME'))
+    if(price = item.get_price('NettoPreis'))
       xml_list = _xml_element('ListOfPrice')
       xml_price = _xml_element('Price')
       xml_unit = _xml_nested_text('CHF', 'UnitPrice', 'Currency', 
@@ -252,7 +252,7 @@ class << self
       xml_list.add_element(xml_price)
       xml_base.add_element(xml_list)
     end
-    if(price = item.get_price('BruttoPreis'))
+    if(price = item.get_price('NettoPreisME'))
       xml_price = _xml_nested_text(sprintf('%2.2f', price.amount / 100.0), 
                     total, 'MonetaryValue', 'MonetaryAmount')
       xml_base.add_element(xml_price)
