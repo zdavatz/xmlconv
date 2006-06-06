@@ -11,7 +11,8 @@ module XmlConv
 	module Util
 		class PollingMission
 			attr_accessor :directory, :reader, :writer, :destination, 
-										:error_recipients, :debug_recipients, :backup_dir
+                    :error_recipients, :debug_recipients, :backup_dir,
+                    :glob_pattern
 		end
 		class PollingManager
 			PROJECT_ROOT = File.expand_path('../..', File.dirname(__FILE__))
@@ -42,13 +43,13 @@ module XmlConv
 			ensure
 				file.close if(file)
 			end
-			def file_paths(dir_path)
-				Dir.entries(dir_path).collect { |entry|
-					File.expand_path(entry, dir_path) unless(entry[0] == ?.)
+			def file_paths(dir_path, pattern=nil)
+				Dir.glob(File.expand_path(pattern || '*', dir_path)).collect { |entry|
+					File.expand_path(entry, dir_path)
 				}.compact
 			end
 			def poll(source)
-				file_paths(source.directory).each { |path|
+				file_paths(source.directory, source.glob_pattern).each { |path|
 					begin
 						transaction = XmlConv::Util::Transaction.new
 						transaction.input = File.read(path)

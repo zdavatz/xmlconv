@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 # Util::TestPollingManager -- xmlconv2 -- 29.06.2004 -- hwyss@ywesee.com
 
-$: << File.dirname(__FILE__)
+$: << File.expand_path('..', File.dirname(__FILE__))
 $: << File.expand_path('../../src', File.dirname(__FILE__))
 
 require 'test/unit'
@@ -79,6 +79,7 @@ reader: XmlBdd
 				backup_dir = File.expand_path('../data', File.dirname(__FILE__))
 				source = Mock.new('Source')
 				source.__next(:directory) { @dir }
+				source.__next(:glob_pattern) { '*' }
 				source.__next(:reader) { 'Reader' }
 				source.__next(:writer) { 'Writer' }
 				source.__next(:destination) { 'http://foo.bar.baz:2345' }
