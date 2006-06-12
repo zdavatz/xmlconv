@@ -14,7 +14,7 @@ module XmlConv
 			LOOKANDFEEL = Custom::Lookandfeel
 			def login
 				if((pass = user_input(:pass)) \
-					&& (pass == "034bea8ec2af311a4913819499bd5bd5"))
+					&& (pass == "6646c9e7892ef147dbed611a00ea48e6"))
 					@user = Util::KnownUser.new
 				end
 			end
