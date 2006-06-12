@@ -185,13 +185,13 @@ module XmlConv
 				assert_instance_of(Model::DeliveryItem, item1)
 				assert_equal('2508466', item1.line_no)
 				assert_equal('125301307', item1.et_nummer_id)
-				assert_equal(7200, item1.qty)
+				assert_equal('7200', item1.qty)
 				assert_equal(Date.new(2004,4,14), item1.delivery_date)
 				item2 = items.at(1)
 				assert_instance_of(Model::DeliveryItem, item2)
 				assert_equal('2508467', item2.line_no)
 				assert_equal('125301607', item2.et_nummer_id)
-				assert_equal(900, item2.qty)
+				assert_equal('900', item2.qty)
 				assert_equal(Date.today, item2.delivery_date)
 			end
 			def test_parse

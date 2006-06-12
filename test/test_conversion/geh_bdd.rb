@@ -6,6 +6,7 @@ $: << File.expand_path('../../src', File.dirname(__FILE__))
 
 require 'test/unit'
 require 'conversion/geh_bdd'
+require 'date'
 
 module XmlConv
 	module Conversion
@@ -285,13 +286,13 @@ module XmlConv
 				assert_instance_of(Model::DeliveryItem, item1)
 				assert_equal('10', item1.line_no)
 				assert_equal('123123123', item1.et_nummer_id)
-				assert_equal(3, item1.qty)
+				assert_equal('3', item1.qty)
 				assert_equal(Date.new(2006,5,16), item1.delivery_date)
 				item2 = items.last
 				assert_instance_of(Model::DeliveryItem, item2)
 				assert_equal('20', item2.line_no)
 				assert_equal('234236837482', item2.et_nummer_id)
-				assert_equal(10, item2.qty)
+				assert_equal('10', item2.qty)
 				assert_equal(Date.new(2006,5,16), item2.delivery_date)
 			end
 			def test__bdd_add_xml_header
@@ -309,8 +310,9 @@ module XmlConv
 				delivery = Model::Delivery.new
 				GehBdd._container_add_xml_party(delivery, xml_party, 'Customer')
 				customer = delivery.customer
-				assert_equal('Grossauer Elektro - Handels AG', customer.name.to_s)
 				assert_instance_of(Model::Party, customer)
+				assert_equal('Grossauer Elektro - Handels AG', customer.name.to_s)
+        assert_equal('123456', customer.acc_id)
 				cust_addr = customer.address
 				assert_instance_of(Model::Address, cust_addr)
 				assert_equal(['Thalerstrasse 1'], cust_addr.lines)
@@ -358,10 +360,12 @@ module XmlConv
 				assert_instance_of(Model::DeliveryItem, item)
 				assert_equal('10', item.line_no)
 				assert_equal('123123123', item.et_nummer_id)
-				#assert_equal('123123123', item.ids['Seller'])
-				assert_equal('123 890 390', item.ids['Customer'])
-				assert_equal(3, item.qty)
+				assert_equal('123 890 390', item.ids['LIEFERANTENARTIKEL'])
+				assert_equal('3', item.qty)
 				assert_equal(Date.new(2006, 5, 16), item.delivery_date)
+        price = item.get_price('NettoPreis')
+        assert_instance_of(Model::Price, price)
+				assert_equal('780.00', price.amount)
 			end
 		end
 	end

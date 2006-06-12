@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 # Integration::TestXmlI2 -- xmlconv2 -- 02.06.2004 -- hwyss@ywesee.com
 
-$: << File.dirname(__FILE__)
+$: << File.expand_path('..', File.dirname(__FILE__))
 $: << File.expand_path('../../src', File.dirname(__FILE__))
 
 require 'test/unit'
@@ -150,16 +150,19 @@ module XmlConv
 301:#{Date.today.strftime('%Y%m%d')}
 500:2508466
 501:125301307
+502:15.0205.025
 520:7200
 540:2
 541:20040414
 500:2508467
 501:125301607
+502:15.0202.550
 520:900
 540:2
 541:#{Date.today.strftime('%Y%m%d')}
 500:2508468
 501:125301707
+502:15.0202.563
 520:250
 540:2
 541:20040414
@@ -215,16 +218,19 @@ module XmlConv
 301:#{Date.today.strftime('%Y%m%d')}
 500:2508466
 501:125301307
+502:15.0205.025
 520:7200
 540:2
 541:20040414
 500:2508467
 501:125301607
+502:15.0202.550
 520:900
 540:2
 541:#{Date.today.strftime('%Y%m%d')}
 500:2508468
 501:125301707
+502:15.0202.563
 520:250
 540:2
 541:20040414

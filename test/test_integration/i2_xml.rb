@@ -144,7 +144,7 @@ module XmlConv
       <Price Purpose='SummePositionen'>4.20</Price>
       <Price Purpose='MehrwertsteuerPct'>7.60</Price>
       <Price Purpose='Mehrwertsteuer'>0.32</Price>
-      <Price Purpose='Endbetrag'>4.51</Price>
+      <Price Purpose='Endbetrag'>4.52</Price>
       <FreeText>A single Header-Text
 Another single Header-Text</FreeText>
       <Agreement>

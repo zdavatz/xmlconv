@@ -11,7 +11,7 @@ module XmlConv
 				self.ids['ET-NUMMER']
 			end
 			def customer_id
-				self.ids['Customer']
+				self.ids['LIEFERANTENARTIKEL']
 			end
 		end
 	end

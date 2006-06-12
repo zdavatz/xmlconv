@@ -9,6 +9,7 @@ require 'model/delivery'
 require 'model/delivery_item'
 require 'model/name'
 require 'model/party'
+require 'model/price'
 
 module XmlConv
 	module Conversion
@@ -55,6 +56,9 @@ class << self
 	def _container_add_xml_party(container, xml_party, role)
 		party = Model::Party.new
 		party.role = role
+		if(xml_id = REXML::XPath.first(xml_party, 'PartyID//Ident'))
+			party.add_id('ACC', _latin1(xml_id.text))
+		end
 		if(xml_address = REXML::XPath.first(xml_party, 'NameAddress'))
 			_party_add_xml_address(party, xml_address)
 			if(xml_name = REXML::XPath.first(xml_address, 'Name1'))
@@ -103,10 +107,10 @@ class << self
 		end
 		if(xml_id = REXML::XPath.first(xml_item, 
 																	 'BaseItemDetail//BuyerPartNumberPartID'))
-			item.add_id('Customer', _latin1(xml_id.text))
+			item.add_id('LIEFERANTENARTIKEL', _latin1(xml_id.text))
 		end
 		xml_qty = REXML::XPath.first(xml_item, 'BaseItemDetail//QuantityValue')
-		item.qty = xml_qty.text.to_i
+		item.qty = xml_qty.text
 		if(xml_date = REXML::XPath.first(xml_item, 
 																	   'DeliveryDetail//RequestedDeliveryDate'))
 			raw = _latin1(xml_date.text)
@@ -116,6 +120,12 @@ class << self
 														 Date.today
 													 end
 		end
+    if(xml_price = REXML::XPath.first(xml_item, 'PricingDetail//UnitPriceValue'))
+      price = Model::Price.new
+      price.purpose = 'NettoPreis'
+      price.amount = xml_price.text
+      item.add_price(price)
+    end
 		delivery.add_item(item)
 	end
 	def _latin1(str)

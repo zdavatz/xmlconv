@@ -165,17 +165,17 @@ class << self
                                    'NumberOfLines')
     xml_totals = _xml_element('InvoiceTotals')
     if(price = invoice.get_price('SummePositionen'))
-      xml_net = _xml_nested_text(sprintf('%2.2f', price.amount / 100.0),
+      xml_net = _xml_nested_text(sprintf('%1.2f', price.amount),
                                  'NetValue', 'MonetaryValue', 'MonetaryAmount')
       xml_totals.add_element(xml_net)
     end
     if(price = invoice.get_price('Mehrwertsteuer'))
-      xml_tax = _xml_nested_text(sprintf('%2.2f', price.amount / 100.0),
+      xml_tax = _xml_nested_text(sprintf('%1.2f', price.amount),
                                  'TotalTax', 'MonetaryValue', 'MonetaryAmount')
       xml_totals.add_element(xml_tax)
     end
     if(price = invoice.get_price('Endbetrag'))
-      xml_total = _xml_nested_text(sprintf('%2.2f', price.amount / 100.0),
+      xml_total = _xml_nested_text(sprintf('%1.2f', price.amount),
                                    'TotalAmountPlusTax', 'MonetaryValue', 
                                    'MonetaryAmount')
       xml_totals.add_element(xml_total)
@@ -245,7 +245,7 @@ class << self
       xml_price = _xml_element('Price')
       xml_unit = _xml_nested_text('CHF', 'UnitPrice', 'Currency', 
                                   'CurrencyCoded')
-      xml_value = _xml_nested_text(sprintf('%2.2f', price.amount / 100.0), 
+      xml_value = _xml_nested_text(sprintf('%1.2f', price.amount), 
                                    'UnitPriceValue')
       xml_unit.add_element(xml_value)
       xml_price.add_element(xml_unit)
@@ -253,7 +253,7 @@ class << self
       xml_base.add_element(xml_list)
     end
     if(price = item.get_price('NettoPreisME'))
-      xml_price = _xml_nested_text(sprintf('%2.2f', price.amount / 100.0), 
+      xml_price = _xml_nested_text(sprintf('%1.2f', price.amount), 
                     total, 'MonetaryValue', 'MonetaryAmount')
       xml_base.add_element(xml_price)
     end

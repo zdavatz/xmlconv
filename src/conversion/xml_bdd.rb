@@ -2,6 +2,7 @@
 # XmlBdd -- xmlconv2 -- 01.06.2004 -- hwyss@ywesee.com
 
 require 'date'
+require 'iconv'
 require 'rexml/document'
 require 'rexml/xpath'
 require 'model/address'
@@ -80,7 +81,7 @@ module XmlConv
 						_container_add_xml_id(item, xml_id)	
 					}
 					xml_qty = REXML::XPath.first(xml_item, 'Qty')
-					item.qty = xml_qty.text.to_i
+					item.qty = xml_qty.text
 					if(xml_date = REXML::XPath.first(xml_item, 'DeliveryDate'))
 						raw = _latin1(xml_date.text)
 						item.delivery_date = begin
@@ -115,7 +116,7 @@ module XmlConv
 				end
 				def _latin1(str)
 					Iconv.iconv('ISO-8859-1', 'UTF8', str).first.strip
-				rescue
+				rescue Exception => err
 					str
 				end
 			end

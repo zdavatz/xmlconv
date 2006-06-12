@@ -366,7 +366,7 @@ module XmlConv
 				xml_item = Mock.new('XmlItem')
 				price = Mock.new('Price')
 				price.__next(:purpose) { 'BruttoPreis' }
-				price.__next(:amount) { 1005 }
+				price.__next(:amount) { '10.05' }
 				xml_item.__next(:add_element) { |xml_price|
 					assert_instance_of(REXML::Element, xml_price)
 					assert_equal('Price', xml_price.name)
@@ -382,7 +382,7 @@ module XmlConv
 				xml_item = Mock.new('XmlItem')
 				price = Mock.new('Price')
 				price.__next(:purpose) { 'Grundrabatt' }
-				price.__next(:amount) { -150 }
+				price.__next(:amount) { '-1.50' }
 				xml_item.__next(:add_element) { |xml_price|
 					assert_instance_of(REXML::Element, xml_price)
 					assert_equal('Price', xml_price.name)
@@ -406,9 +406,9 @@ module XmlConv
 				agreement = Mock.new('Agreement')
 				agreement.__next(:terms_cond) { 'TermsCond Text' }
 				price2.__next(:purpose) { 'Purpose2' }
-				price2.__next(:amount) { 2345 }
+				price2.__next(:amount) { '23.45' }
 				price1.__next(:purpose) { 'Purpose1' }
-				price1.__next(:amount) { 1234 }
+				price1.__next(:amount) { '12.34' }
 				free_text.__next(:type) { }
 				free_text.__next(:to_s) { 'Free Text' }
 				item2.__next(:line_no) { 2 }
@@ -506,7 +506,7 @@ module XmlConv
 				part_info = Mock.new('PartInfo')
 				price = Mock.new('Price')
 				price.__next(:purpose) { 'BruttoPreis' }
-				price.__next(:amount) { 12345 }
+				price.__next(:amount) { '123.45' }
 				part_info.__next(:dimension) { 'the Dimension' }
 				part_info.__next(:value) { 'the Value' }
 				item.__next(:line_no) { '10' }

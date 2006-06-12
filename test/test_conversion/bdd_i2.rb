@@ -259,6 +259,7 @@ module XmlConv
 				item.__next(:customer_id) { '12345' }
 				item.__next(:qty) { 17 }
 				item.__next(:delivery_date) { }
+				item.__next(:get_price) { }
 				order.__next(:add_position) { |position|
 					assert_instance_of(I2::Position, position)
 					assert_equal('LineNo', position.number)
@@ -279,6 +280,12 @@ module XmlConv
 				item.__next(:customer_id) { '12345' }
 				item.__next(:qty) { 17 }
 				item.__next(:delivery_date) { a_date }
+        price = Mock.new('Price')
+        price.__next(:amount) { '780.00' }
+        item.__next(:get_price) { |type|
+          assert_equal('NettoPreis', type)
+          price
+        }
 				order.__next(:add_position) { |position|
 					assert_instance_of(I2::Position, position)
 					assert_equal('LineNo', position.number)
@@ -288,6 +295,7 @@ module XmlConv
 					assert_instance_of(I2::Date, i2date)
 					assert_equal(a_date, i2date)
 					assert_equal(:delivery, i2date.code)
+          assert_equal('780.00', position.price)
 				}
 				BddI2._order_add_item(order, item)
 				order.__verify

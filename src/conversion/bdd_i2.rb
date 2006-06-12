@@ -82,6 +82,9 @@ module XmlConv
 					if(date = item.delivery_date)
 						position.delivery_date = I2::Date.from_date(date)
 					end
+          if(price = item.get_price('NettoPreis'))
+            position.price = price.amount
+          end
 					order.add_position(position)
 				end
 			end

@@ -198,7 +198,7 @@ module XmlConv
 				def _xml_add_item_price(xml_item, price)
 					xml_price = REXML::Element.new('Price')
 					xml_price.add_attribute('Purpose', price.purpose)
-					xml_price.text = sprintf('%2.2f', price.amount / 100.0)
+					xml_price.text = sprintf('%1.2f', price.amount)
 					xml_item.add_element(xml_price)
 				end
 				def _xml_add_item_status(xml_item, trans)

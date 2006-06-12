@@ -249,7 +249,7 @@ module XmlConv
 					if(price = _value(ast))
 						bdd_price = Model::Price.new
 						bdd_price.purpose = purpose
-						bdd_price.amount = (price.to_f * 100).to_i
+						bdd_price.amount = sprintf('%1.2f', price)
 						item.add_price(bdd_price)
 					end
 				end

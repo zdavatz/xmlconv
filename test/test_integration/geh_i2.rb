@@ -272,6 +272,7 @@ module XmlConv
 201:EP
 220:Danilo Lanzafame
 201:BY
+202:123456
 220:Grossauer Elektro - Handels AG
 222:Thalerstrasse 1
 223:Heiden
@@ -290,12 +291,14 @@ module XmlConv
 520:3
 540:2
 541:20060516
+604:780.00
 500:20
 501:234236837482
 502:283 222 011
 520:10
 540:2
 541:20060516
+604:330.00
 				EOS
 				expected.split("\n").each_with_index { |line, index|
 					assert_equal(line, result[index])
