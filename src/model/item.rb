@@ -9,7 +9,7 @@ require 'model/price_container'
 module XmlConv
 	module Model
 		class Item
-			attr_accessor :line_no, :qty
+			attr_accessor :line_no, :qty, :unit
 			include IdContainer
 			include FreeTextContainer
 			include PartInfoContainer

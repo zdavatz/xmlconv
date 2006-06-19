@@ -47,6 +47,7 @@ module XmlConv
 				assert_instance_of(REXML::Document, xml)
         expected = <<-EOS
   <?xml version='1.0' encoding='UTF-8'?>
+
   <OrderResponse>
     <OrderResponseHeader>
       <OrderResponseNumber>
@@ -297,6 +298,7 @@ module XmlConv
 				assert_instance_of(REXML::Document, xml)
         expected = <<-EOS
   <?xml version='1.0' encoding='UTF-8'?>
+
   <Invoice>
     <InvoiceHeader>
       <InvoiceNumber>

@@ -4,7 +4,12 @@
 module XmlConv
 	module I2
 		class Order
-			attr_accessor :sender_id, :delivery_id
+			I2_DELIVERY_CODES = {
+				:pickup		=>	'070',
+				:delivery	=>	'060',
+				:camion 	=>	'010',
+			}
+			attr_accessor :sender_id, :delivery_id, :terms_cond
 			attr_reader :addresses, :dates, :positions
 			def initialize
 				@addresses = []
@@ -27,6 +32,9 @@ module XmlConv
 				EOS
 				@addresses.each { |addr| output << addr.to_s }
 				output << "237:61\n"
+        if(terms = I2_DELIVERY_CODES[@terms_cond])
+          output << sprintf("238:%s\n", terms)
+        end
 				@dates.each { |date| output << date.to_s }
 				@positions.each { |pos| output << pos.to_s }
 				output

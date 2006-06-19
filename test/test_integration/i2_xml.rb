@@ -44,6 +44,7 @@ module XmlConv
 				assert_instance_of(REXML::Document, xml)
 				expected = <<-EOS
   <?xml version='1.0' encoding='UTF-8'?>
+
   <!DOCTYPE BDD SYSTEM "ABB BDD.dtd">
   <BDD>
     <BSR>

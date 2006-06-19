@@ -13,6 +13,11 @@ module XmlConv
 				'Employee'	=>	:employee,
 				'ShipTo'		=>	:delivery,
 			}
+			I2_DELIVERY_CODES = {
+				'wird abgeholt'   =>  :pickup,
+				'werkslieferung'  =>  :delivery,
+				'camion'          =>  :camion,
+			}
 			class << self
 				def convert(bdd)
 					doc = I2::Document.new
@@ -33,6 +38,9 @@ module XmlConv
 					if(customer = delivery.customer)
 						_order_add_customer(order, customer)
 					end
+          if(agreement = delivery.agreement)
+            order.terms_cond = I2_DELIVERY_CODES[agreement.terms_cond]
+          end
 					delivery.items.each { |item|
 						_order_add_item(order, item)
 					}
@@ -79,6 +87,7 @@ module XmlConv
             position.customer_id = id
           end
 					position.qty = item.qty
+          position.unit = item.unit
 					if(date = item.delivery_date)
 						position.delivery_date = I2::Date.from_date(date)
 					end

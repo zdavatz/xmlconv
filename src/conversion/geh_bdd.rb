@@ -3,6 +3,7 @@
 
 require 'rexml/document'
 require 'model/address'
+require 'model/agreement'
 require 'model/bdd'
 require 'model/bsr'
 require 'model/delivery'
@@ -29,6 +30,12 @@ class << self
 			'OrderRequest/OrderRequestHeader')
 		_bdd_add_xml_header(bdd, xml_header)
 		_delivery_add_xml_header(delivery, xml_header)
+    if(xml_terms = REXML::XPath.first(xml_header, 
+        '//TermsOfDeliveryFunctionCodedOther'))
+      agreement = Model::Agreement.new
+      agreement.terms_cond = _latin1(xml_terms.text).downcase
+      delivery.agreement = agreement
+    end
 		REXML::XPath.each(xml_document, 'OrderRequest//ItemDetail') { |xml_item|
 			_delivery_add_xml_item(delivery, xml_item)	
 		}
@@ -110,7 +117,10 @@ class << self
 			item.add_id('LIEFERANTENARTIKEL', _latin1(xml_id.text))
 		end
 		xml_qty = REXML::XPath.first(xml_item, 'BaseItemDetail//QuantityValue')
-		item.qty = xml_qty.text
+		item.qty = _latin1(xml_qty.text)
+    if(xml_unit = REXML::XPath.first(xml_item, 'BaseItemDetail//UOMCoded'))
+      item.unit = _latin1(xml_unit.text)
+    end
 		if(xml_date = REXML::XPath.first(xml_item, 
 																	   'DeliveryDetail//RequestedDeliveryDate'))
 			raw = _latin1(xml_date.text)
@@ -123,7 +133,7 @@ class << self
     if(xml_price = REXML::XPath.first(xml_item, 'PricingDetail//UnitPriceValue'))
       price = Model::Price.new
       price.purpose = 'NettoPreis'
-      price.amount = xml_price.text
+      price.amount = _latin1(xml_price.text)
       item.add_price(price)
     end
 		delivery.add_item(item)

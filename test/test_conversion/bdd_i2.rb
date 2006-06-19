@@ -25,15 +25,19 @@ module XmlConv
 			end
 			def test__doc_add_delivery
 				doc = I2::Document.new
+        agreement = Mock.new
+        agreement.__next(:terms_cond) { 'camion' }
 				delivery = Mock.new
 				delivery.__next(:bsr_id) { 'BSR-ID' }
 				delivery.__next(:customer_id) { 'Customer-Delivery-Id' }
 				delivery.__next(:customer) {}
+				delivery.__next(:agreement) { agreement }
 				delivery.__next(:items) { [] }
 				BddI2._doc_add_delivery(doc, delivery)
 				order = doc.orders.first
 				assert_equal('BSR-ID', order.sender_id)
 				assert_equal('Customer-Delivery-Id', order.delivery_id)
+				assert_equal(:camion, order.terms_cond)
 				delivery.__verify
 			end
 			def test__order_add_customer
@@ -258,6 +262,7 @@ module XmlConv
 				item.__next(:et_nummer_id) { 'EtNummerId' }
 				item.__next(:customer_id) { '12345' }
 				item.__next(:qty) { 17 }
+				item.__next(:unit) { }
 				item.__next(:delivery_date) { }
 				item.__next(:get_price) { }
 				order.__next(:add_position) { |position|
@@ -265,6 +270,7 @@ module XmlConv
 					assert_equal('LineNo', position.number)
 					assert_equal('EtNummerId', position.article_ean)
 					assert_equal(17, position.qty)
+					assert_nil(position.unit)
 					assert_nil(position.delivery_date)
 				}
 				BddI2._order_add_item(order, item)
@@ -279,6 +285,7 @@ module XmlConv
 				item.__next(:et_nummer_id) { 'EtNummerId' }
 				item.__next(:customer_id) { '12345' }
 				item.__next(:qty) { 17 }
+				item.__next(:unit) { 'STK' }
 				item.__next(:delivery_date) { a_date }
         price = Mock.new('Price')
         price.__next(:amount) { '780.00' }
@@ -291,6 +298,7 @@ module XmlConv
 					assert_equal('LineNo', position.number)
 					assert_equal('EtNummerId', position.article_ean)
 					assert_equal(17, position.qty)
+					assert_equal('STK', position.unit)
 					i2date = position.delivery_date
 					assert_instance_of(I2::Date, i2date)
 					assert_equal(a_date, i2date)

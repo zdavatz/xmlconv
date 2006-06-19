@@ -74,7 +74,7 @@ module XmlConv
 		<OrderTermsOfDelivery>
 			<TermsOfDelivery>
 				<TermsOfDeliveryFunctionCoded>Other</TermsOfDeliveryFunctionCoded>
-				<TermsOfDeliveryFunctionCodedOther>V2</TermsOfDeliveryFunctionCodedOther>
+				<TermsOfDeliveryFunctionCodedOther>wird abgeholt</TermsOfDeliveryFunctionCodedOther>
 				<TransportTermsCoded>Other</TransportTermsCoded>
 				<TransportTermsCodedOther>Auto EK</TransportTermsCodedOther>
 				<ShipmentMethodOfPaymentCoded>Other</ShipmentMethodOfPaymentCoded>
@@ -283,12 +283,14 @@ module XmlConv
 223:Heiden
 225:9410
 237:61
+238:070
 300:4
 301:#{Date.today.strftime('%Y%m%d')}
 500:10
 501:123123123
 502:123 890 390
 520:3
+521:Other
 540:2
 541:20060516
 604:780.00
@@ -296,6 +298,7 @@ module XmlConv
 501:234236837482
 502:283 222 011
 520:10
+521:Other
 540:2
 541:20060516
 604:330.00
