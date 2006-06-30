@@ -51,11 +51,11 @@ module XmlConv
   <OrderResponse>
     <OrderResponseHeader>
       <OrderResponseNumber>
-        <BuyerOrderResponseNumber>Commission Number</BuyerOrderResponseNumber>
+        <BuyerOrderResponseNumber>Order Number</BuyerOrderResponseNumber>
       </OrderResponseNumber>
       <OrderReference>
         <Reference>
-          <RefNum>Order Number</RefNum>
+          <RefNum>Commission Number</RefNum>
         </Reference>
       </OrderReference>
       <OrderResponseIssueDate>20040627000000</OrderResponseIssueDate>
@@ -63,7 +63,7 @@ module XmlConv
         <Party>
           <PartyID>
             <Identifier>
-              <Ident>667</Ident>
+              <Ident>663</Ident>
             </Identifier>
           </PartyID>
           <NameAddress>
@@ -318,6 +318,11 @@ module XmlConv
       </InvoiceReferences>
       <SellerParty>
         <Party>
+          <PartyID>
+            <Identifier>
+              <Ident>663</Ident>
+            </Identifier>
+          </PartyID>
           <NameAddress>
             <Name1>PLICA AG</Name1>
             <Street>ZUERCHERSTRASSE 350</Street>
