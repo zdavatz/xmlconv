@@ -114,7 +114,7 @@ module XmlConv
         delivery.mock_handle(:seller) { party1 }
         party1.mock_handle(:add_id, 1) { |domain, id| 
           assert_equal('ACC', domain)
-          assert_equal(667, id) 
+          assert_equal(663, id) 
           seller_id = id
         }
         response = REXML::Element.new('OrderResponse')
@@ -122,10 +122,10 @@ module XmlConv
         assert_equal(1, response.elements.size)
         xml_header = response.elements[1]
         xml_response_id = xml_header.elements[1]
-        expected = '<OrderResponseNumber><BuyerOrderResponseNumber>0000405477</BuyerOrderResponseNumber></OrderResponseNumber>'
+        expected = '<OrderResponseNumber><BuyerOrderResponseNumber>B-1299545</BuyerOrderResponseNumber></OrderResponseNumber>'
         assert_equal(expected, xml_response_id.to_s)
         xml_reference_id = xml_header.elements[2]
-        expected = '<OrderReference><Reference><RefNum>B-1299545</RefNum></Reference></OrderReference>'
+        expected = '<OrderReference><Reference><RefNum>0000405477</RefNum></Reference></OrderReference>'
         assert_equal(expected, xml_reference_id.to_s)
         xml_issue_date = xml_header.elements[3]
         expected = '<OrderResponseIssueDate>20060511020719</OrderResponseIssueDate>'
@@ -133,7 +133,7 @@ module XmlConv
         xml_party1 = xml_header.elements[4]
         assert_equal('SellerParty', xml_party1.name)
         seller_id = xml_party1.elements[1]
-        expected = '<Party><PartyID><Identifier><Ident>667</Ident></Identifier></PartyID></Party>'
+        expected = '<Party><PartyID><Identifier><Ident>663</Ident></Identifier></PartyID></Party>'
         assert_equal(expected, seller_id.to_s)
         xml_party2 = xml_header.elements[5]
         assert_equal('BuyerParty', xml_party2.name)

@@ -7,7 +7,7 @@ module XmlConv
   module Conversion
     class BddGeh
 class << self
-  SELLER_ID = 667 # DTSTTCPW-approach. Could also be passed in, e.g. from the
+  SELLER_ID = 663 # DTSTTCPW-approach. Could also be passed in, e.g. from the
                   # PollingMission
   def convert(bdd)
     docs = []
@@ -107,9 +107,9 @@ class << self
   end
   def _xml_add_delivery_header(xml_root, delivery)
     xml_header = _xml_element("OrderResponseHeader")
-    xml_header.add_element(_xml_nested_text(delivery.customer_id, 
-                           "OrderResponseNumber", "BuyerOrderResponseNumber"))
     xml_header.add_element(_xml_nested_text(delivery.reference_id, 
+                           "OrderResponseNumber", "BuyerOrderResponseNumber"))
+    xml_header.add_element(_xml_nested_text(delivery.customer_id, 
                            'OrderReference', 'Reference', 'RefNum'))
     if(date = delivery.status_date)
       str = date.strftime('%Y%m%d%H%M%S')
@@ -142,6 +142,9 @@ class << self
     end
     _xml_add_invoice_references(xml_header, invoice)
     if(party = invoice.seller)
+      unless(party.party_id)
+        party.add_id('ACC', SELLER_ID)
+      end
       _xml_add_bdd_party(xml_header, party)
     end
     xml_root.add_element(xml_header)
