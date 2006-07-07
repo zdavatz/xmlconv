@@ -17,6 +17,12 @@ module XmlConv
 			include PriceContainer
 			attr_accessor :agreement, :free_text, :status, :status_date
 			attr_accessor :customer, :seller
+			def customer_id
+				self.ids['Customer']
+			end
+			def reference_id
+				self.ids['ACC']
+			end
 		end
 	end
 end

@@ -279,7 +279,8 @@ module XmlConv
 			def test_i2_xml_invoice
 				src = <<-EOS
 "00" "Plica" "Electro LAN SA" "20060522" "2300" "INVOIC" "0"
-"01" "000" "00332720" "20060522" "PLVH-122545" "B-678033 N, 22.5.06" "OC" "TP"
+"01" "000" "Receipt-Number" "20060522" "Order Number" 
+	"Commission Number" "OC" "TP" 
 "02" "SE" "PLICA AG" "" "ZUERCHERSTRASSE 350" "FRAUENFELD" "8500" "CH"
 "02" "CU" "ELECTRO LAN SA" "ARTICLE ELECTRIQUE EN GROS" "RUE DE TUNNEL 67-69" "NEUCHÂTEL" "2000" "CH"
 "02" "EP" "GIOVANNI RUSSO" "" "" "" "" ""
@@ -303,7 +304,7 @@ module XmlConv
     <InvoiceHeader>
       <InvoiceNumber>
         <Reference>
-          <RefNum>00332720</RefNum>
+          <RefNum>Receipt-Number</RefNum>
         </Reference>
       </InvoiceNumber>
       <InvoiceIssueDate>20060522000000</InvoiceIssueDate>
@@ -311,7 +312,7 @@ module XmlConv
         <PurchaseOrderReference>
           <PurchaseOrderNumber>
             <Reference>
-              <RefNum>PLVH-122545</RefNum>
+              <RefNum>Commission Number</RefNum>
             </Reference>
           </PurchaseOrderNumber>
         </PurchaseOrderReference>

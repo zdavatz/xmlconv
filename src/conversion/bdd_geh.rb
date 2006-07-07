@@ -158,7 +158,7 @@ class << self
   end
   def _xml_add_invoice_references(xml_header, invoice)
     xml_refs = _xml_element('InvoiceReferences')
-    xml_refs.add_element(_xml_nested_text(invoice.delivery_id.last, 
+    xml_refs.add_element(_xml_nested_text(invoice.customer_id, 
                          'PurchaseOrderReference', 'PurchaseOrderNumber',
                          'Reference', 'RefNum'))
     xml_header.add_element(xml_refs)

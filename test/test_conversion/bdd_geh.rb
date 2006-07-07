@@ -313,7 +313,7 @@ module XmlConv
         invoice = FlexMock.new
         invoice.mock_handle(:status_date) { }
         invoice.mock_handle(:invoice_id) { ['Invoice', '12345'] }
-        invoice.mock_handle(:delivery_id) { ['ACC', '54321'] }
+        invoice.mock_handle(:customer_id) { '54321' }
         invoice.mock_handle(:seller) { }
         invoice.mock_handle(:items) { [] }
         invoice.mock_handle(:get_price) { }
@@ -360,7 +360,7 @@ module XmlConv
         delivery.mock_handle(:invoice_id) { ['Invoice', '0000405477'] }
         delivery.mock_handle(:status) { 'Confirmed' }
         delivery.mock_handle(:status_date) { Time.local(2006, 5, 11, 2, 7, 19) }
-        delivery.mock_handle(:delivery_id) { ['ACC', 'B-1299545'] }
+        delivery.mock_handle(:customer_id) { 'B-1299545' }
         delivery.mock_handle(:seller) { party }
         delivery.mock_handle(:items) { [] } 
         delivery.mock_handle(:get_price) { }
@@ -397,7 +397,7 @@ module XmlConv
         party2.mock_handle(:address) { }
         party2.mock_handle(:employee) { }
         invoice.mock_handle(:invoice_id) { ['Invoice', '0038379197'] }
-        invoice.mock_handle(:delivery_id) { ['ACC', 'B-1298089'] }
+        invoice.mock_handle(:customer_id) { 'B-1298089' }
         invoice.mock_handle(:status) { 'Confirmed' }
         invoice.mock_handle(:status_date) { Time.local(2006, 5, 12, 7, 32, 48) }
         invoice.mock_handle(:seller) { party1 }

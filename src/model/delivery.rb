@@ -10,12 +10,6 @@ module XmlConv
 			def bsr_id
 				@bsr.bsr_id unless(@bsr.nil?)
 			end
-			def customer_id
-				self.ids['Customer']
-			end
-			def reference_id
-				self.ids['ACC']
-			end
 		end
 	end
 end
