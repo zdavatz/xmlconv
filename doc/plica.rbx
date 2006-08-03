@@ -50,7 +50,11 @@ begin
 	transaction.writer = 'BddI2'
 	transaction.destination = destination
 	transaction.origin = "http://#{connection.remote_ip}:#{connection.remote_port}"
-  transaction.partner = "Winterhalter + Fenner AG"
+  transaction.partner = if(/electrolan/i.match(xml_src))
+                          "ElectroLAN SA"
+                        else
+                          "Winterhalter + Fenner AG"
+                        end
 
 	xmlconv.dispatch(transaction)
 
