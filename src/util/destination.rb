@@ -81,7 +81,7 @@ module XmlConv
              ## bogostatus: assume that the more information in the string, 
              ##             the worse the status is (ok < not found)
              ##             rationale: DTSTTCPW
-             if(@status > worst_status)
+             if(@status.to_s > worst_status.to_s)
                worst_status = @status
              end
            }
