@@ -3,6 +3,7 @@
 
 require 'sbsm/drbserver'
 require 'state/global'
+require 'util/invoicer'
 require 'util/polling_manager'
 require 'util/session'
 require 'util/transaction'
@@ -61,6 +62,12 @@ module XmlConv
 					}
 				end
 			end
+      def send_invoice(time_range, date = Date.today)
+        transactions = @transactions.select { |trans| 
+          time_range.include?(trans.commit_time)
+        }
+        Util::Invoicer.run(time_range, transactions, date)
+      end
 		end
 	end
 end
@@ -81,6 +88,7 @@ class XmlConvApp < SBSM::DRbServer
 			start_polling
 		end
 		start_dispatcher
+		start_invoicer
 		super(@system)
 	end
 	def dispatch(transaction)
@@ -104,7 +112,19 @@ class XmlConvApp < SBSM::DRbServer
 			}
 		}
 	end
-	def start_polling
+  def start_invoicer
+    @invoicer_thread = Thread.new {
+      loop { 
+        this_month = Date.today
+        next_month = this_month >> 1
+        strt = Time.local(this_month.year, this_month.month)
+        stop = Time.local(next_month.year, next_month.month)
+        sleep(stop - Time.now)
+        @system.send_invoice(strt...stop)
+      }
+    }
+  end
+  def start_polling
 		@polling_thread = Thread.new {
 			loop {
 				begin

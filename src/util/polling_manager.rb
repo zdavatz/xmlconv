@@ -12,7 +12,7 @@ module XmlConv
 		class PollingMission
 			attr_accessor :directory, :reader, :writer, :destination, 
                     :error_recipients, :debug_recipients, :backup_dir,
-                    :glob_pattern
+                    :glob_pattern, :partner
 		end
 		class PollingManager
 			PROJECT_ROOT = File.expand_path('../..', File.dirname(__FILE__))
@@ -53,6 +53,7 @@ module XmlConv
 					begin
 						transaction = XmlConv::Util::Transaction.new
 						transaction.input = File.read(path)
+						transaction.partner = source.partner
 						transaction.origin = 'file:' << path
 						transaction.reader = source.reader
 						transaction.writer = source.writer

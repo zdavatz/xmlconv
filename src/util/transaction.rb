@@ -19,7 +19,7 @@ module XmlConv
 			MAIL_FROM = 'xmlconv@ywesee.com'
 			SMTP_HANDLER = Net::SMTP
 			attr_accessor :input, :reader, :writer, :destination, :origin, 
-										:transaction_id, :error, 
+										:transaction_id, :partner, :error,
 										:error_recipients, :debug_recipients
 			attr_reader :output, :model, :start_time, :commit_time, 
 									:input_model, :output_model, :status
