@@ -2,10 +2,10 @@
 # Model::TestFreeTextContainer -- xmlconv2 -- 29.06.2004 -- hwyss@ywesee.com
 
 $: << File.dirname(__FILE__)
-$: << File.expand_path('../../src', File.dirname(__FILE__))
+$: << File.expand_path('../../lib', File.dirname(__FILE__))
 
 require 'test/unit'
-require 'model/invoice_item'
+require 'xmlconv/model/invoice_item'
 
 module XmlConv
 	module Model

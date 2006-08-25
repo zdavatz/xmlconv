@@ -1,11 +1,11 @@
 #!/usr/bin/env ruby
 # TestDelivery -- xmlconv2 -- 01.06.2004 -- hwyss@ywesee.com
 
-$: << File.dirname(__FILE__)
-$: << File.expand_path('../../src', File.dirname(__FILE__))
+$: << File.expand_path('..', File.dirname(__FILE__))
+$: << File.expand_path('../../lib', File.dirname(__FILE__))
 
 require 'test/unit'
-require 'model/delivery'
+require 'xmlconv/model/delivery'
 require 'mock'
 
 module XmlConv

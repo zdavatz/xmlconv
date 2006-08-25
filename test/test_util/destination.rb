@@ -3,16 +3,19 @@
 
 $: << File.dirname(__FILE__)
 $: << File.expand_path('..', File.dirname(__FILE__))
-$: << File.expand_path('../../src', File.dirname(__FILE__))
+$: << File.expand_path('../../lib', File.dirname(__FILE__))
 
 require 'test/unit'
-require 'util/destination'
+require 'xmlconv/util/destination'
 require 'mock'
 
 module XmlConv
 	module Util
-		class DestinationHttp < Destination
+		class DestinationHttp < RemoteDestination
 			HTTP_CLASS = Mock.new('DestinationHttp::HTTP_CLASS')
+		end
+		class DestinationFtp < RemoteDestination
+			FTP_CLASS = Mock.new('DestinationHttp::FTP_CLASS')
 		end
 		class TestDestination < Test::Unit::TestCase
 			def setup
@@ -36,6 +39,13 @@ module XmlConv
 			def test_forget_credentials
 				assert_respond_to(@destination, :forget_credentials!)
 			end
+      def test_book
+        assert_instance_of(DestinationDir, Destination.book('/'))
+        assert_instance_of(DestinationHttp, 
+                           Destination.book('http://www.example.com'))
+        assert_instance_of(DestinationFtp, 
+                           Destination.book('ftp://www.example.com'))
+      end
 		end
 		class TestDestinationDir < Test::Unit::TestCase
 			def setup
@@ -122,14 +132,14 @@ module XmlConv
 				assert_equal(20, @destination.status_comparable)
 			end
 		end
-		class TestDestinationHttp < Test::Unit::TestCase
+		class TestRemoteDestination < Test::Unit::TestCase
 			class ToSMock < Mock
 				def to_s
 					true
 				end
 			end
 			def setup
-				@destination = DestinationHttp.new
+				@destination = RemoteDestination.new
 			end
 			def test_attr_accessors
 				assert_respond_to(@destination, :path)
@@ -138,6 +148,16 @@ module XmlConv
 				assert_respond_to(@destination, :uri=)
 				assert_respond_to(@destination, :host)
 				assert_respond_to(@destination, :host=)
+			end
+		end
+		class TestDestinationHttp < Test::Unit::TestCase
+			class ToSMock < Mock
+				def to_s
+					true
+				end
+			end
+			def setup
+				@destination = DestinationHttp.new
 			end
 			def test_path_writer
 				assert_equal('http:/', @destination.uri.to_s)
@@ -161,7 +181,7 @@ module XmlConv
 				assert_equal('http://www.example.com/foo/bar', @destination.uri.to_s)
 			end
 			def test_deliver
-				@destination.uri = 'http://testaccount:password@janico.ywesee.com:12345/test.rbx'
+				@destination.uri = 'http://testaccount:password@xmlconv.ywesee.com:12345/test.rbx'
 				http_session = Mock.new('HttpSession')
 				delivery = ToSMock.new('Delivery')
 				response = Mock.new('Response')
@@ -176,7 +196,7 @@ module XmlConv
 					response
 				}
 				DestinationHttp::HTTP_CLASS.__next(:start) { |block, host, port| 
-					assert_equal('janico.ywesee.com', host)
+					assert_equal('xmlconv.ywesee.com', host)
 					assert_equal(12345, port)
 					block.call(http_session)
 				}
@@ -186,11 +206,73 @@ module XmlConv
 				uri = @destination.uri
 				assert_nil(uri.user)
 				assert_nil(uri.password)
-				assert_equal('http://janico.ywesee.com:12345/test.rbx', uri.to_s)
+				assert_equal('http://xmlconv.ywesee.com:12345/test.rbx', uri.to_s)
 				DestinationHttp::HTTP_CLASS.__verify
 				http_session.__verify
 				delivery.__verify
 				response.__verify
+			end
+		end
+		class TestDestinationFtp < Test::Unit::TestCase
+			class ToSMock < Mock
+				def to_s
+					true
+				end
+			end
+			def setup
+				@destination = DestinationFtp.new
+			end
+			def test_path_writer
+				assert_equal('ftp:/', @destination.uri.to_s)
+				@destination.path = '/foo/bar'
+				assert_equal('ftp:/foo/bar', @destination.uri.to_s)
+			end
+			def test_host_writer
+				assert_equal('ftp:/', @destination.uri.to_s)
+				@destination.host = 'www.example.org'
+				assert_equal('ftp://www.example.org/', @destination.uri.to_s)
+			end
+			def test_uri_writer
+				uri = URI.parse('ftp://www.example.org/foo/bar')
+				assert_instance_of(URI::FTP, @destination.uri)
+				assert_equal('ftp:/', @destination.uri.to_s)
+				@destination.uri = uri
+				assert_instance_of(URI::FTP, @destination.uri)
+				assert_equal('ftp://www.example.org/foo/bar', @destination.uri.to_s)
+				@destination.uri = 'ftp://www.example.com/foo/bar'
+				assert_instance_of(URI::FTP, @destination.uri)
+				assert_equal('ftp://www.example.com/foo/bar', @destination.uri.to_s)
+			end
+			def test_deliver
+				@destination.uri = 'ftp://testaccount:password@xmlconv.ywesee.com/foo/bar/'
+				ftp_session = Mock.new('FtpSession')
+				delivery = ToSMock.new('Delivery')
+				delivery.__next(:to_s) { 'The Delivery' }
+        delivery.__next(:filename) { 'test.dat' }
+        delivery.__next(:filename) { 'test.dat' }
+        ftp_session.__next(:chdir) { |path|
+          assert_equal('/foo/bar/', path)
+        }
+        ftp_session.__next(:puttextfile) { |local, remote|
+          assert_equal("The Delivery\n", File.read(local))
+          assert_equal('test.dat', remote)
+        }
+				DestinationFtp::FTP_CLASS.__next(:open) { |block, host, user, password| 
+					assert_equal('xmlconv.ywesee.com', host)
+					assert_equal('testaccount', user)
+					assert_equal('password', password)
+					block.call(ftp_session)
+				}
+				@destination.deliver(delivery)
+				assert_equal(:ftp_ok, @destination.status)
+				# When the delivery is delivered, forget username and Password
+				uri = @destination.uri
+				assert_nil(uri.user)
+				assert_nil(uri.password)
+				assert_equal('ftp://xmlconv.ywesee.com:21/foo/bar/test.dat', uri.to_s)
+				DestinationFtp::FTP_CLASS.__verify
+				ftp_session.__verify
+				delivery.__verify
 			end
 		end
 	end

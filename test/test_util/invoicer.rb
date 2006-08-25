@@ -2,17 +2,17 @@
 # Util::TestInvoicer -- xmlconv2 -- 03.08.2006 -- hwyss@ywesee.com
 
 $: << File.dirname(__FILE__)
-$: << File.expand_path('../../src', File.dirname(__FILE__))
+$: << File.expand_path('../../lib', File.dirname(__FILE__))
 
 require 'test/unit'
-require 'util/invoicer'
+require 'xmlconv/util/invoicer'
 require 'flexmock'
 
 module XmlConv
 	module Util
 		class TestInvoicer < Test::Unit::TestCase
       def setup
-        @invoicer = Invoicer.new
+        @invoicer = Invoicer
       end
       def test_group_by_partner
         trans1 = FlexMock.new

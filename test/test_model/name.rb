@@ -2,10 +2,10 @@
 # TestName -- xmlconv2 -- 01.06.2004 -- hwyss@ywesee.com
 
 $: << File.dirname(__FILE__)
-$: << File.expand_path('../../src', File.dirname(__FILE__))
+$: << File.expand_path('../../lib', File.dirname(__FILE__))
 
 require 'test/unit'
-require 'model/name'
+require 'xmlconv/model/name'
 
 module XmlConv
 	module Model

@@ -1,18 +1,52 @@
 #!/usr/bin/env ruby
 # XmlConv -- xmlconv2 -- 07.06.2004 -- hwyss@ywesee.com
 
-$: << File.expand_path('../src', File.dirname(__FILE__))
-$: << File.expand_path('..', File.dirname(__FILE__))
-
 require 'drb/drb'
-require 'util/application'
-require 'etc/config'
+require 'odba/connection_pool'
+require 'xmlconv/config'
+require 'xmlconv/util/application'
+require 'logger'
 
-$0 = "XmlConv2"
+config = XmlConv::CONFIG
 
-xmlconv = XmlConvApp.new
+log_file = config.log_file
+if(log_file.is_a?(String))
+	FileUtils.mkdir_p(File.dirname(log_file))
+	log_file = File.open(log_file, 'a')
+	at_exit { log_file.close }
+end
+logger = Logger.new(log_file)
+logger.level = Logger.const_get(config.log_level)
+XmlConv::LOGGER = logger
 
-DRb.start_service(XmlConv::SERVER_URI, xmlconv)
-puts 'drb-service started'
+plugin_dir = File.expand_path(config.plugin_dir)
+$:.push(plugin_dir)
+
+logger.debug(config.program_name) { 
+  "checking directory '#{plugin_dir}' for plugins" 
+}
+Dir.glob(File.join(plugin_dir, '*')) { |entry|
+  if(/\.(rb|so)$/.match(entry))
+    keyword = File.basename(entry)
+    keyword.slice!(/#{File.extname(keyword)}$/)
+    logger.debug(config.program_name) { 
+      "loading plugin: '#{keyword}' (#{File.basename(entry)})" 
+    }
+    begin
+      require File.basename(keyword)
+    rescue 
+      logger.warn(config.program_name) {
+        "loading plugin '#{keyword}' failed!"
+      }
+    end
+  end
+}
+
+ODBA.storage.dbi = ODBA::ConnectionPool.new("DBI:pg:#{config.db_name}",
+                                            config.db_user, config.db_auth)
+
+$0 = config.program_name
+DRb.start_service(config.server_url, XmlConvApp.new)
+logger.info(config.program_name) { 'drb-service started' }
 
 DRb.thread.join

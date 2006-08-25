@@ -2,10 +2,10 @@
 # TestPrice -- xmlconv2 -- 21.06.2004 -- hwyss@ywesee.com
 
 $: << File.dirname(__FILE__)
-$: << File.expand_path('../../src', File.dirname(__FILE__))
+$: << File.expand_path('../../lib', File.dirname(__FILE__))
 
 require 'test/unit'
-require 'model/price'
+require 'xmlconv/model/price'
 
 module XmlConv
 	module Model

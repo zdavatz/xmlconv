@@ -3,10 +3,10 @@
 
 $: << File.dirname(__FILE__)
 $: << File.expand_path('..', File.dirname(__FILE__))
-$: << File.expand_path('../../src', File.dirname(__FILE__))
+$: << File.expand_path('../../lib', File.dirname(__FILE__))
 
 require 'test/unit'
-require 'util/application'
+require 'xmlconv/util/application'
 require 'mock'
 
 module XmlConv

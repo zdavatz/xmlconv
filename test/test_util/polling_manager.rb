@@ -2,18 +2,154 @@
 # Util::TestPollingManager -- xmlconv2 -- 29.06.2004 -- hwyss@ywesee.com
 
 $: << File.expand_path('..', File.dirname(__FILE__))
-$: << File.expand_path('../../src', File.dirname(__FILE__))
+$: << File.expand_path('../../lib', File.dirname(__FILE__))
 
 require 'test/unit'
-require 'util/polling_manager'
+require 'xmlconv/util/polling_manager'
 require 'mock'
+require 'rexml/document'
+require 'config'
 
 module XmlConv
 	module Util
-		class PollingManager
-			CONFIG_PATH = File.expand_path('data/polling.yaml', 
-				File.dirname(__FILE__))
-		end
+    class TestPollingMission < Test::Unit::TestCase
+      def setup
+        @mission = PollingMission.new
+				@dir = File.expand_path('data/i2', 
+					File.dirname(__FILE__))
+				FileUtils.mkdir_p(@dir)
+				@file1 = File.expand_path('file1.txt', @dir)
+				File.open(@file1, 'w') { |fh| fh << "File 1\n" }
+      end
+			def teardown
+				FileUtils.rm_rf(@dir) 
+			end
+			def test_file_paths
+        @mission.directory = @dir
+				file2 = File.expand_path('file2.txt', @dir)
+				File.open(file2, 'w') { |fh| fh << "File 2\n" }
+				assert_equal([@file1, file2], @mission.file_paths.sort)
+        @mission.glob_pattern = "file2*"
+				assert_equal([file2], @mission.file_paths.sort)
+			end
+			def test_poll
+				backup_dir = File.expand_path('../data', File.dirname(__FILE__))
+				@mission.directory = @dir
+				@mission.glob_pattern = '*'
+        @mission.partner = 'Partner'
+				@mission.reader = 'Reader'
+				@mission.writer = 'Writer'
+				@mission.destination = 'http://foo.bar.baz:2345'
+				@mission.debug_recipients = nil
+				@mission.error_recipients = nil
+				@mission.backup_dir = backup_dir
+				@mission.poll { |transaction|
+					assert_instance_of(Util::Transaction, transaction)
+					assert_equal("File 1\n", transaction.input)
+					assert_equal('file:' << @file1, transaction.origin)
+					assert_equal('Reader', transaction.reader)
+					assert_equal('Writer', transaction.writer)
+					dest = transaction.destination
+					assert_instance_of(Util::DestinationHttp, dest)
+					assert_equal('http://foo.bar.baz:2345', dest.uri.to_s)
+        }
+			end
+    end
+    class TestPopMission < Test::Unit::TestCase
+      def setup
+        @popserver = TCPServer.new('127.0.0.1', 0)
+        addr = @popserver.addr 
+        @mission = PopMission.new
+        @mission.host = 'localhost'
+        @mission.port = addr.at(1)
+        @mission.user = "testuser"
+        @mission.pass = "test"
+        @mission.content_type = "text/xml"
+        @datadir = File.expand_path('data', File.dirname(__FILE__)) 
+        @mission.backup_dir = File.join(@datadir, 'backup')
+        @mission.destination = File.join(@datadir, 'destination')
+        @mission.partner = 'Partner'
+				@mission.reader = 'Reader'
+				@mission.writer = 'Writer'
+				@mission.destination = 'http://foo.bar.baz:2345'
+				@mission.debug_recipients = nil
+				@mission.error_recipients = nil
+      end
+      def teardown
+        FileUtils.rm_r(@datadir)
+      end
+      def test_poll
+        message = RMail::Message.new
+        part1 = RMail::Message.new
+        part1.header.add("content-type", 'text/plain')
+        part1.body = "some senseless data"
+        message.add_part(part1)
+
+        part2 = RMail::Message.new
+        part2.header.add("content-type", 'text/xml', nil, 
+                         'encoding' => 'iso-8859-1')
+        doc = REXML::Document.new("<foo><bar /></foo>")
+        part2.body = doc.to_s
+        message.add_part(part2)
+
+        part3 = RMail::Message.new
+        part3.header.add("content-type", 'text/plain')
+        part3.body = "some more senseless data"
+        message.add_part(part3)
+
+        mail = message.to_s
+
+        @server = Thread.new { 
+          Thread.start(@popserver.accept) do |socket|
+            socket.puts("+OK")
+            while line = socket.gets
+              case line[0,4]
+              when "USER"
+                assert_equal("USER testuser\r\n", line)
+                socket.print("+OK\r\n")
+              when "PASS"
+                assert_equal("PASS test\r\n", line)
+                socket.print("+OK\r\n")
+              when "STAT"
+                socket.print("+OK 1 1\r\n")
+              when "LIST"
+                socket.print("+OK\r\n")
+                socket.print("1 #{mail.size}\r\n")
+                socket.print(".\r\n")
+              when "RETR"
+                socket.print("+OK #{mail.size}\r\n")
+                socket.print(mail)
+                socket.print("\r\n.\r\n")
+              when "QUIT"
+                socket.print("+OK\r\n")
+                break
+              else
+                socket.print("+OK\r\n")
+              end
+            end
+            socket.close
+          end
+        }
+        counter = 0
+        @mission.poll { |transaction|
+          counter += 1
+ 					assert_instance_of(Util::Transaction, transaction)
+					assert_equal(doc.to_s, transaction.input)
+					assert_equal("pop3:testuser@localhost:#{@mission.port}", 
+                       transaction.origin)
+					assert_equal('Reader', transaction.reader)
+					assert_equal('Writer', transaction.writer)
+					dest = transaction.destination
+					assert_instance_of(Util::DestinationHttp, dest)
+					assert_equal('http://foo.bar.baz:2345', dest.uri.to_s)
+       }
+       assert_equal(1, counter, 
+                    "poll-block should have been called exactly once")
+      end
+      def teardown
+        @popserver.close
+      end
+    end
 		class TestPollingManager < Test::Unit::TestCase
 			def setup
 				@sys = Mock.new('System')
@@ -29,7 +165,7 @@ module XmlConv
 				@sys.__verify
 			end
 			def test_load_sources
-				File.open(PollingManager::CONFIG_PATH, 'w') { |fh|
+				File.open(CONFIG.polling_file, 'w') { |fh|
 					fh << <<-EOS
 --- !ruby/object:XmlConv::Util::PollingMission
 reader: I2Bdd
@@ -69,42 +205,6 @@ reader: XmlBdd
 				@polling.load_sources { |source|
 					block.call(source)
 				}
-			end
-			def test_file_paths
-				file2 = File.expand_path('file2.txt', @dir)
-				File.open(file2, 'w') { |fh| fh << "File 2\n" }
-				assert_equal([@file1, file2], @polling.file_paths(@dir).sort)
-			end
-			def test_poll
-				backup_dir = File.expand_path('../data', File.dirname(__FILE__))
-				source = Mock.new('Source')
-				source.__next(:directory) { @dir }
-				source.__next(:glob_pattern) { '*' }
-				source.__next(:reader) { 'Reader' }
-				source.__next(:writer) { 'Writer' }
-				source.__next(:destination) { 'http://foo.bar.baz:2345' }
-				source.__next(:debug_recipients) { }
-				source.__next(:error_recipients) { }
-				source.__next(:backup_dir) { backup_dir }
-				@sys.__next(:execute) { |transaction|
-					assert_instance_of(Util::Transaction, transaction)
-					assert_equal("File 1\n", transaction.input)
-					assert_equal('file:' << @file1, transaction.origin)
-					assert_equal('Reader', transaction.reader)
-					assert_equal('Writer', transaction.writer)
-					dest = transaction.destination
-					assert_instance_of(Util::DestinationHttp, dest)
-					assert_equal('http://foo.bar.baz:2345', dest.uri.to_s)
-				}
-				@polling.poll(source)
-				source.__verify
-			end
-			def test_destination
-				dest = @polling.destination('http://foo:bar@baz.com')
-				assert_instance_of(Util::DestinationHttp, dest)
-				assert_equal('baz.com', dest.host)
-				assert_instance_of(URI::HTTP, dest.uri)
-				assert_equal('http://foo:bar@baz.com', dest.uri.to_s)
 			end
 		end
 	end

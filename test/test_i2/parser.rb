@@ -1,11 +1,12 @@
 #!/usr/bin/env ruby
 # I2::TestParser -- xmlconv2 -- 28.06.2004 -- hwyss@ywesee.com
 
-$: << File.dirname(__FILE__)
-$: << File.expand_path('../../src', File.dirname(__FILE__))
+$: << File.expand_path('..', File.dirname(__FILE__))
+$: << File.expand_path('../../lib', File.dirname(__FILE__))
 
 require 'test/unit'
-require 'i2/parser'
+require 'xmlconv/i2/parser'
+require 'config'
 
 module XmlConv
 	module I2

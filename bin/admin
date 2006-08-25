@@ -4,8 +4,8 @@
 $: << File.expand_path('..', File.dirname(__FILE__))
 $: << File.expand_path('../src', File.dirname(__FILE__))
 
-require 'util/application'
-require 'etc/config'
+require 'xmlconv/util/application'
+require 'xmlconv/config'
 require 'readline'
 include Readline
 
@@ -21,7 +21,7 @@ Kernel.trap('INT') {
 
 prompt = 'xmlconv> '
 DRb.start_service
-xmlconv = DRbObject.new(nil, XmlConv::SERVER_URI)
+xmlconv = DRbObject.new(nil, XmlConv::CONFIG.server_url)
 last_error = nil
 priority = -1
 while(line = readline(prompt, true))
