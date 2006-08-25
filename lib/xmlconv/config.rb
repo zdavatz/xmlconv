@@ -21,6 +21,7 @@ module XmlConv
     '/etc/xmlconv/xmlconv.yml',
   ]
   defaults = {
+    'access'            => {},
     'config'			      => default_config_files,
     'db_name'           => 'xmlconv',
     'db_user'           => 'xmlconv',
