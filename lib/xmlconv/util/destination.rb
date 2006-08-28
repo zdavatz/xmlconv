@@ -123,11 +123,9 @@ module XmlConv
           fh.puts(delivery)
           fh.close
           self.class::FTP_CLASS.open(@uri.host, @uri.user, @uri.password) { |conn|
-            conn.login(@uri.user, @uri.password)
             conn.chdir(@uri.path)
             conn.puttextfile(fh.path, delivery.filename)
           }
-          @uri.path = File.join(@uri.path, delivery.filename)
           @status = :ftp_ok
         end
       end
