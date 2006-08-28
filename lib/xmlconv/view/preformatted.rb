@@ -10,22 +10,36 @@ module XmlConv
 			def init
 				super
 				if(@value)	
-					raw = @value.gsub(/>\s+</, "><").gsub(/\r\n?/, "\n")
-						pretty = CGI.pretty(raw)
+          raw = @value.gsub(/>\s+</, "><").gsub(/\r\n?/, "\n")
+          begin
+            pretty = CGI.pretty(raw)
+          rescue
+            pretty = raw
+          end
 					wrap = ''
 					pretty.each_line { |line|
 						if(line.length < BREAK_WIDTH)
 							wrap << line
 						else
-							parts = line.split('" "')
+              indent = line[/^ +/].to_s
+              indent = indent[0,indent.length % (BREAK_WIDTH / 3)]
+							tmpparts = line.split(/(?<=") +(?=")/)
+              parts = []
+              tmpparts.each { |part|
+                if(part.length > BREAK_WIDTH)
+                  parts.concat(part.split(/ /))
+                else
+                  parts.push(part)
+                end
+              }
 							wrapline = parts.shift
 							while(part = parts.shift)
 								if((wrapline.length + part.length) >= BREAK_WIDTH)
 									wrap << wrapline
-									wrap << "\"\n"
-									wrapline = "     \"" << part
+									wrap << "\n"
+									wrapline = indent.dup << (' ' * 5) << part
 								else
-									wrapline << '" "' << part
+									wrapline << ' ' << part
 								end
 							end
 							wrap << wrapline

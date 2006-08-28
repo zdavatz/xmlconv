@@ -13,7 +13,19 @@ module XmlConv
 	module Util
     class Mission
       attr_accessor :reader, :writer, :destination, :error_recipients,
-        :debug_recipients, :backup_dir, :partner
+        :debug_recipients, :backup_dir, :partner, :postprocs
+      def create_transaction
+        transaction = XmlConv::Util::Transaction.new
+        transaction.domain = @domain
+        transaction.partner = @partner
+        transaction.reader = @reader
+        transaction.writer = @writer
+        transaction.debug_recipients = @debug_recipients
+        transaction.error_recipients = @error_recipients
+        transaction.postprocs = @postprocs
+        transaction.destination = Destination.book(@destination)
+        transaction
+      end
     end
 		class PollingMission < Mission
 			attr_accessor :directory, :glob_pattern
@@ -24,17 +36,12 @@ module XmlConv
 				}.compact
 			end
 			def poll
+        @directory = File.expand_path(@directory, CONFIG.project_root)
 				file_paths.each { |path|
 					begin
-						transaction = XmlConv::Util::Transaction.new
+						transaction = create_transaction
 						transaction.input = File.read(path)
-						transaction.partner = @partner
 						transaction.origin = 'file:' << path
-						transaction.reader = @reader
-						transaction.writer = @writer
-						transaction.destination = Destination.book(@destination)
-						transaction.debug_recipients = @debug_recipients
-						transaction.error_recipients = @error_recipients
 						yield transaction
           rescue Exception => e
             puts e
@@ -49,10 +56,13 @@ module XmlConv
     class PopMission < Mission
       attr_accessor :host, :port, :user, :pass, :content_type
       def poll(&block)
-        Net::POP3.start(@host, @port, @user, @pass) { |pop|
+        Net::POP3.start(@host, @port || 110, @user, @pass) { |pop|
           pop.each_mail { |mail|
             source = mail.pop
             begin
+              ## work around a bug in RMail::Parser that cannot deal with
+              ## RFC-2822-compliant CRLF..
+              source.gsub!(/\r\n/, "\n")
               poll_message(RMail::Parser.read(source), &block)
             ensure
               time = Time.now
@@ -72,15 +82,9 @@ module XmlConv
             poll_message(part, &block)
           }
         elsif(@content_type.match(message.header.content_type('text/plain')))
-          transaction = XmlConv::Util::Transaction.new
-          transaction.input = message.body
-          transaction.partner = @partner
+          transaction = create_transaction
+          transaction.input = message.decode
           transaction.origin = sprintf('pop3:%s@%s:%s', @user, @host, @port)
-          transaction.reader = @reader
-          transaction.writer = @writer
-          transaction.destination = Destination.book(@destination)
-          transaction.debug_recipients = @debug_recipients
-          transaction.error_recipients = @error_recipients
           block.call(transaction)
         end
       end
@@ -92,8 +96,6 @@ module XmlConv
 			def load_sources(&block)
 				file = File.open(CONFIG.polling_file)
 				YAML.load_documents(file) { |mission|
-					path = File.expand_path(mission.directory, CONFIG.project_root)
-					mission.directory = path
 					block.call(mission)
 				}
 			ensure

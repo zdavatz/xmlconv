@@ -26,6 +26,7 @@ module XmlConv
 			end
 		end
 		class TransactionLogin < SBSM::State
+			VIEW = View::Login
 			def login
 				if(@session.login)
 					Transaction.new(@session, @model)

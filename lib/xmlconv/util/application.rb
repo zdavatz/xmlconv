@@ -33,6 +33,7 @@ module XmlConv
 			def _execute(transaction)
 				transaction.transaction_id = next_transaction_id
 				transaction.execute
+        transaction.postprocess
 			rescue Exception => error
 				transaction.error = error
 			ensure
@@ -83,8 +84,7 @@ class XmlConvApp < SBSM::DRbServer
 			XmlConv::Util::Application.new
 		}
 		@system.init
-		@dispatch_queue = []
-		@dispatch_mutex = Mutex.new
+		@dispatch_queue = Queue.new
 		if(self::class::POLLING_INTERVAL)
 			start_polling
 		end
@@ -93,23 +93,13 @@ class XmlConvApp < SBSM::DRbServer
 		super(@system)
 	end
 	def dispatch(transaction)
-		@dispatch_mutex.synchronize {
-			@dispatch_queue.push(transaction)
-		}
-		@dispatcher_thread.wakeup
+    @dispatch_queue.push(transaction)
 	end
 	def start_dispatcher
 		@dispatcher_thread = Thread.new {
 			Thread.current.abort_on_exception = true
 			loop { 
-				Thread.stop
-				while(!@dispatch_queue.empty?)
-					transaction = nil
-					@dispatch_mutex.synchronize {
-						transaction = @dispatch_queue.shift
-					}
-					@system.execute(transaction)
-				end
+				@system.execute(@dispatch_queue.pop)
 			}
 		}
 	end
@@ -131,7 +121,9 @@ class XmlConvApp < SBSM::DRbServer
 				begin
 					XmlConv::Util::PollingManager.new(@system).poll_sources
 				rescue Exception => exc
-					XmlConv::LOGGER.error(XmlConv::CONFIG.program_name) { exc.to_s }
+					XmlConv::LOGGER.error(XmlConv::CONFIG.program_name) { 
+            [exc.class, exc.message].concat(exc.backtrace).join("\n")
+          }
 				end
 				sleep(self::class::POLLING_INTERVAL)
 			}

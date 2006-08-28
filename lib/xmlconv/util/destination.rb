@@ -114,15 +114,21 @@ module XmlConv
 				@uri = uri
 			end
       def do_deliver(delivery)
-        fh = Tempfile.new('xmlconv')
-        fh.puts(delivery)
-        fh.close
-        self.class::FTP_CLASS.open(@uri.host, @uri.user, @uri.password) { |conn|
-          conn.chdir(@uri.path)
-          conn.puttextfile(fh.path, delivery.filename)
-        }
-        @uri.path = File.join(@uri.path, delivery.filename)
-        @status = :ftp_ok
+        if(delivery.is_a?(Array))
+          delivery.each { |part| 
+            do_deliver(part) 
+          }
+        else
+          fh = Tempfile.new('xmlconv')
+          fh.puts(delivery)
+          fh.close
+          self.class::FTP_CLASS.open(@uri.host, @uri.user, @uri.password) { |conn|
+            conn.chdir(@uri.path)
+            conn.puttextfile(fh.path, delivery.filename)
+          }
+          @uri.path = File.join(@uri.path, delivery.filename)
+          @status = :ftp_ok
+        end
       end
     end
 		class DestinationHttp < RemoteDestination

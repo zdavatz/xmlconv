@@ -10,13 +10,17 @@ module XmlConv
 	module Util
 		class Transaction
 			include ODBA::Persistable
+			ODBA_SERIALIZABLE = ['@postprocs']
 			MAIL_FROM = 'xmlconv@ywesee.com'
 			SMTP_HANDLER = Net::SMTP
 			attr_accessor :input, :reader, :writer, :destination, :origin, 
-										:transaction_id, :partner, :error,
-										:error_recipients, :debug_recipients
-			attr_reader :output, :model, :start_time, :commit_time, 
+										:transaction_id, :partner, :error, :postprocs,
+										:error_recipients, :debug_recipients, :domain
+			attr_reader :output, :model, :start_time, :commit_time,
 									:input_model, :output_model, :status
+      def initialize
+        @postprocs = []
+      end
 			def execute
 				reader_instance = Conversion.const_get(@reader)
 				writer_instance = Conversion.const_get(@writer)
@@ -49,7 +53,7 @@ Date:   #{@start_time.strftime("%d.%m.%Y")}
 Time:   #{@start_time.strftime("%H:%M:%S")}
 Status: #{status}
 Error:  #{@error}
-Link:   http://janico.ywesee.com/de/transaction/transaction_id/#{@transaction_id}
+Link:   http://#{@domain}/de/transaction/transaction_id/#{@transaction_id}
 
 Input:
 # input start
@@ -75,6 +79,15 @@ Output:
         @input.extend(ODBA::Persistable) if(@input)
         @output.extend(ODBA::Persistable) if(@output)
         super
+      end
+      def postprocess
+        if(@postprocs.respond_to?(:each))
+          @postprocs.each { |klass, *args|
+            next if args.empty?
+            args.push(self)
+            PostProcess.const_get(klass).send(*args)
+          }
+        end
       end
 			def status
 				if(@error)

@@ -14,7 +14,7 @@ module XmlConv
 			LOOKANDFEEL = Custom::Lookandfeel
 			def login
 				if((pass = user_input(:pass)) \
-					&& (pass == XMLConv::CONFIG.pass_hash))
+					&& (pass == CONFIG.pass_hash))
 					@user = Util::KnownUser.new
 				end
 			end
