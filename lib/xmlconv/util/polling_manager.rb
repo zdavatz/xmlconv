@@ -66,7 +66,7 @@ module XmlConv
               poll_message(RMail::Parser.read(source), &block)
             ensure
               time = Time.now
-              name = sprintf("%s.%s.%s", @account, 
+              name = sprintf("%s.%s.%s", @user, 
                              time.strftime("%Y%m%d%H%M%S"), time.usec)
               FileUtils.mkdir_p(@backup_dir)
               path = File.join(@backup_dir, name)
