@@ -20,6 +20,9 @@ module XmlConv
 			def add_invoice(invoice)
 				@invoices.push(invoice)
 			end
+      def empty?
+        @deliveries.empty? && @invoices.empty?
+      end
       def invoiced_amount
         @invoices.inject(0) { |memo, invoice|
           memo + invoice.get_price('SummePositionen').amount.to_f

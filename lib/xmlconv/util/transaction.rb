@@ -17,7 +17,7 @@ module XmlConv
 										:transaction_id, :partner, :error, :postprocs,
 										:error_recipients, :debug_recipients, :domain
 			attr_reader :output, :model, :start_time, :commit_time,
-									:input_model, :output_model, :status
+									:input_model, :output_model
       def initialize
         @postprocs = []
       end
@@ -92,6 +92,8 @@ Output:
 			def status
 				if(@error)
 					:error
+        elsif(@model.empty?)
+          :empty
 				elsif(@destination.respond_to?(:status))
 					@destination.status
 				end
