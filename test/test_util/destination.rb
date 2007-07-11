@@ -249,7 +249,6 @@ module XmlConv
 				delivery = ToSMock.new('Delivery')
 				delivery.__next(:to_s) { 'The Delivery' }
         delivery.__next(:filename) { 'test.dat' }
-        delivery.__next(:filename) { 'test.dat' }
         ftp_session.__next(:chdir) { |path|
           assert_equal('/foo/bar/', path)
         }
@@ -269,7 +268,7 @@ module XmlConv
 				uri = @destination.uri
 				assert_nil(uri.user)
 				assert_nil(uri.password)
-				assert_equal('ftp://xmlconv.ywesee.com:21/foo/bar/test.dat', uri.to_s)
+				assert_equal('ftp://xmlconv.ywesee.com:21/foo/bar/', uri.to_s)
 				DestinationFtp::FTP_CLASS.__verify
 				ftp_session.__verify
 				delivery.__verify

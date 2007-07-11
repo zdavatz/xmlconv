@@ -92,7 +92,7 @@ Output:
 			def status
 				if(@error)
 					:error
-        elsif(@model.empty?)
+        elsif(@model.nil? || @model.empty?)
           :empty
 				elsif(@destination.respond_to?(:status))
 					@destination.status
