@@ -273,6 +273,42 @@ module XmlConv
 				ftp_session.__verify
 				delivery.__verify
 			end
+			def test_deliver__many
+				@destination.uri = 'ftp://testaccount:password@xmlconv.ywesee.com/foo/bar/'
+				ftp_session = Mock.new('FtpSession')
+				delivery = ToSMock.new('Delivery')
+				delivery.__next(:to_s) { 'The Delivery' }
+        delivery.__next(:filename) { 'test.dat' }
+				delivery.__next(:to_s) { 'The Delivery' }
+        delivery.__next(:filename) { 'test.dat' }
+        ftp_session.__next(:chdir) { |path|
+          assert_equal('/foo/bar/', path)
+        }
+        ftp_session.__next(:puttextfile) { |local, remote|
+          assert_equal("The Delivery\n", File.read(local))
+          assert_equal('000.test.dat', remote)
+        }
+        ftp_session.__next(:puttextfile) { |local, remote|
+          assert_equal("The Delivery\n", File.read(local))
+          assert_equal('001.test.dat', remote)
+        }
+				DestinationFtp::FTP_CLASS.__next(:open) { |block, host, user, password| 
+					assert_equal('xmlconv.ywesee.com', host)
+					assert_equal('testaccount', user)
+					assert_equal('password', password)
+					block.call(ftp_session)
+				}
+				@destination.deliver([delivery, delivery])
+				assert_equal(:ftp_ok, @destination.status)
+				# When the delivery is delivered, forget username and Password
+				uri = @destination.uri
+				assert_nil(uri.user)
+				assert_nil(uri.password)
+				assert_equal('ftp://xmlconv.ywesee.com:21/foo/bar/', uri.to_s)
+				DestinationFtp::FTP_CLASS.__verify
+				ftp_session.__verify
+				delivery.__verify
+			end
 		end
 	end
 end

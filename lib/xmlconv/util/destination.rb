@@ -119,16 +119,20 @@ module XmlConv
           deliver_to_connection(conn, delivery)
         }
       end
-      def deliver_to_connection(connection, delivery)
+      def deliver_to_connection(connection, delivery, idx=nil)
         if(delivery.is_a?(Array))
-          delivery.each { |part| 
-            deliver_to_connection(connection, part) 
+          delivery.each_with_index { |part, idx| 
+            deliver_to_connection(connection, part, idx) 
           }
         else
           fh = Tempfile.new('xmlconv')
           fh.puts(delivery)
           fh.flush
-          connection.puttextfile(fh.path, delivery.filename)
+          target = delivery.filename
+          if(idx)
+            target = sprintf("%03i.%s", idx, target)
+          end
+          connection.puttextfile(fh.path, target)
           fh.close!
           @status = :ftp_ok
         end
