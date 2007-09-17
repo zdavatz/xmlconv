@@ -54,6 +54,46 @@ module XmlConv
 					assert_equal('http://foo.bar.baz:2345', dest.uri.to_s)
         }
 			end
+			def test_poll_filtered__match
+				backup_dir = File.expand_path('../data', File.dirname(__FILE__))
+				@mission.directory = @dir
+				@mission.glob_pattern = '*'
+        @mission.partner = 'Partner'
+				@mission.reader = 'Reader'
+				@mission.writer = 'Writer'
+				@mission.destination = 'http://foo.bar.baz:2345'
+				@mission.debug_recipients = nil
+				@mission.error_recipients = nil
+				@mission.backup_dir = backup_dir
+        @mission.filter = "^File\\s*\\d+"
+				@mission.poll { |transaction|
+          flunk "Block should not be called in Filtered Transaction"
+        }
+        assert(true)
+			end
+			def test_poll_filtered__no_match
+				backup_dir = File.expand_path('../data', File.dirname(__FILE__))
+				@mission.directory = @dir
+				@mission.glob_pattern = '*'
+        @mission.partner = 'Partner'
+				@mission.reader = 'Reader'
+				@mission.writer = 'Writer'
+				@mission.destination = 'http://foo.bar.baz:2345'
+				@mission.debug_recipients = nil
+				@mission.error_recipients = nil
+				@mission.backup_dir = backup_dir
+        @mission.filter = "^File\\s*2"
+				@mission.poll { |transaction|
+					assert_instance_of(Util::Transaction, transaction)
+					assert_equal("File 1\n", transaction.input)
+					assert_equal('file:' << @file1, transaction.origin)
+					assert_equal('Reader', transaction.reader)
+					assert_equal('Writer', transaction.writer)
+					dest = transaction.destination
+					assert_instance_of(Util::DestinationHttp, dest)
+					assert_equal('http://foo.bar.baz:2345', dest.uri.to_s)
+        }
+			end
     end
     class TestPopMission < Test::Unit::TestCase
       def setup

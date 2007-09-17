@@ -13,7 +13,7 @@ module XmlConv
 	module Util
     class Mission
       attr_accessor :reader, :writer, :destination, :error_recipients,
-        :debug_recipients, :backup_dir, :partner, :postprocs
+        :debug_recipients, :backup_dir, :partner, :postprocs, :filter
       def create_transaction
         transaction = XmlConv::Util::Transaction.new
         transaction.domain = @domain
@@ -25,6 +25,14 @@ module XmlConv
         transaction.postprocs = @postprocs
         transaction.destination = Destination.book(@destination)
         transaction
+      end
+      def filtered_transaction(src, origin, &block)
+        unless(@filter && Regexp.new(@filter).match(src))
+          transaction = create_transaction
+          transaction.input = src
+          transaction.origin = origin
+          block.call(transaction)
+        end
       end
     end
 		class PollingMission < Mission
@@ -39,10 +47,9 @@ module XmlConv
         @directory = File.expand_path(@directory, CONFIG.project_root)
 				file_paths.each { |path|
 					begin
-						transaction = create_transaction
-						transaction.input = File.read(path)
-						transaction.origin = 'file:' << path
-						yield transaction
+            filtered_transaction(File.read(path), 'file:' << path) { |transaction|
+              yield transaction
+            }
           rescue Exception => e
             puts e
             puts e.backtrace
@@ -82,10 +89,9 @@ module XmlConv
             poll_message(part, &block)
           }
         elsif(@content_type.match(message.header.content_type('text/plain')))
-          transaction = create_transaction
-          transaction.input = message.decode
-          transaction.origin = sprintf('pop3:%s@%s:%s', @user, @host, @port)
-          block.call(transaction)
+          src = message.decode
+          filtered_transaction(src, sprintf('pop3:%s@%s:%s', @user, @host, @port),
+                               &block)
         end
       end
     end
