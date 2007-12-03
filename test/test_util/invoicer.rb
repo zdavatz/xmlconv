@@ -16,14 +16,20 @@ module XmlConv
       end
       def test_group_by_partner
         trans1 = FlexMock.new
-        trans1.mock_handle(:partner) { 'Group1' }
-        trans1.mock_handle(:model) { 'Model1' }
+        trans1.should_receive(:partner)\
+          .times(1).and_return { 'Group1' }
+        trans1.should_receive(:model)\
+          .times(1).and_return { 'Model1' }
         trans2 = FlexMock.new
-        trans2.mock_handle(:partner) { 'Group2' }
-        trans2.mock_handle(:model) { 'Model2' }
+        trans2.should_receive(:partner)\
+          .times(1).and_return { 'Group2' }
+        trans2.should_receive(:model)\
+          .times(1).and_return { 'Model2' }
         trans3 = FlexMock.new
-        trans3.mock_handle(:partner) { 'Group1' }
-        trans3.mock_handle(:model) { 'Model3' }
+        trans3.should_receive(:partner)\
+          .times(1).and_return { 'Group1' }
+        trans3.should_receive(:model)\
+          .times(1).and_return { 'Model3' }
         transactions = [trans1, trans2, trans3]
         expected = {
           'Group1'  => ['Model1', 'Model3'],

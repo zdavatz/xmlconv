@@ -36,6 +36,8 @@ module XmlConv
     'plugin_dir'        => File.expand_path('conversion', code_dir),
     'postproc_dir'      => File.expand_path('postprocess', code_dir),
     'server_url'        => 'druby://localhost:10010',
+    'target_format_fs'  => ',',
+    'target_format_rs'  => "\n",
     'ydim_id'           => nil,
     'vat_rate'          => 7.6,
   }

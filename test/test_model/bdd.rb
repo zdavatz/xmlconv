@@ -6,7 +6,6 @@ $: << File.expand_path('../../lib', File.dirname(__FILE__))
 
 require 'test/unit'
 require 'xmlconv/model/bdd'
-require 'mock'
 require 'flexmock'
 
 module XmlConv
@@ -24,13 +23,13 @@ module XmlConv
 				assert_respond_to(@bdd, :invoices)
 			end
 			def test_add_delivery
-				delivery = Mock.new('Delivery')
+				delivery = FlexMock.new('Delivery')
 				assert_equal([], @bdd.deliveries)
 				@bdd.add_delivery(delivery)
 				assert_equal([delivery], @bdd.deliveries)
 			end
 			def test_add_invoice
-				invoice = Mock.new('Invoice')
+				invoice = FlexMock.new('Invoice')
 				assert_equal([], @bdd.invoices)
 				@bdd.add_invoice(invoice)
 				assert_equal([invoice], @bdd.invoices)
@@ -40,15 +39,16 @@ module XmlConv
         invoice = FlexMock.new
         price = FlexMock.new
         @bdd.invoices.push(invoice, invoice) 
-        invoice.mock_handle(:get_price, 4) { |purpose|
+        invoice.should_receive(:get_price)\
+          .times(4).and_return { |purpose|
           assert_equal('SummePositionen', purpose)
           price
         }
-        price.mock_handle(:amount) { '123.45' }
+        price.should_receive(:amount)\
+          .times(1).and_return { '123.45' }
         assert_equal(246.90, @bdd.invoiced_amount)
         @bdd.deliveries.push(invoice) 
         assert_equal(246.90, @bdd.invoiced_amount)
-        invoice.mock_verify
       end
 		end
 	end
