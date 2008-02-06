@@ -13,7 +13,8 @@ module XmlConv
 	module Util
     class Mission
       attr_accessor :reader, :writer, :destination, :error_recipients,
-        :debug_recipients, :backup_dir, :partner, :postprocs, :filter
+        :debug_recipients, :backup_dir, :partner, :postprocs, :filter, 
+        :tmp_destination
       def create_transaction
         transaction = XmlConv::Util::Transaction.new
         transaction.domain = @domain
@@ -23,7 +24,7 @@ module XmlConv
         transaction.debug_recipients = @debug_recipients
         transaction.error_recipients = @error_recipients
         transaction.postprocs = @postprocs
-        transaction.destination = Destination.book(@destination)
+        transaction.destination = Destination.book(@destination, @tmp_destination)
         transaction
       end
       def filtered_transaction(src, origin, &block)

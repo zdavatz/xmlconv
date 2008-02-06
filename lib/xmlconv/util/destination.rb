@@ -20,13 +20,14 @@ module XmlConv
 				:http_ok				=>	20,
         :ftp_ok         =>  20,
 			}
-      def Destination.book(str)
+      def Destination.book(str, tmp=nil)
 				uri = URI.parse(str)
+        tmp = URI.parse(tmp) if tmp
 				case uri
 				when URI::HTTP
 					DestinationHttp.new(uri)
         when URI::FTP
-          DestinationFtp.new(uri)
+          DestinationFtp.new(uri, tmp)
 				else
 					DestinationDir.new(uri)
 				end
@@ -78,6 +79,7 @@ module XmlConv
 			end
 		end
     class RemoteDestination < Destination
+      attr_accessor :transport
       def deliver(delivery)
         do_deliver(delivery)
       ensure
@@ -108,13 +110,14 @@ module XmlConv
       end
     end
     class DestinationFtp < RemoteDestination
-			FTP_CLASS = Net::FTP # replaceable for testing purposes
-			def initialize(uri = URI.parse('ftp:/'))
+			def initialize(uri = URI.parse('ftp:/'), tmp = nil)
 				super()
+        @tmp = tmp
 				@uri = uri
+        @transport = Net::FTP
 			end
       def do_deliver(delivery)
-        self.class::FTP_CLASS.open(@uri.host, @uri.user, @uri.password) { |conn|
+        @transport.open(@uri.host, @uri.user, @uri.password) { |conn|
           conn.chdir(@uri.path)
           deliver_to_connection(conn, delivery)
         }
@@ -130,22 +133,28 @@ module XmlConv
           fh.flush
           target = delivery.filename
           if(idx)
-            target = sprintf("%03i.%s", idx, target)
+            target = sprintf("%03i_%s", idx, target)
           end
-          connection.puttextfile(fh.path, target)
+          if(@tmp)
+            tmp = File.join(@tmp.path, target)
+            connection.puttextfile(fh.path, tmp)
+            connection.rename(tmp, target)
+          else
+            connection.puttextfile(fh.path, target)
+          end
           fh.close!
           @status = :ftp_ok
         end
       end
     end
 		class DestinationHttp < RemoteDestination
-			HTTP_CLASS = Net::HTTP # replaceable for testing purposes
 			HTTP_HEADERS = {
 				'content-type'	=>	'text/xml',
 			}
 			def initialize(uri = URI.parse('http:/'))
 				super()
 				@uri = uri
+        @transport = Net::HTTP
 			end
       def do_deliver(delivery)
         if(delivery.is_a?(Array))
@@ -161,7 +170,7 @@ module XmlConv
            }
            @status = worst_status
         else
-          self.class::HTTP_CLASS.start(@uri.host, @uri.port) { |http|
+          @transport.start(@uri.host, @uri.port) { |http|
             request = Net::HTTP::Post.new(@uri.path, HTTP_HEADERS)
             if(@uri.user || @uri.password)
               request.basic_auth(@uri.user, @uri.password)
