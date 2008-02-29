@@ -26,6 +26,7 @@ module XmlConv
     'db_name'           => 'xmlconv',
     'db_user'           => 'xmlconv',
     'db_auth'           => '',
+    'default_filename'  => '%s%s_%s.dat',
     'grammar_dir'       => data_dir,
     'log_file'          => STDERR,
     'log_level'         => 'INFO',

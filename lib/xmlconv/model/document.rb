@@ -14,7 +14,8 @@ module XmlConv
         @transaction_id = time.strftime("%Y%m%d%H%M%S#{msec}")
       end
       def filename
-        @filename || sprintf("%s%s_%s.dat", @prefix, @suffix, @transaction_id)
+        @filename || sprintf(XmlConv::CONFIG.default_filename, 
+                             @prefix, @suffix, @transaction_id)
       end
       def to_s
         "" << self
