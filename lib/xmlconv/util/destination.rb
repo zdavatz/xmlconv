@@ -12,11 +12,12 @@ module XmlConv
 	module Util
 		class Destination
 			include ODBA::Persistable
-			attr_accessor :path
-			attr_reader :uri, :status
+			attr_accessor :path, :status
+			attr_reader :uri
 			STATUS_COMPARABLE = {
 				:pending_pickup	=>	10,	
 				:picked_up			=>	20,	
+        :bbmb_ok        =>  20,
 				:http_ok				=>	20,
         :ftp_ok         =>  20,
 			}

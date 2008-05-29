@@ -98,6 +98,11 @@ Output:
 					@destination.status
 				end
 			end
+      def status=(status)
+        if @destination.respond_to?(:status=)
+          @destination.status = status
+        end
+      end
 			def status_comparable
 				if(@destination.respond_to?(:status_comparable))
 					@destination.status_comparable 
