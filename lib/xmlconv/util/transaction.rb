@@ -101,6 +101,8 @@ Output:
       def status=(status)
         if @destination.respond_to?(:status=)
           @destination.status = status
+          @destination.odba_store
+          @destination.status
         end
       end
 			def status_comparable
