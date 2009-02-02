@@ -95,6 +95,10 @@ class XmlConvApp < SBSM::DRbServer
 	def dispatch(transaction)
     @dispatch_queue.push(transaction)
 	end
+  def execute_with_response(transaction)
+    @system.execute(transaction)
+    transaction.response.to_s
+  end
 	def start_dispatcher
 		@dispatcher_thread = Thread.new {
 			Thread.current.abort_on_exception = true
