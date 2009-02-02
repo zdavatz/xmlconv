@@ -96,7 +96,11 @@ class XmlConvApp < SBSM::DRbServer
     @dispatch_queue.push(transaction)
 	end
   def execute_with_response(transaction)
-    @system.execute(transaction)
+    begin
+      @system.execute(transaction)
+    rescue Exception => e
+      puts "rescued #{e.class}"
+    end
     transaction.response.to_s
   end
 	def start_dispatcher

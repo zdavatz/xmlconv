@@ -94,11 +94,9 @@ Output:
         responses[delivery] = response
       end
       def response
-        if @responses && !@responses.empty?
-          reader_instance = Conversion.const_get(@reader)
-          if reader_instance.respond_to?(:respond)
-            reader_instance.respond(@model, @responses)
-          end
+        reader_instance = Conversion.const_get(@reader)
+        if reader_instance.respond_to?(:respond)
+          reader_instance.respond(self, responses)
         end
       end
       def responses
