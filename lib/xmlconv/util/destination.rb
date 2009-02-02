@@ -44,6 +44,9 @@ module XmlConv
 			def status_comparable
 				self::class::STATUS_COMPARABLE[@status].to_i				
 			end
+      def sanitize(str)
+        str.to_s.gsub ' ', '+'
+      end
 			def forget_credentials!
 			end
 		end
@@ -64,19 +67,19 @@ module XmlConv
         else
           FileUtils.mkdir_p(@path)
           @filename = delivery.filename
-          path = File.expand_path(@filename, @path)
+          path = File.expand_path(sanitize(@filename), @path)
           File.open(path, 'w') { |fh| fh << delivery.to_s }
         end
 			end
 			def update_status
 				if(@status == :pending_pickup \
-					&& !File.exist?(File.expand_path(@filename.to_s, @path)))
+					&& !File.exist?(File.expand_path(sanitize(@filename), @path)))
 					@status = :picked_up
 					odba_store
 				end
 			end
 			def uri
-				URI.parse("file:#{File.expand_path(@filename.to_s, @path)}")
+				URI.parse("file:#{File.expand_path(sanitize(@filename), @path)}")
 			end
 		end
     class RemoteDestination < Destination
