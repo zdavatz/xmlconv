@@ -45,7 +45,7 @@ module XmlConv
 				self::class::STATUS_COMPARABLE[@status].to_i				
 			end
       def sanitize(str)
-        str.to_s.gsub ' ', '+'
+        str.to_s.gsub(/[^a-zA-Z0-9 ]/, '').gsub(' ', '+')
       end
 			def forget_credentials!
 			end
