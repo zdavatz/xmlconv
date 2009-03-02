@@ -89,7 +89,7 @@ class XmlConvApp < SBSM::DRbServer
 			start_polling
 		end
 		start_dispatcher
-		start_invoicer
+		start_invoicer if XmlConv::CONFIG.run_invoicer
 		super(@system)
 	end
 	def dispatch(transaction)
