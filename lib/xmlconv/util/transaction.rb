@@ -10,13 +10,13 @@ module XmlConv
 	module Util
 		class Transaction
 			include ODBA::Persistable
-			ODBA_SERIALIZABLE = ['@postprocs', '@responses']
+			ODBA_SERIALIZABLE = ['@postprocs', '@responses', '@arguments']
 			MAIL_FROM = 'xmlconv@ywesee.com'
 			SMTP_HANDLER = Net::SMTP
       attr_accessor :input, :reader, :writer, :destination, :origin,
                     :transaction_id, :partner, :error, :postprocs,
                     :error_recipients, :debug_recipients, :domain,
-                    :response
+                    :response, :arguments
 			attr_reader :output, :model, :start_time, :commit_time,
 									:input_model, :output_model
       def initialize
@@ -27,8 +27,9 @@ module XmlConv
 				writer_instance = Conversion.const_get(@writer)
 				@start_time = Time.now
 				input_model = reader_instance.parse(@input)
-				@model = reader_instance.convert(input_model)
-				output_model = writer_instance.convert(@model)
+        @arguments ||= []
+				@model = reader_instance.convert(input_model, *@arguments)
+				output_model = writer_instance.convert(@model, *@arguments)
 				@output = output_model.to_s
 				@destination.deliver(output_model)
 				@commit_time = Time.now

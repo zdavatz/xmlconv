@@ -18,6 +18,10 @@ if(log_file.is_a?(String))
 end
 logger = Logger.new(log_file)
 logger.level = Logger.const_get(config.log_level)
+logger.info(config.program_name) do
+  require 'pp'
+  config.pretty_inspect
+end
 XmlConv::LOGGER = logger
 
 XmlConv::Util.autoload(config.plugin_dir, 'plugin')

@@ -20,15 +20,18 @@ module XmlConv
         :bbmb_ok        =>  20,
 				:http_ok				=>	20,
         :ftp_ok         =>  20,
+        :sftp_ok        =>  20,
 			}
       def Destination.book(str, tmp=nil)
 				uri = URI.parse(str)
         tmp = URI.parse(tmp) if tmp
-				case uri
-				when URI::HTTP
+				case uri.scheme.to_s.downcase
+				when 'http'
 					DestinationHttp.new(uri)
-        when URI::FTP
+        when 'ftp'
           DestinationFtp.new(uri, tmp)
+        when 'sftp'
+          DestinationSftp.new(uri, tmp)
 				else
 					DestinationDir.new(uri)
 				end
@@ -45,7 +48,7 @@ module XmlConv
 				self::class::STATUS_COMPARABLE[@status].to_i				
 			end
       def sanitize(str)
-        str.to_s.gsub(/[^a-zA-Z0-9 ]/, '').gsub(' ', '+')
+        str.to_s.gsub(/[^a-zA-Z0-9 _.]/, '').gsub(' ', '+')
       end
 			def forget_credentials!
 			end
@@ -186,5 +189,35 @@ module XmlConv
         end
 			end
 		end
+    class DestinationSftp < RemoteDestination
+      def initialize(uri = URI.parse('sftp:/'))
+        require 'net/sftp'
+        super()
+        @uri = uri
+        @transport = Net::SFTP
+      end
+      def do_deliver(delivery)
+        @transport.start(@uri.host, @uri.user,
+                         :keys => CONFIG.ssh_identities) { |conn|
+          deliver_to_connection(conn, delivery)
+        }
+      end
+      def deliver_to_connection(connection, delivery, idx=nil)
+        if(delivery.is_a?(Array))
+          delivery.each_with_index { |part, idx|
+            deliver_to_connection(connection, part, idx)
+          }
+        else
+          target = delivery.filename
+          if(idx)
+            target = sprintf("%03i_%s", idx, target)
+          end
+          connection.file.open(File.join(@uri.path, target), "w") do |fh|
+            fh.puts delivery
+          end
+          @status = :sftp_ok
+        end
+      end
+    end
 	end
 end

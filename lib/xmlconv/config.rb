@@ -37,6 +37,7 @@ module XmlConv
     'plugin_dir'        => File.expand_path('conversion', code_dir),
     'postproc_dir'      => File.expand_path('postprocess', code_dir),
     'server_url'        => 'druby://localhost:10010',
+    'ssh_identities'    => [],
     'target_format_fs'  => ',',
     'target_format_rs'  => "\n",
     'ydim_id'           => nil,
