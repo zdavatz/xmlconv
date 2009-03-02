@@ -10,23 +10,25 @@ class Invoicer
   class << self
     def create_invoice(time_range, groups, date, currency='CHF')
       time = Time.now
-      format = "Umsatzbeteiligung %s\nCHF %1.2f Umsatz\naus %i Rechnungs-Übermittlungen"
+      format = XmlConv::CONFIG.invoice_item_format
       ydim_connect { |client|
-        ydim_inv = client.create_invoice(YDIM_ID)
-        ydim_inv.description = sprintf("Umsatzbeteiligung %s-%s", 
+        ydim_inv = client.create_invoice(XmlConv::CONFIG.ydim_id)
+        ydim_inv.description = sprintf(XmlConv::CONFIG.invoice_format,
                                        time_range.first.strftime("%d.%m.%Y"),
                                        (time_range.last - 1).strftime("%d.%m.%Y"))
         ydim_inv.date = date
         ydim_inv.currency = currency
         ydim_inv.payment_period = 30
+        default_rate = XmlConv::CONFIG.commission
         item_data = groups.sort.collect { |group, bdds|
+          rate = XmlConv::CONFIG.group_commissions[group] || default_rate
           amount = bdds.inject(0) { |memo, bdd| memo + bdd.invoiced_amount }
           {
-            :price    =>  (amount * 3.0) / 1000.0,
+            :price    =>  (amount * rate) / 100.0,
             :quantity =>  1,
-            :text     =>  sprintf(format, group.to_s, amount, bdds.size),
+            :text     =>  sprintf(format, group.to_s, currency, amount, bdds.size),
             :time			=>	Time.local(date.year, date.month, date.day),
-            :unit     =>  "0.3%",
+            :unit     =>  ("%3.2f%%" % rate).gsub(/0+%/, '%'),
           }
         }
         client.add_items(ydim_inv.unique_id, item_data)
