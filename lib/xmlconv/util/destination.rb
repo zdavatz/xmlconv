@@ -21,6 +21,7 @@ module XmlConv
 				:http_ok				=>	20,
         :ftp_ok         =>  20,
         :sftp_ok        =>  20,
+        :mail_ok        =>  20,
 			}
       def Destination.book(str, tmp=nil)
 				uri = URI.parse(str)
@@ -32,6 +33,8 @@ module XmlConv
           DestinationFtp.new(uri, tmp)
         when 'sftp'
           DestinationSftp.new(uri, tmp)
+        when 'mailto'
+          DestinationMail.new(uri)
 				else
 					DestinationDir.new(uri)
 				end
@@ -189,6 +192,31 @@ module XmlConv
         end
 			end
 		end
+    class DestinationMail < Destination
+      def initialize(uri = URI.parse('mailto:noone@nowhere.org'))
+				@uri = uri
+        super()
+      end
+      def deliver(delivery)
+        recipients = [@uri.to].compact
+        recipients.uniq!
+        return if(recipients.empty?)
+        subject = 'XmlConv - Delivery'
+        mail = TMail::Mail.new
+        mail.set_content_type('text', 'plain', 'charset'=>'ISO-8859-1')
+        mail.body = delivery.to_s
+        mail.from = XmlConv::CONFIG.mail_from
+        mail.to = recipients
+        mail.subject = subject
+        mail.date = Time.now
+        mail['User-Agent'] = 'XmlConv::Util::Destination'
+        Net::SMTP.start(XmlConv::CONFIG.mail_host) { |smtp|
+          smtp.sendmail(mail.encoded, XmlConv::CONFIG.mail_from, recipients)
+        }
+        @status = :mail_ok
+        odba_store
+      end
+    end
     class DestinationSftp < RemoteDestination
       def initialize(uri = URI.parse('sftp:/'))
         require 'net/sftp'

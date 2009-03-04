@@ -34,6 +34,8 @@ module XmlConv
     'invoice_item_format' => "Commission %s\nCHF %1.2f Turnover\nout of %i transmitted invoices",
     'log_file'            => STDERR,
     'log_level'           => 'INFO',
+    'mail_host'           => 'localhost',
+    'mail_from'           => 'xmlconv@ywesee.com',
     'pass_hash'           => nil,
     'polling_file'        => conf_dir,
     'program_name'        => 'XmlConv2',

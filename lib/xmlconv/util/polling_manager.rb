@@ -97,6 +97,42 @@ module XmlConv
         end
       end
     end
+    class SftpMission < Mission
+      attr_accessor :origin, :glob_pattern
+      def file_names(sftp, uri)
+        pattern = @glob_pattern || '*'
+        sftp.dir.entries(uri.path).collect do |entry|
+          name = entry.name
+          name if File.fnmatch pattern, name
+        end.compact
+      end
+      def poll(&block)
+        uri = URI.parse(@origin)
+        require 'net/sftp'
+        Net::SFTP.start(uri.host, uri.user,
+                        :keys => CONFIG.ssh_identities) do |sftp|
+          file_names(sftp, uri).each do |name|
+            begin
+              path = File.join uri.path, name
+              origin = File.join @origin, name
+              source = sftp.file.open path do |fh| fh.read end
+              filtered_transaction source, origin do |trans|
+                block.call trans
+              end
+            rescue Exception => e
+              puts e
+              puts e.backtrace
+            ensure
+              FileUtils.mkdir_p(@backup_dir)
+              File.open File.join(@backup_dir, name), 'w' do |fh|
+                fh.puts source
+              end
+              sftp.remove! path
+            end
+          end
+        end
+      end
+    end
 		class PollingManager
 			def initialize(system)
 				@system = system

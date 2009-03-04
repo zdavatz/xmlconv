@@ -11,6 +11,7 @@ module XmlConv
 		class Transaction
 			include ODBA::Persistable
 			ODBA_SERIALIZABLE = ['@postprocs', '@responses', '@arguments']
+      odba_index :invoice_ids
 			MAIL_FROM = 'xmlconv@ywesee.com'
 			SMTP_HANDLER = Net::SMTP
       attr_accessor :input, :reader, :writer, :destination, :origin,
@@ -37,6 +38,11 @@ module XmlConv
 			ensure
 				@destination.forget_credentials!
 			end
+      def invoice_ids
+        @model.invoices.collect do |inv|
+          inv.invoice_id.last.to_s.gsub /^0+/, ''
+        end
+      end
 			def notify
 				recipients = [@debug_recipients]
 				subject = 'XmlConv2 - Debug-Notification'

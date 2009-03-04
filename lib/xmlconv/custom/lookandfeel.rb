@@ -27,6 +27,7 @@ module XmlConv
 					:status_http_ok						=>	'&Uuml;bertragung erfolgreich',
 					:status_http_not_found		=>	'URI nicht gefunden',
 					:status_http_unauthorized	=>	'Keine Berechtigung',
+					:status_mail_ok						=>	'Mail&uuml;bertragung erfolgreich',
 					:status_open							=>	'Offen',
 					:status_pending_pickup		=>	'Bereit zum Abholen',
 					:status_picked_up					=>	'Abgeholt',
