@@ -113,6 +113,7 @@ class XmlConvApp < SBSM::DRbServer
 	end
   def start_invoicer
     @invoicer_thread = Thread.new {
+      Thread.current.abort_on_exception = true
       loop { 
         this_month = Date.today
         next_month = this_month >> 1
