@@ -140,8 +140,8 @@ module XmlConv
       def poll(&block)
         uri = URI.parse(@origin)
         require 'net/sftp'
-        Net::SFTP.start(uri.host, uri.user,
-                        :keys => CONFIG.ssh_identities) do |sftp|
+        Net::SFTP.open(uri.host, uri.user,
+                       :keys => CONFIG.ssh_identities) do |sftp|
           file_names(sftp, uri).each do |name|
             begin
               path = File.join uri.path, name
