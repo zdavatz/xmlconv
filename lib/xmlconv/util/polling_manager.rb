@@ -141,6 +141,7 @@ module XmlConv
         uri = URI.parse(@origin)
         require 'net/sftp'
         Net::SFTP.start(uri.host, uri.user,
+                        :user_known_hosts_file => CONFIG.ssh_known_hosts_file,
                         :keys => CONFIG.ssh_identities) do |sftp|
           file_names(sftp, uri).each do |name|
             begin

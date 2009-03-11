@@ -46,6 +46,7 @@ module XmlConv
                                     #  applications delegate invoicing to bbmb
     'server_url'          => 'druby://localhost:10010',
     'ssh_identities'      => [],
+    'ssh_known_hosts_file'=> File.expand_path('known_hosts', conf_dir),
     'target_format_fs'    => ',',
     'target_format_rs'    => "\n",
     'ydim_id'             => nil,
