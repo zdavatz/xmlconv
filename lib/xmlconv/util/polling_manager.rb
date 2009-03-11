@@ -97,6 +97,37 @@ module XmlConv
         end
       end
     end
+    class FtpMission < Mission
+      attr_accessor :origin, :glob_pattern
+      def file_names(ftp)
+        pattern = @glob_pattern || '*'
+        ftp.nlst.select do |name| File.fnmatch pattern, name end
+      end
+      def poll(&block)
+        uri = URI.parse(@origin)
+        origin_dir = "ftp://#{uri.user}@#{uri.host}#{uri.path}"
+        require 'net/ftp'
+        Net::FTP.start(uri.host, uri.user, uri.password) do |ftp|
+          ftp.chdir uri.path
+          file_names(ftp).each do |name|
+            begin
+              origin = File.join origin_dir, name
+              FileUtils.mkdir_p(@backup_dir)
+              target = File.join(@backup_dir, name)
+              ftp.gettextfile name, target
+              filtered_transaction File.read(target), origin do |trans|
+                block.call trans
+              end
+            rescue Exception => e
+              puts e
+              puts e.backtrace
+            ensure
+              ftp.delete name
+            end
+          end
+        end
+      end
+    end
     class SftpMission < Mission
       attr_accessor :origin, :glob_pattern
       def file_names(sftp, uri)
