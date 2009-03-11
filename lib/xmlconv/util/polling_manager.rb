@@ -107,7 +107,7 @@ module XmlConv
         uri = URI.parse(@origin)
         origin_dir = "ftp://#{uri.user}@#{uri.host}#{uri.path}"
         require 'net/ftp'
-        Net::FTP.start(uri.host, uri.user, uri.password) do |ftp|
+        Net::FTP.open(uri.host, uri.user, uri.password) do |ftp|
           ftp.chdir uri.path
           file_names(ftp).each do |name|
             begin
@@ -140,8 +140,8 @@ module XmlConv
       def poll(&block)
         uri = URI.parse(@origin)
         require 'net/sftp'
-        Net::SFTP.open(uri.host, uri.user,
-                       :keys => CONFIG.ssh_identities) do |sftp|
+        Net::SFTP.start(uri.host, uri.user,
+                        :keys => CONFIG.ssh_identities) do |sftp|
           file_names(sftp, uri).each do |name|
             begin
               path = File.join uri.path, name
