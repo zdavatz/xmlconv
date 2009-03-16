@@ -7,23 +7,30 @@ module XmlConv
 	module View
 		BREAK_WIDTH = 65
 		class Preformatted < HtmlGrid::Value
-			def init
-				super
-				if(@value)	
+      def init
+        super
+        pretty = ''
+        if(@value)
           raw = @value.gsub(/>\s+</, "><").gsub(/\r\n?/, "\n")
-          begin
-            pretty = CGI.pretty(raw)
-          rescue
-            pretty = raw
+          if /^<\?xml/.match(raw)
+            require 'rexml/document'
+            doc = REXML::Document.new raw
+            REXML::Formatters::Pretty.new.write doc, pretty
+          elsif
+            begin
+              pretty = CGI.pretty(raw)
+            rescue
+              pretty = raw
+            end
           end
-					wrap = ''
-					pretty.each_line { |line|
-						if(line.length < BREAK_WIDTH)
-							wrap << line
-						else
+          wrap = ''
+          pretty.each_line { |line|
+            if(line.length < BREAK_WIDTH)
+              wrap << line
+            else
               indent = line[/^ +/].to_s
               indent = indent[0,indent.length % (BREAK_WIDTH / 3)]
-							tmpparts = line.split(/(?<=") +(?=")/)
+              tmpparts = line.split(/(?<=") +(?=")/)
               parts = []
               tmpparts.each { |part|
                 if(part.length > BREAK_WIDTH)
@@ -32,22 +39,22 @@ module XmlConv
                   parts.push(part)
                 end
               }
-							wrapline = parts.shift
-							while(part = parts.shift)
-								if((wrapline.length + part.length) >= BREAK_WIDTH)
-									wrap << wrapline
-									wrap << "\n"
-									wrapline = indent.dup << (' ' * 5) << part
-								else
-									wrapline << ' ' << part
-								end
-							end
-							wrap << wrapline
-						end
-					}
-					@value = CGI.escapeHTML(wrap)
-				end
-			end
+              wrapline = parts.shift
+              while(part = parts.shift)
+                if((wrapline.length + part.length) >= BREAK_WIDTH)
+                  wrap << wrapline
+                  wrap << "\n"
+                  wrapline = indent.dup << (' ' * 5) << part
+                else
+                  wrapline << ' ' << part
+                end
+              end
+              wrap << wrapline
+            end
+          }
+          @value = CGI.escapeHTML(wrap)
+        end
+      end
 		end
 	end
 end
