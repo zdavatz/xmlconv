@@ -14,8 +14,10 @@ module XmlConv
           raw = @value.gsub(/>\s+</, "><").gsub(/\r\n?/, "\n")
           if /^<\?xml/.match(raw)
             require 'rexml/document'
-            doc = REXML::Document.new raw
-            REXML::Formatters::Pretty.new.write doc, pretty
+            raw.scan /<\?xml.*?>(?=<\?xml|\z)/ do |part|
+              doc = REXML::Document.new part
+              REXML::Formatters::Pretty.new.write doc, pretty
+            end
           elsif
             begin
               pretty = CGI.pretty(raw)
