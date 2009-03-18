@@ -226,6 +226,7 @@ module XmlConv
       end
       def do_deliver(delivery)
         @transport.start(@uri.host, @uri.user,
+                         :user_known_hosts_file => CONFIG.ssh_known_hosts_file,
                          :keys => CONFIG.ssh_identities) { |conn|
           deliver_to_connection(conn, delivery)
         }
