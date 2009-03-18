@@ -32,7 +32,7 @@ module XmlConv
         when 'ftp'
           DestinationFtp.new(uri, tmp)
         when 'sftp'
-          DestinationSftp.new(uri, tmp)
+          DestinationSftp.new(uri)
         when 'mailto'
           DestinationMail.new(uri)
 				else
