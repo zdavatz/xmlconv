@@ -11,19 +11,11 @@ module XmlConv
         super
         pretty = ''
         if(@value)
-          raw = @value.gsub(/>\s+</, "><").gsub(/\r\n?/, "\n")
-          if /^<\?xml/.match(raw)
-            require 'rexml/document'
-            raw.scan /<\?xml.*?>(?=<\?xml|\z)/ do |part|
-              doc = REXML::Document.new part
-              REXML::Formatters::Pretty.new.write doc, pretty
-            end
-          elsif
-            begin
-              pretty = CGI.pretty(raw)
-            rescue
-              pretty = raw
-            end
+          raw = @value.gsub(/>\s+</, ">\n<").gsub(/\r\n?/, "\n")
+          begin
+            pretty = CGI.pretty(raw)
+          rescue
+            pretty = raw
           end
           wrap = ''
           pretty.each_line { |line|
