@@ -231,16 +231,13 @@ module XmlConv
           deliver_to_connection(conn, delivery)
         }
       end
-      def deliver_to_connection(connection, delivery, idx=nil)
+      def deliver_to_connection(connection, delivery)
         if(delivery.is_a?(Array))
-          delivery.each_with_index { |part, idx|
-            deliver_to_connection(connection, part, idx)
+          delivery.each { |part|
+            deliver_to_connection(connection, part)
           }
         else
           target = delivery.filename
-          if(idx)
-            target = sprintf("%03i_%s", idx, target)
-          end
           connection.file.open(File.join(@uri.path, target), "w") do |fh|
             fh.puts delivery
           end
