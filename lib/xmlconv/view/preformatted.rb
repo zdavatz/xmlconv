@@ -11,7 +11,7 @@ module XmlConv
         super
         pretty = ''
         if(@value)
-          raw = @value.gsub(/>\s*</, ">\n<").gsub(/\r\n?/, "\n")
+          raw = @value.gsub(/>\s+</, "><").gsub(/\r\n?/, "\n")
           begin
             pretty = CGI.pretty(raw)
           rescue
