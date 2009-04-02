@@ -23,7 +23,7 @@ module XmlConv
   defaults = {
     'access'              => {},
     'commission'          => 0.3, ## Commission in percent
-    'config'			        => default_config_files,
+    'config'              => default_config_files,
     'db_name'             => 'xmlconv',
     'db_user'             => 'xmlconv',
     'db_auth'             => '',
@@ -50,6 +50,7 @@ module XmlConv
     'target_format_fs'    => ',',
     'target_format_rs'    => "\n",
     'ydim_id'             => nil,
+    'ydim_config'         => nil,
     'vat_rate'            => 7.6,
   }
 

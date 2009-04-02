@@ -54,6 +54,9 @@ class Invoicer
     end
     def ydim_connect(&block)
       config = YDIM::Client::CONFIG
+      if(path = XmlConv::CONFIG.ydim_config)
+        config.load(path)
+      end
       server = DRbObject.new(nil, config.server_url)
       client = YDIM::Client.new(config)
       key = OpenSSL::PKey::DSA.new(File.read(config.private_key))
