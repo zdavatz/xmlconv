@@ -31,7 +31,7 @@ module XmlConv
     'grammar_dir'         => data_dir,
     'group_commissions'   => {}, ## Commission per Group in percent
     'invoice_format'      => "Commission %s-%s",
-    'invoice_item_format' => "Commission %s\nCHF %1.2f Turnover\nout of %i transmitted invoices",
+    'invoice_item_format' => "Commission %s\n%s %1.2f Turnover\nout of %i transmitted invoices",
     'log_file'            => STDERR,
     'log_level'           => 'INFO',
     'mail_host'           => 'localhost',
