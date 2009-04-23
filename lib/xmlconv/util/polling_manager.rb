@@ -5,6 +5,7 @@ require 'fileutils'
 require 'uri'
 require 'yaml'
 require 'xmlconv/util/destination'
+require 'xmlconv/util/mail'
 require 'xmlconv/util/transaction'
 require 'net/pop'
 require 'rmail'
@@ -179,9 +180,15 @@ module XmlConv
 			end
 			def poll_sources
 				load_sources { |source|
-          source.poll { |transaction|
-            @system.execute(transaction)
-          }
+          begin
+            source.poll { |transaction|
+              @system.execute(transaction)
+            }
+          rescue Exception => e
+            subject = 'XmlConv2 - Polling-Error'
+            body = [e.class, e.message].concat(e.backtrace).join("\n")
+            Util::Mail.notify source.error_recipients, subject, body
+          end
 				}
 			end
 		end

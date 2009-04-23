@@ -7,11 +7,15 @@ $: << File.expand_path('../../lib', File.dirname(__FILE__))
 require 'test/unit'
 require 'xmlconv/util/polling_manager'
 require 'mock'
+require 'flexmock'
 require 'rexml/document'
 require 'config'
 
 module XmlConv
 	module Util
+    module Mail
+      SMTP_HANDLER = FlexMock.new('SMTP-Handler')
+    end
     class TestPollingMission < Test::Unit::TestCase
       def setup
         @mission = PollingMission.new
@@ -191,6 +195,7 @@ module XmlConv
       end
     end
 		class TestPollingManager < Test::Unit::TestCase
+      include FlexMock::TestCase
 			def setup
 				@sys = Mock.new('System')
 				@polling = PollingManager.new(@sys)
@@ -203,6 +208,7 @@ module XmlConv
 			def teardown
 				FileUtils.rm_rf(@dir) 
 				@sys.__verify
+        super
 			end
 			def test_load_sources
 				File.open(CONFIG.polling_file, 'w') { |fh|
@@ -217,7 +223,7 @@ directory: "./test/test_util/data/xml"
 destination: "http://user:pass@foo.bar.baz"
 writer: BddI2
 reader: XmlBdd
-				EOS
+          EOS
 				}
 				block = nil
 				block3 = Proc.new { |source| 
@@ -244,6 +250,50 @@ reader: XmlBdd
 					block.call(source)
 				}
 			end
+      def test_poll__general_error
+        mission1 = flexmock(YAML.load <<-EOS)
+--- !ruby/object:XmlConv::Util::PollingMission
+reader: I2Bdd
+directory: "./test/test_util/data/i2"
+writer: BddXml
+destination: "http://example.com:12345"
+error_recipients:
+ - test@ywesee.com
+        EOS
+        mission2 = flexmock(YAML.load <<-EOS)
+--- !ruby/object:XmlConv::Util::PollingMission
+directory: "./test/test_util/data/xml"
+destination: "http://user:pass@foo.bar.baz"
+writer: BddI2
+reader: XmlBdd
+error_recipients:
+ - test@ywesee.com
+        EOS
+
+        flexmock(YAML).should_receive(:load_documents).and_return do |mission, block|
+          block.call(mission1)
+          block.call(mission2)
+        end
+        executed_mission2 = false
+        mission1.should_receive(:poll).times(1).and_return do
+          raise "Something went wrong (simulated Error)"
+        end
+        mission2.should_receive(:poll).times(1).and_return do
+          executed_mission2 = true
+          assert true # passed the test: the second mission was executed
+        end
+        flexmock(Util::Mail).should_receive(:notify).times(1)\
+          .and_return do |recipients, subject, body|
+          assert_equal [ 'test@ywesee.com' ], recipients
+          assert_equal 'XmlConv2 - Polling-Error', subject
+          assert_equal <<-EOS, body[0,52]
+RuntimeError
+Something went wrong (simulated Error)
+          EOS
+        end
+        @polling.poll_sources
+        assert executed_mission2, "Polling choked on Error"
+      end
 		end
 	end
 end

@@ -12,6 +12,8 @@ module XmlConv
 	module I2
 		class TestParser < Test::Unit::TestCase
 			def setup
+        XmlConv::CONFIG.grammar_dir = File.expand_path('../../data/grammar',
+                                                       File.dirname(__FILE__))
 				@parser = XmlConv::I2.cached_parser
 			end
 			def test_parser_class

@@ -21,9 +21,9 @@ module XmlConv
 		module_function :const_get
 	end
 	module Util
-		class Transaction
-			SMTP_HANDLER = Mock.new('SMTP-Handler')
-		end
+    module Mail
+      SMTP_HANDLER = Mock.new('SMTP-Handler')
+    end
 		class TestTransaction < Test::Unit::TestCase
 			def setup
 				@transaction = Util::Transaction.new
@@ -101,7 +101,7 @@ module XmlConv
 			def test_notify
 				@transaction.instance_variable_set('@start_time', Time.now)
 				@transaction.error_recipients = ['bar']
-				smtp = Transaction::SMTP_HANDLER
+				smtp = Mail::SMTP_HANDLER
 				@transaction.notify
 				@transaction.debug_recipients = ['foo']
 				mail = Mock.new('MailSession')

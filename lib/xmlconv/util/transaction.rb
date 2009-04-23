@@ -3,8 +3,7 @@
 
 require 'odba'
 require 'xmlconv/util/destination'
-require 'net/smtp'
-require 'tmail'
+require 'xmlconv/util/mail'
 
 module XmlConv
 	module Util
@@ -12,8 +11,6 @@ module XmlConv
 			include ODBA::Persistable
 			ODBA_SERIALIZABLE = ['@postprocs', '@responses', '@arguments']
       odba_index :invoice_ids
-			MAIL_FROM = 'xmlconv@ywesee.com'
-			SMTP_HANDLER = Net::SMTP
       attr_accessor :input, :reader, :writer, :destination, :origin,
                     :transaction_id, :partner, :error, :postprocs,
                     :error_recipients, :debug_recipients, :domain,
@@ -54,9 +51,7 @@ module XmlConv
 				recipients.compact!
 				recipients.uniq!
 				return if(recipients.empty?)
-				mail = TMail::Mail.new
-				mail.set_content_type('text', 'plain', 'charset'=>'ISO-8859-1')
-				mail.body = <<-EOS
+				body = <<-EOS
 Date:   #{@start_time.strftime("%d.%m.%Y")}
 Time:   #{@start_time.strftime("%H:%M:%S")}
 Status: #{status}
@@ -73,15 +68,7 @@ Output:
 #{@output}
 # output end
 				EOS
-				mail.from = self::class::MAIL_FROM
-				mail.to = recipients
-				mail.subject = subject
-				mail.date = Time.now
-				mail['User-Agent'] = 'XmlConv::Util::Transaction'
-
-				self.class::SMTP_HANDLER.start('mail.ywesee.com') { |smtp|
-					smtp.sendmail(mail.encoded, self::class::MAIL_FROM, recipients)
-				}
+        Util::Mail.notify recipients, subject, body
 			end
       def odba_store
         @input.extend(ODBA::Persistable) if(@input)

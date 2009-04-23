@@ -359,7 +359,8 @@ module XmlConv
         @transport.should_receive(:start).and_return { |host, user, opts, block| 
           assert_equal('xmlconv.ywesee.com', host)
           assert_equal('testaccount', user)
-          assert_equal({:keys => []}, opts)
+          assert_equal([], opts[:keys])
+          assert_instance_of(String, opts[:user_known_hosts_file])
           block.call(sftp_session)
         }
         file_operations.should_receive(:open).and_return do |path, mode, block|
@@ -389,10 +390,11 @@ module XmlConv
         @transport.should_receive(:start).and_return { |host, user, opts, block| 
           assert_equal('xmlconv.ywesee.com', host)
           assert_equal('testaccount', user)
-          assert_equal({:keys => []}, opts)
+          assert_equal([], opts[:keys])
+          assert_instance_of(String, opts[:user_known_hosts_file])
           block.call(sftp_session)
         }
-        expecteds = %w{/foo/bar/000_test.dat /foo/bar/001_test.dat}
+        expecteds = %w{/foo/bar/test.dat /foo/bar/test.dat}
         file_operations.should_receive(:open).and_return do |path, mode, block|
           assert_equal(expecteds.shift, path)
           assert_equal 'w', mode
