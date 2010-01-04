@@ -19,7 +19,10 @@ Kernel.trap('INT') {
 	end
 }
 
-prompt = 'xmlconv> '
+domain = XmlConv::CONFIG.domain
+$0 = "#{domain} (Admin-Tool)"
+prompt = "#{domain}> "
+
 DRb.start_service
 xmlconv = DRbObject.new(nil, XmlConv::CONFIG.server_url)
 last_error = nil
@@ -42,7 +45,7 @@ while(line = readline(prompt, true))
 	when /^last_error/
 		begin
 			$stdout.puts eval(line)
-		rescue Exception => last_error
+		rescue StandardError, SyntaxError => last_error
 			$stdout.puts last_error
 		end
 	when /sp\s+(-?\d+)/, /set_priority\s+(-?\d+)/ 
@@ -56,7 +59,7 @@ while(line = readline(prompt, true))
 				$current.join
 			end
 			$stdout.puts result
-		rescue Exception => last_error
+		rescue StandardError, SyntaxError => last_error
 			$stdout.puts last_error
 		end
 	end
