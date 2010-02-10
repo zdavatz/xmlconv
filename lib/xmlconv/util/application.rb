@@ -126,6 +126,7 @@ class XmlConvApp < SBSM::DRbServer
   end
   def start_polling
 		@polling_thread = Thread.new {
+      Thread.current.abort_on_exception = true
 			loop {
 				begin
 					XmlConv::Util::PollingManager.new(@system).poll_sources
