@@ -164,6 +164,8 @@ module XmlConv
             end
           end
         end
+      rescue NoMethodError
+        ## prevent polling error notification for intermittent connection problems
       end
     end
 		class PollingManager
