@@ -1,8 +1,10 @@
 #!/usr/bin/env ruby
+# Admin -- xmlconv -- 24.02.2011 -- mhatakeyama@ywesee.com 
 # Admin -- xmlconv -- 09.07.2003 -- hwyss@ywesee.com 
 
 $: << File.expand_path('..', File.dirname(__FILE__))
 $: << File.expand_path('../src', File.dirname(__FILE__))
+$: << File.expand_path('../lib', File.dirname(__FILE__))
 
 require 'xmlconv/util/application'
 require 'xmlconv/config'
@@ -19,7 +21,10 @@ Kernel.trap('INT') {
 	end
 }
 
-domain = XmlConv::CONFIG.domain
+domain = 'ch.xmlconv'
+if XmlConv::CONFIG.respond_to?(:domain)
+  domain = XmlConv::CONFIG.domain
+end
 $0 = "#{domain} (Admin-Tool)"
 prompt = "#{domain}> "
 

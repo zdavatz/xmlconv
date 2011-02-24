@@ -10,6 +10,7 @@ require 'xmlconv/util/transaction'
 require 'xmlconv/util/validator'
 require 'thread'
 require 'odba'
+require 'xmlconv/model/bdd'
 
 module XmlConv
 	module Util
