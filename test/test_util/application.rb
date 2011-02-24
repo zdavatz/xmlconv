@@ -1,4 +1,5 @@
 #!/usr/bin/env ruby
+# XmlConv::TestApplication -- xmlconv  -- 24.02.2011 -- mhatakeya@ywesee.com
 # XmlConv::TestApplication -- xmlconv2 -- 07.06.2004 -- hwyss@ywesee.com
 
 $: << File.dirname(__FILE__)
@@ -8,6 +9,7 @@ $: << File.expand_path('../../lib', File.dirname(__FILE__))
 require 'test/unit'
 require 'xmlconv/util/application'
 require 'mock'
+require 'flexmock'
 
 module XmlConv
 	module Conversion
@@ -22,6 +24,7 @@ module XmlConv
 	end
 	module Util
 		class TestApplication < Test::Unit::TestCase
+      include FlexMock::TestCase
 			def setup
 				@app = Util::Application.new
 				@app.init
@@ -163,6 +166,16 @@ module XmlConv
 				trans2.__verify
 				trans3.__verify
 			end
+      def test_exprort_orders
+        transaction = flexmock('transaction') do |trans|
+          trans.should_receive(:commit_time).and_return(Time.local(2010,1,1))
+          trans.should_receive(:output).and_return('output')
+        end
+        @app.transactions.push(transaction)
+        temp = Tempfile.new('test_export_order')
+        assert_equal([transaction], @app.export_orders(Time.local(2009,1,1), Time.local(2011,1,1), temp.path))
+        temp.close
+     end
 		end
 	end
 end

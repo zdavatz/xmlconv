@@ -319,6 +319,7 @@ module XmlConv
         assert_equal('ftp://xmlconv.ywesee.com:21/foo/bar/', uri.to_s)
       end
 		end
+=begin
     class TestDestinationSftp < Test::Unit::TestCase
       include FlexMock::TestCase
       def setup
@@ -411,5 +412,6 @@ module XmlConv
         assert_equal('sftp://xmlconv.ywesee.com/foo/bar/', uri.to_s)
       end
     end
+=end
 	end
 end
