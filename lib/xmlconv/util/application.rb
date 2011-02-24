@@ -139,4 +139,16 @@ class XmlConvApp < SBSM::DRbServer
 			}
 		}
 	end
+  def export_orders(first=Time.local(1990,1,1), last=Time.local(2100,1,1), output_file=nil)
+    range=Range.new(first, last)
+    output_file ||= "#{ENV['HOME']}/xmlconv_export.csv"
+    open(output_file, "w") do |f|
+      self.transactions.reverse.each do |t|
+        if range.include?(t.commit_time)
+          f.print t.output
+        end
+      end
+    end
+  end
 end
+
