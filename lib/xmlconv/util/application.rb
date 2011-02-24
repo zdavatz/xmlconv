@@ -70,9 +70,9 @@ module XmlConv
         }
         Util::Invoicer.run(time_range, transactions, date)
       end
-      def export_orders(first=Time.local(1990,1,1), last=Time.local(2100,1,1), output_file=nil)
+      def export_orders(first=Time.local(1990,1,1), last=Time.local(2037,1,1), output_file=nil)
         range=Range.new(first, last)
-        output_file ||= "#{ENV['HOME']}/xmlconv_export.csv"
+        output_file ||= "/home/ywesee/xmlconv_export/xmlconv_export.csv"
         open(output_file, "w") do |f|
           self.transactions.reverse.each do |t|
             if range.include?(t.commit_time)
