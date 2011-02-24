@@ -1,3 +1,9 @@
+=== 1.0.1 / 23.02.2011
+
+* Export Feature added
+
+  * Added the possibility to export the orders from the database via bin/admin
+
 === 1.0.0 / 23.02.2011
 
 * 1 major enhancement

@@ -1,5 +1,6 @@
 History.txt
 LICENSE
+Manifest.txt
 README.txt
 Rakefile
 bin/admin
@@ -90,3 +91,4 @@ test/test_util/destination.rb
 test/test_util/invoicer.rb
 test/test_util/polling_manager.rb
 test/test_util/transaction.rb
+xmlconv_convert.rb
