@@ -1,5 +1,6 @@
 #!/usr/bin/env ruby
-# I2::Header -- xmlconv2 -- 02.06.2004 -- hwyss@ywesee.com
+# XmlConv::I2::Header -- xmlconv  -- 27.07.2011 -- mhatakeyama@ywesee.com
+# XmlConv::I2::Header -- xmlconv2 -- 02.06.2004 -- hwyss@ywesee.com
 
 module XmlConv
 	module I2
@@ -10,8 +11,9 @@ module XmlConv
 				@recipient_id = recipient_id
         @prefix = @recipient_id
         time = Time.now
-				msec = sprintf('%03i', (time.to_f * 1000).to_i % 100)
-        @transaction_id = time.strftime("%Y%m%d%H%M%S#{msec}")
+#				msec = sprintf('%03i', (time.to_f * 1000).to_i % 100)
+        #@transaction_id = time.strftime("%Y%m%d%H%M#{msec}")
+        @transaction_id = time.strftime("%Y%m%d%H%M")
 			end
       def suffix=(suffix)
         @suffix = "_" << suffix.to_s

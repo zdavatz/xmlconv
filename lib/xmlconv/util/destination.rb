@@ -1,5 +1,6 @@
 #!/usr/bin/env ruby
-# Destination -- xmlconv2 -- 08.06.2004 -- hwyss@ywesee.com
+# XmlConv::Destination -- xmlconv  -- 27.07.2011 -- mhatakeyama@ywesee.com
+# XmlConv::Destination -- xmlconv2 -- 08.06.2004 -- hwyss@ywesee.com
 
 require 'fileutils'
 require 'uri'
@@ -143,7 +144,8 @@ module XmlConv
           fh.flush
           target = delivery.filename
           if(idx)
-            target = sprintf("%03i_%s", idx, target)
+            #target = sprintf("%03i_%s", idx, target)
+            target.gsub!(/\.dat/, "%03i.dat" % idx)
           end
           if(@tmp)
             tmp = File.join(@tmp.path, target)
