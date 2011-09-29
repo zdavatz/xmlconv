@@ -16,10 +16,11 @@ module XmlConv
 			def to_s
 				output = <<-EOS
 500:#{@number}
-501:#{@article_ean}
         EOS
+#501:#{@article_ean}
         [@customer_id, @pharmacode].compact.each { |id|
-          output << sprintf("502:%s\n", id)
+          #output << sprintf("502:%s\n", id)
+          output << sprintf("501:%s\n", id)
         }
         output << sprintf("520:%s\n", @qty)
         if(@unit)

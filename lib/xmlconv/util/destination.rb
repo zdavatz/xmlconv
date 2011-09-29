@@ -1,5 +1,5 @@
 #!/usr/bin/env ruby
-# XmlConv::Destination -- xmlconv  -- 27.07.2011 -- mhatakeyama@ywesee.com
+# XmlConv::Destination -- xmlconv  -- 22.09.2011 -- mhatakeyama@ywesee.com
 # XmlConv::Destination -- xmlconv2 -- 08.06.2004 -- hwyss@ywesee.com
 
 require 'fileutils'
@@ -135,18 +135,21 @@ module XmlConv
       end
       def deliver_to_connection(connection, delivery, idx=nil)
         if(delivery.is_a?(Array))
-          delivery.each_with_index { |part, idx| 
-            deliver_to_connection(connection, part, idx) 
+          #delivery.each_with_index { |part, idx| 
+          delivery.each { |part| 
+            #deliver_to_connection(connection, part, idx) 
+            deliver_to_connection(connection, part) 
           }
         else
           fh = Tempfile.new('xmlconv')
           fh.puts(delivery)
           fh.flush
           target = delivery.filename
-          if(idx)
+#          if(idx)
             #target = sprintf("%03i_%s", idx, target)
-            target.gsub!(/\.dat/, "%03i.dat" % idx)
-          end
+#            target.gsub!(/\.dat/, "%03i.dat" % idx)
+#            target.gsub!(/(CO_\d{13})/, '\1%02d' % idx)
+#          end
           if(@tmp)
             tmp = File.join(@tmp.path, target)
             connection.puttextfile(fh.path, tmp)

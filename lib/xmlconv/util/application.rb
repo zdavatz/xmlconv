@@ -1,4 +1,5 @@
 #!/usr/bin/env ruby
+# XmlConv::Application -- xmlconv  -- 29.09.2011 -- mhatakeyama@ywesee.com
 # XmlConv::Application -- xmlconv2 -- 07.06.2004 -- hwyss@ywesee.com
 
 require 'sbsm/drbserver'
@@ -11,6 +12,10 @@ require 'xmlconv/util/validator'
 require 'thread'
 require 'odba'
 require 'xmlconv/model/bdd'
+
+require 'conversion/pharmacieplus_bdd'
+require 'conversion/bdd_i2'
+require 'postprocess/bbmb'
 
 module XmlConv
 	module Util
