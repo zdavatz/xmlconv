@@ -41,7 +41,7 @@ module XmlConv
 				transaction.error = error
       ensure
         ODBA.transaction {
-          transaction.odba_isolated_store
+          transaction.odba_store
           @transactions.push(transaction)
           @transactions.odba_isolated_store
         }
