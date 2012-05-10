@@ -1,4 +1,5 @@
 #!/usr/bin/env ruby
+# XmlConv::Application -- xmlconv  -- 10.05.2012 -- yasaka@ywesee.com
 # XmlConv::Application -- xmlconv  -- 29.09.2011 -- mhatakeyama@ywesee.com
 # XmlConv::Application -- xmlconv2 -- 07.06.2004 -- hwyss@ywesee.com
 
@@ -12,10 +13,6 @@ require 'xmlconv/util/validator'
 require 'thread'
 require 'odba'
 require 'xmlconv/model/bdd'
-
-require 'conversion/pharmacieplus_bdd'
-require 'conversion/bdd_i2'
-require 'postprocess/bbmb'
 
 module XmlConv
 	module Util
@@ -42,12 +39,13 @@ module XmlConv
         transaction.postprocess
 			rescue Exception => error
 				transaction.error = error
-			ensure
-				@transactions.push(transaction)
-				ODBA.transaction {
-					@transactions.odba_store
-				}
-			end
+      ensure
+        ODBA.transaction {
+          transaction.odba_isolated_store
+          @transactions.push(transaction)
+          @transactions.odba_isolated_store
+        }
+      end
 			def next_transaction_id
 				@id_mutex.synchronize {
 					@next_transaction_id ||= @transactions.collect { |transaction|

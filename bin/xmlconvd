@@ -1,4 +1,5 @@
 #!/usr/bin/env ruby
+# XmlConv -- xmlconv2 -- 10.05.2012 -- yasaka@ywesee.com
 # XmlConv -- xmlconv2 -- 07.06.2004 -- hwyss@ywesee.com
 
 require 'drb/drb'
@@ -30,6 +31,7 @@ XmlConv::Util.autoload(config.postproc_dir, 'postproc')
 ODBA.storage.dbi = ODBA::ConnectionPool.new("DBI:pg:#{config.db_name}",
                                             config.db_user, config.db_auth)
 ODBA.cache.setup
+ODBA.cache.prefetch
 
 $0 = config.program_name
 DRb.start_service(config.server_url, XmlConvApp.new)

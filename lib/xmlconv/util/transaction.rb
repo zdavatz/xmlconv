@@ -1,4 +1,5 @@
 #!/usr/bin/env ruby
+# Util::Transaction -- xmlconv2 -- 10.05.2012 -- yasaka@ywesee.com
 # Util::Transaction -- xmlconv2 -- 04.06.2004 -- hwyss@ywesee.com
 
 require 'odba'
@@ -10,6 +11,7 @@ module XmlConv
 		class Transaction
 			include ODBA::Persistable
 			ODBA_SERIALIZABLE = ['@postprocs', '@responses', '@arguments']
+      ODBA_PREFETCH = true
       odba_index :invoice_ids
       attr_accessor :input, :reader, :writer, :destination, :origin,
                     :transaction_id, :partner, :error, :postprocs,
