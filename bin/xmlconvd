@@ -28,7 +28,7 @@ XmlConv::LOGGER = logger
 XmlConv::Util.autoload(config.plugin_dir, 'plugin')
 XmlConv::Util.autoload(config.postproc_dir, 'postproc')
 
-ODBA.storage.dbi = ODBA::ConnectionPool.new("DBI:pg:#{config.db_name}",
+ODBA.storage.dbi = ODBA::ConnectionPool.new("DBI:Pg:#{config.db_name}",
                                             config.db_user, config.db_auth)
 ODBA.cache.setup
 ODBA.cache.prefetch
