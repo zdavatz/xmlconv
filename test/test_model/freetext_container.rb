@@ -4,15 +4,15 @@
 $: << File.dirname(__FILE__)
 $: << File.expand_path('../../lib', File.dirname(__FILE__))
 
-require 'test/unit'
 require 'xmlconv/model/invoice_item'
+require 'minitest/autorun'
 
 module XmlConv
 	module Model
 		class Container 
 			include FreeTextContainer
 		end
-		class TestFreeTextContainer < Test::Unit::TestCase
+		class TestFreeTextContainer < ::Minitest::Test
 			def setup
 				@container = Container.new
 			end
@@ -27,7 +27,7 @@ module XmlConv
 				assert_equal('Description', txt.type)
 			end
 		end
-		class TestFreeText < Test::Unit::TestCase
+		class TestFreeText < ::Minitest::Test
 			def setup
 				@text = FreeText.new
 			end

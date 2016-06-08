@@ -1,0 +1,10 @@
+--- !ruby/object:XmlConv::Util::PollingMission
+reader: I2Bdd
+directory: "./test/test_util/data/i2"
+writer: BddXml
+destination: "http://example.com:12345"
+--- !ruby/object:XmlConv::Util::PollingMission
+directory: "./test/test_util/data/xml"
+destination: "http://user:pass@foo.bar.baz"
+writer: BddI2
+reader: XmlBdd

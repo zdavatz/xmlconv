@@ -4,12 +4,12 @@
 $: << File.dirname(__FILE__)
 $: << File.expand_path('../../lib', File.dirname(__FILE__))
 
-require 'test/unit'
 require 'xmlconv/i2/date'
+require 'minitest/autorun'
 
 module XmlConv
 	module I2
-		class TestDate < Test::Unit::TestCase
+		class TestDate < ::Minitest::Test
 			def test_from_date
 				a_date = Date.new(1975, 8, 21)
 				date = I2::Date.from_date(a_date)

@@ -4,19 +4,20 @@
 $: << File.expand_path('..', File.dirname(__FILE__))
 $: << File.expand_path('../../lib', File.dirname(__FILE__))
 
-require 'test/unit'
 require 'xmlconv/util/polling_manager'
-require 'mock'
-require 'flexmock'
 require 'rexml/document'
 require 'config'
+require 'mail'
+require 'minitest/autorun'
+require 'flexmock/minitest'
+
+Mail.defaults do
+  delivery_method :test
+end
 
 module XmlConv
 	module Util
-    module Mail
-      SMTP_HANDLER = FlexMock.new('SMTP-Handler')
-    end
-    class TestPollingMission < Test::Unit::TestCase
+    class TestPollingMission < ::Minitest::Test
       def setup
         @mission = PollingMission.new
 				@dir = File.expand_path('data/i2', 
@@ -99,7 +100,7 @@ module XmlConv
         }
 			end
     end
-    class TestPopMission < Test::Unit::TestCase
+    class TestPopMission < ::Minitest::Test
       def setup
         @popserver = TCPServer.new('127.0.0.1', 0)
         addr = @popserver.addr 
@@ -194,10 +195,9 @@ module XmlConv
         @popserver.close
       end
     end
-		class TestPollingManager < Test::Unit::TestCase
-      include FlexMock::TestCase
+		class TestPollingManager < ::Minitest::Test
 			def setup
-				@sys = Mock.new('System')
+				@sys = flexmock('System')
 				@polling = PollingManager.new(@sys)
 				@dir = File.expand_path('data/i2', 
 					File.dirname(__FILE__))

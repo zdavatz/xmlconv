@@ -4,13 +4,13 @@
 $: << File.dirname(__FILE__)
 $: << File.expand_path('../../lib', File.dirname(__FILE__))
 
-require 'test/unit'
 require 'xmlconv/model/invoice'
-require 'mock'
+require 'minitest/autorun'
+require 'flexmock/minitest'
 
 module XmlConv
 	module Model
-		class TestInvoice < Test::Unit::TestCase
+		class TestInvoice < ::Minitest::Test
 			def setup
 				@invoice = Invoice.new
 			end
@@ -35,30 +35,27 @@ module XmlConv
 				assert_respond_to(@invoice, :add_free_text)
 			end
 			def test_add_item
-				item = Mock.new
+				item = flexmock
 				@invoice.add_item(item)	
 				assert_equal([item], @invoice.items)
-				item.__verify
 			end
 			def test_add_delivery_id
 				@invoice.add_delivery_id('Domain', 'Id')
 				assert_equal(['Domain', 'Id'], @invoice.delivery_id)
 			end
 			def test_add_party__customer
-				party = Mock.new('Customer')
-				party.__next(:role) { 'Customer' }
+				party = flexmock('Customer')
+        party.should_receive(:role).and_return( 'Customer').once
 				@invoice.add_party(party)
 				assert_equal(party, @invoice.customer)
 				assert_equal([party], @invoice.parties)
-				party.__verify
 			end
 			def test_add_party__seller
-				party = Mock.new('Seller')
-				party.__next(:role) { 'Seller' }
+				party = flexmock('Seller')
+        party.should_receive(:role).and_return( 'Seller').once
 				@invoice.add_party(party)
 				assert_equal(party, @invoice.seller)
 				assert_equal([party], @invoice.parties)
-				party.__verify
 			end
 		end
 	end

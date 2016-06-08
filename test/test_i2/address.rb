@@ -4,12 +4,12 @@
 $: << File.dirname(__FILE__)
 $: << File.expand_path('../../lib', File.dirname(__FILE__))
 
-require 'test/unit'
 require 'xmlconv/i2/address'
+require 'minitest/autorun'
 
 module XmlConv
 	module I2
-		class TestAddress < Test::Unit::TestCase
+		class TestAddress < ::Minitest::Test
 			def setup
 				@address = I2::Address.new
 			end

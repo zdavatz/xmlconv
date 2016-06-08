@@ -4,12 +4,12 @@
 $: << File.dirname(__FILE__)
 $: << File.expand_path('../../lib', File.dirname(__FILE__))
 
-require 'test/unit'
 require 'xmlconv/model/name'
+require 'minitest/autorun'
 
 module XmlConv
 	module Model
-		class TestName < Test::Unit::TestCase
+		class TestName < ::Minitest::Test
 			def setup
 				@name = Name.new
 			end

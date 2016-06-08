@@ -4,13 +4,13 @@
 $: << File.dirname(__FILE__)
 $: << File.expand_path('../../lib', File.dirname(__FILE__))
 
-require 'test/unit'
 require 'xmlconv/model/bsr'
-require 'mock'
+require 'minitest/autorun'
+require 'flexmock/minitest'
 
 module XmlConv
 	module Model
-		class TestBsr < Test::Unit::TestCase
+		class TestBsr < ::Minitest::Test
 			def setup
 				@bsr = Bsr.new
 			end
@@ -26,12 +26,11 @@ module XmlConv
 				assert_respond_to(@bsr, :verb=)
 			end
 			def test_bsr_id
-				party = Mock.new('Party')
-				party.__next(:role) { 'Customer' }
-				party.__next(:party_id) { 'id_string' }
+				party = flexmock('Party')
+        party.should_receive(:role).and_return( 'Customer').once
+        party.should_receive(:party_id).and_return( 'id_string').once
 				@bsr.add_party(party)
 				assert_equal('id_string', @bsr.bsr_id)
-				party.__verify
 			end
 		end
 	end

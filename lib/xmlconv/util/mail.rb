@@ -1,30 +1,26 @@
 #!/usr/bin/env ruby
+# encoding: utf-8
 # Util::Mail -- XmlConv -- 23.04.2009 -- hwyss@ywesee.com
 
-require 'net/smtp'
-require 'tmail'
+require 'mail'
 require 'xmlconv/config'
 
 module XmlConv
   module Util
 module Mail
   SMTP_HANDLER = Net::SMTP
-  def Mail.notify recipients, subject, body
+  def Mail.notify recipients, my_subject, my_body
     recipients.flatten!
     recipients.compact!
     recipients.uniq!
     return if(recipients.empty?)
-    mail = TMail::Mail.new
-    mail.set_content_type('text', 'plain', 'charset'=>'ISO-8859-1')
-    mail.body = body
-    mail.from = XmlConv::CONFIG.mail_from
-    mail.to = recipients
-    mail.subject = subject
-    mail.date = Time.now
-    mail['User-Agent'] = 'XmlConv::Util::Mail'
-    SMTP_HANDLER.start(XmlConv::CONFIG.mail_host) { |smtp|
-      smtp.sendmail(mail.encoded, XmlConv::CONFIG.mail_from, recipients)
-    }
+    mail = ::Mail.deliver do
+      content_type("text/plain; charset'utf-8'")
+      from(XmlConv::CONFIG.mail_from || 'dummy@test.com')
+      to recipients
+      subject = my_subject
+      body = my_body
+    end
   end
 end
   end

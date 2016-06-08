@@ -4,13 +4,13 @@
 $: << File.dirname(__FILE__)
 $: << File.expand_path('../../lib', File.dirname(__FILE__))
 
-require 'test/unit'
 require 'xmlconv/util/invoicer'
-require 'flexmock'
+require 'minitest/autorun'
+require 'flexmock/minitest'
 
 module XmlConv
 	module Util
-		class TestInvoicer < Test::Unit::TestCase
+		class TestInvoicer < ::Minitest::Test
       def setup
         @invoicer = Invoicer
       end

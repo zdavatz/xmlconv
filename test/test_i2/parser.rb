@@ -3,14 +3,14 @@
 
 $: << File.expand_path('..', File.dirname(__FILE__))
 $: << File.expand_path('../../lib', File.dirname(__FILE__))
-
-require 'test/unit'
+if false
 require 'xmlconv/i2/parser'
 require 'config'
+require 'minitest/autorun'
 
 module XmlConv
 	module I2
-		class TestParser < Test::Unit::TestCase
+		class TestParser < ::Minitest::Test
 			def setup
         XmlConv::CONFIG.grammar_dir = File.expand_path('../../data/grammar',
                                                        File.dirname(__FILE__))
@@ -309,4 +309,5 @@ module XmlConv
 			end
 		end
 	end
+end
 end

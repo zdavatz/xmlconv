@@ -2,15 +2,16 @@
 # Model::TestInvoiceItem -- xmlconv2 -- 23.06.2004 -- hwyss@ywesee.com
 
 $: << File.dirname(__FILE__)
+puts File.expand_path('../../lib', File.dirname(__FILE__))
 $: << File.expand_path('../../lib', File.dirname(__FILE__))
 
-require 'test/unit'
 require 'xmlconv/model/invoice_item'
-require 'mock'
+require 'minitest/autorun'
+require 'flexmock/minitest'
 
 module XmlConv
 	module Model
-		class TestInvoiceItem < Test::Unit::TestCase
+		class TestInvoiceItem < ::Minitest::Test
 			def setup
 				@item = InvoiceItem.new
 			end
@@ -31,7 +32,7 @@ module XmlConv
 				assert_equal({'ET-NUMMER'	=>	'et_number'}, @item.ids)
 			end
 			def test_add_part_info
-				info = Mock.new('PartInfo')
+				info = flexmock('PartInfo')
 				assert_equal([], @item.part_infos)
 				@item.add_part_info(info)
 				assert_equal([info], @item.part_infos)

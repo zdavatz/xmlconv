@@ -6,15 +6,14 @@ $: << File.dirname(__FILE__)
 $: << File.expand_path('..', File.dirname(__FILE__))
 $: << File.expand_path('../../lib', File.dirname(__FILE__))
 
-require 'test/unit'
 require 'xmlconv/util/application'
-require 'mock'
-require 'flexmock'
+require 'minitest/autorun'
+require 'flexmock/minitest'
 
 module XmlConv
 	module Conversion
 		def const_get(symbol)
-			if(symbol.is_a?(Mock))
+			if(symbol.is_a?(FlexMock))
 				symbol
 			else
 				super
@@ -23,8 +22,7 @@ module XmlConv
 		module_function :const_get
 	end
 	module Util
-		class TestApplication < Test::Unit::TestCase
-      include FlexMock::TestCase
+		class TestApplication < ::Minitest::Test
 			def setup
 				@app = Util::Application.new
 				@app.init
@@ -34,100 +32,69 @@ module XmlConv
 				assert_respond_to(@app, :failed_transactions)
 			end
 			def test_execute
-				transaction = Mock.new('Transaction')
-				cache = Mock.new('Cache')
-				cache.__next(:transaction) { |block|
-					block.call
-				}
-				cache.__next(:store) { |transactions|
-					assert_equal(@app.transactions, transactions)
-				}
+				transaction = flexmock('Transaction')
+				cache = flexmock('Cache')
+        cache.should_receive(:transaction).with(Proc).once.and_return{ |block|  block.call }
+        cache.should_receive(:store).with(@app.transactions)
 				ODBA.cache = cache
-				transaction.__next(:transaction_id=) { |id|
-					assert_equal(1, id)
-				}
-				transaction.__next(:execute) { }
-				transaction.__next(:notify) { }
+        transaction.should_receive(:transaction_id=).with(1)
+        transaction.should_receive(:execute).once.and_return(transaction)
+        transaction.should_receive(:notify).once
 				assert_equal([], @app.transactions)
 				assert_equal(0, @app.transactions.size)
 				@app.execute(transaction)
 				assert_equal([transaction], @app.transactions)
-				transaction.__verify
-				cache.__verify
 			ensure
 				ODBA.cache = nil
 			end
 			def test_execute__survive_notification_failure
-				transaction = Mock.new('Transaction')
-				cache = Mock.new('Cache')
-				cache.__next(:transaction) { |block|
-					block.call
-				}
-				cache.__next(:store) { |transactions|
-					assert_equal(@app.transactions, transactions)
-				}
+				transaction = flexmock('Transaction')
+				cache = flexmock('Cache')
+        cache.should_receive(:transaction).with(Proc).once.and_return{ |block|  block.call }
+        cache.should_receive(:store).with(@app.transactions)
 				ODBA.cache = cache
-				transaction.__next(:transaction_id=) { |id|
-					assert_equal(1, id)
-				}
-				transaction.__next(:execute) { }
-				transaction.__next(:notify) { 
-					raise Net::SMTPFatalError, 'could not send email'
-				}
+        transaction.should_receive(:transaction_id=).with(1)
+        transaction.should_receive(:execute).once.and_raise(Net::SMTPFatalError, 'could not send email')
 				assert_equal([], @app.transactions)
 				assert_equal(0, @app.transactions.size)
 				@app.execute(transaction)
 				assert_equal([transaction], @app.transactions)
-				transaction.__verify
-				cache.__verify
 			ensure
 				ODBA.cache = nil
 			end
 			def test_execute__notify_errors
-				transaction = Mock.new('Transaction')
-				cache = Mock.new('Cache')
-				cache.__next(:transaction) { |block|
-					block.call
-				}
-				cache.__next(:store) { |transactions|
-					assert_equal(@app.transactions, transactions)
-				}
+				transaction = flexmock('Transaction')
+				cache = flexmock('Cache')
+        cache.should_receive(:transaction).with(Proc).once.and_return{ |block|  block.call }
+        cache.should_receive(:store).with(@app.transactions)
 				ODBA.cache = cache
-				transaction.__next(:transaction_id=) { |id|
-					assert_equal(1, id)
-				}
-				transaction.__next(:execute) {
-					raise 'oops, something went wrong'
-				}
-				transaction.__next(:error=) { }
-				transaction.__next(:notify) { }
+        transaction.should_receive(:transaction_id=).with(1)
+        transaction.should_receive(:execute).and_raise 'oops, something went wrong'
+        transaction.should_receive(:error=)
+        transaction.should_receive(:notify)
 				assert_equal([], @app.transactions)
 				assert_equal(0, @app.transactions.size)
 				@app.execute(transaction)
 				assert_equal([transaction], @app.transactions)
-				transaction.__verify
-				cache.__verify
 			ensure
 				ODBA.cache = nil
 			end
 			def test_dumpable
-				assert_nothing_raised { Marshal.dump(@app) }
+				Marshal.dump(@app)
 			end
 			def test_next_transaction_id
 				assert_equal([], @app.transactions)
 				assert_equal(1, @app.next_transaction_id)
 				assert_equal(2, @app.next_transaction_id)
 				assert_equal(3, @app.next_transaction_id)
-				trans1 = Mock.new('Transaction1')
-				trans2 = Mock.new('Transaction2')
+				trans1 = flexmock('Transaction1')
+				trans2 = flexmock('Transaction2')
+        trans1.should_receive(:transaction_id).and_return(6)
+        trans2.should_receive(:transaction_id).and_return(3)
 				@app.transactions.push(trans1)
 				@app.transactions.push(trans2)
 				@app.instance_variable_set('@next_transaction_id', nil)
-				trans1.__next(:transaction_id) { 6 }
-				trans2.__next(:transaction_id) { 3 }
 				assert_equal(7, @app.next_transaction_id)
-				trans1.__verify
-				trans2.__verify
 			end
 			def test_odba_exclude_vars
 				@app.instance_variable_set('@next_transaction_id', 10)
@@ -135,36 +102,19 @@ module XmlConv
 				assert_nil(@app.instance_variable_get('@next_transaction_id'))
 			end
 			def test_transaction
-				trans1 = Mock.new('Transaction1')
-				trans2 = Mock.new('Transaction2')
-				trans3 = Mock.new('Transaction2')
+				trans1 = flexmock('Transaction1')
+				trans2 = flexmock('Transaction2')
+				trans3 = flexmock('Transaction2')
+        trans1.should_receive(:transaction_id).and_return(1).at_least.once
+        trans2.should_receive(:transaction_id).and_return(2).at_least.once
+        trans3.should_receive(:transaction_id).and_return(5).at_least.once
 				@app.transactions.push(trans1)
 				@app.transactions.push(trans2)
-				trans2.__next(:transaction_id) { 2 }
-				trans1.__next(:transaction_id) { 1 }
 				assert_equal(trans1, @app.transaction(1))
-				trans1.__verify
-				trans2.__verify
 				@app.transactions.push(trans3)
-				trans3.__next(:transaction_id) { 5 }
-				trans1.__next(:transaction_id) { 1 }
-				trans2.__next(:transaction_id) { 2 }
 				assert_equal(trans2, @app.transaction(2))
-				trans1.__verify
-				trans2.__verify
-				trans3.__verify
-				trans3.__next(:transaction_id) { 5 }
-				trans3.__next(:transaction_id) { 5 }
 				assert_equal(trans3, @app.transaction(5))
-				trans1.__verify
-				trans2.__verify
-				trans3.__verify
-				trans3.__next(:transaction_id) { 5 }
-				trans3.__next(:transaction_id) { 5 }
 				assert_equal(trans3, @app.transaction('5'))
-				trans1.__verify
-				trans2.__verify
-				trans3.__verify
 			end
       def test_exprort_orders
         transaction = flexmock('transaction') do |trans|

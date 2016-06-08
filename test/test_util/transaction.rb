@@ -5,14 +5,19 @@ $: << File.dirname(__FILE__)
 $: << File.expand_path('..', File.dirname(__FILE__))
 $: << File.expand_path('../../lib', File.dirname(__FILE__))
 
-require 'test/unit'
 require 'xmlconv/util/transaction'
-require 'mock'
+require 'mail'
+require 'minitest/autorun'
+require 'flexmock/minitest'
+
+Mail.defaults do
+  delivery_method :test
+end
 
 module XmlConv
 	module Conversion
 		def const_get(symbol)
-			if(symbol.is_a?(Mock))
+			if(symbol.is_a?(FlexMock))
 				symbol
 			else
 				super
@@ -21,10 +26,7 @@ module XmlConv
 		module_function :const_get
 	end
 	module Util
-    module Mail
-      SMTP_HANDLER = Mock.new('SMTP-Handler')
-    end
-		class TestTransaction < Test::Unit::TestCase
+		class TestTransaction < ::Minitest::Test
 			def setup
 				@transaction = Util::Transaction.new
 			end
@@ -47,33 +49,22 @@ module XmlConv
 				assert_respond_to(@transaction, :commit_time)
 			end
 			def test_execute
-				src = Mock.new('source')
-				input = Mock.new('input')
-				reader = Mock.new('reader')
-				model = Mock.new('model')
-				writer = Mock.new('writer')
-				output = Mock.new('output')
-				destination = Mock.new('destination')
+				src = flexmock('source')
+				input = flexmock('input')
+				reader = flexmock('reader')
+				model = flexmock('model')
+				writer = flexmock('writer')
+				output = flexmock('output')
+				destination = flexmock('destination')
 				@transaction.input = src
 				@transaction.reader = reader
 				@transaction.writer = writer
 				@transaction.destination = destination
-				reader.__next(:parse) { |read_src|
-					assert_equal(src, read_src)
-					input	
-				}
-				reader.__next(:convert) { |read_input|
-					assert_equal(input, read_input)
-					model
-				}
-				writer.__next(:convert) { |write_input|
-					assert_equal(model, write_input)
-					output
-				}
-				destination.__next(:deliver) { |delivery|
-					assert_equal(output, delivery)
-				}
-				destination.__next(:forget_credentials!) { }
+        reader.should_receive(:parse).with(src).once.and_return(input)
+        reader.should_receive(:convert).with(input).once.and_return(model)
+        writer.should_receive(:convert).with(model).once.and_return(output)
+        destination.should_receive(:deliver).with(output).once
+        destination.should_receive(:forget_credentials!).once
 				time1 = Time.now
 				result = @transaction.execute
 				time2 = Time.now
@@ -85,45 +76,30 @@ module XmlConv
 				assert_equal(output.to_s, result)
 				assert_in_delta(time1, @transaction.start_time, 0.001)
 				assert_in_delta(time2, @transaction.commit_time, 0.001)
-				input.__verify
-				reader.__verify
-				model.__verify
-				writer.__verify
-				output.__verify
-				destination.__verify
 			end
 			def test_persistable
 				assert_kind_of(ODBA::Persistable, @transaction)
 			end
 			def test_dumpable
-				assert_nothing_raised { Marshal.dump(@transaction) }
+				Marshal.dump(@transaction)
 			end
 			def test_notify
+          ::Mail::TestMailer.deliveries.clear
+          ::Mail.defaults do
+          delivery_method :test
+        end
 				@transaction.instance_variable_set('@start_time', Time.now)
 				@transaction.error_recipients = ['bar']
-				smtp = Mail::SMTP_HANDLER
 				@transaction.notify
+        assert_equal(0, ::Mail::TestMailer.deliveries.size)
 				@transaction.debug_recipients = ['foo']
-				mail = Mock.new('MailSession')
-				mail.__next(:sendmail) { |encoded, from, recipients| 
-					assert_equal(['foo'], recipients)
-				
-				}
-				smtp.__next(:start) { |block, server|
-					block.call(mail)
-				}
 				@transaction.notify
+        assert_equal(1, ::Mail::TestMailer.deliveries.size)
+        assert_equal(['foo'], ::Mail::TestMailer.deliveries.last.to)
 				@transaction.error = 'error!'
-				mail.__next(:sendmail) { |encoded, from, recipients| 
-					assert_equal(['foo', 'bar'], recipients)
-				
-				}
-				smtp.__next(:start) { |block, server|
-					block.call(mail)
-				}
 				@transaction.notify
-				smtp.__verify
-				mail.__verify
+        assert_equal(2, ::Mail::TestMailer.deliveries.size)
+        assert_equal(['foo', 'bar'], ::Mail::TestMailer.deliveries.last.to)
 			end
 		end
 	end

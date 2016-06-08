@@ -5,15 +5,14 @@ $: << File.dirname(__FILE__)
 $: << File.expand_path('..', File.dirname(__FILE__))
 $: << File.expand_path('../../lib', File.dirname(__FILE__))
 
-require 'test/unit'
 require 'xmlconv/util/destination'
-require 'flexmock'
 require 'xmlconv/config'
+require 'minitest/autorun'
+require 'flexmock/minitest'
 
 module XmlConv
 	module Util
-		class TestDestination < Test::Unit::TestCase
-      include FlexMock::TestCase
+		class TestDestination < ::Minitest::Test
 			def setup
 				@destination = Destination.new
         super
@@ -44,8 +43,7 @@ module XmlConv
                            Destination.book('ftp://www.example.com'))
       end
 		end
-		class TestDestinationDir < Test::Unit::TestCase
-      include FlexMock::TestCase
+		class TestDestinationDir < ::Minitest::Test
 			def setup
 				@destination = DestinationDir.new
 				@target_dir = File.expand_path('data/destination', 
@@ -129,8 +127,7 @@ module XmlConv
 				assert_equal(20, @destination.status_comparable)
 			end
 		end
-		class TestRemoteDestination < Test::Unit::TestCase
-      include FlexMock::TestCase
+		class TestRemoteDestination < ::Minitest::Test
 			def setup
 				@destination = RemoteDestination.new
         super
@@ -144,8 +141,7 @@ module XmlConv
 				assert_respond_to(@destination, :host=)
 			end
 		end
-		class TestDestinationHttp < Test::Unit::TestCase
-      include FlexMock::TestCase
+		class TestDestinationHttp < ::Minitest::Test
 			def setup
 				@destination = DestinationHttp.new
         @destination.transport = @transport = flexmock('DestinationHttp::HTTP_CLASS')
@@ -201,8 +197,7 @@ module XmlConv
 				assert_equal('http://xmlconv.ywesee.com:12345/test.rbx', uri.to_s)
 			end
 		end
-		class TestDestinationFtp < Test::Unit::TestCase
-      include FlexMock::TestCase
+		class TestDestinationFtp < ::Minitest::Test
 			def setup
 				@destination = DestinationFtp.new
         @destination.transport = @transport = flexmock('DestinationFtp::FTP_CLASS')
@@ -265,7 +260,7 @@ module XmlConv
 				delivery.should_receive(:to_s).and_return { 'The Delivery' }
         delivery.should_receive(:filename).and_return { 'test.dat' }
         ftp_session.should_receive(:chdir).and_return { |path|
-          assert_equal('/foo/bar/', path)
+          assert_equal('foo/bar/', path)
         }
         expecteds = %w{000_test.dat 001_test.dat}
         ftp_session.should_receive(:puttextfile).times(2)\
@@ -289,16 +284,14 @@ module XmlConv
 			end
       def test_deliver_tmp
         path = 'ftp://testaccount:password@xmlconv.ywesee.com/foo/bar/'
-        tmp = '/foo/tmp'
+        tmp = '/foo/tmp/'
         @destination = Destination.book(path, tmp)
         @destination.transport = @transport = flexmock('DestinationHttp::FTP_CLASS')
         ftp_session = flexmock('FtpSession')
         delivery = flexmock('Delivery')
         delivery.should_receive(:to_s).and_return { 'The Delivery' }
         delivery.should_receive(:filename).and_return { 'test.dat' }
-        ftp_session.should_receive(:chdir).and_return { |path|
-          assert_equal('/foo/bar/', path)
-        }
+        ftp_session.should_receive(:chdir).with('foo/bar/')
         ftp_session.should_receive(:puttextfile).and_return { |local, remote|
           assert_equal("The Delivery\n", File.read(local))
           assert_equal('/foo/tmp/test.dat', remote)
@@ -320,8 +313,7 @@ module XmlConv
       end
 		end
 =begin
-    class TestDestinationSftp < Test::Unit::TestCase
-      include FlexMock::TestCase
+    class TestDestinationSftp < ::Minitest::Test
       def setup
         @destination = DestinationSftp.new
         @destination.transport = @transport = flexmock('DestinationSftp::SFTP_CLASS')

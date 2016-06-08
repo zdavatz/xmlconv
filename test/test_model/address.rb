@@ -4,12 +4,12 @@
 $: << File.dirname(__FILE__)
 $: << File.expand_path('../../lib', File.dirname(__FILE__))
 
-require 'test/unit'
 require 'xmlconv/model/address'
+require 'minitest/autorun'
 
 module XmlConv
 	module Model
-		class TestAddress < Test::Unit::TestCase
+		class TestAddress < ::Minitest::Test
 			def setup
 				@address = Address.new
 			end

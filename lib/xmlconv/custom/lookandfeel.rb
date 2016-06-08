@@ -34,7 +34,7 @@ module XmlConv
 					:th_commit_time						=>	'Zeit',
 					:th_error									=>	'Fehler',
 					:th_input									=>	'Input',
-					:th_uri_comparable				=>	'Empfänger',
+					:th_uri_comparable				=>	'EmpfÃ¤nger',
 					:th_filename							=>	'Filename',
 					:th_transaction_id				=>	'ID',
 					:th_origin								=>	'Absender',

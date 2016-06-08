@@ -4,18 +4,13 @@
 $: << File.expand_path('..', File.dirname(__FILE__))
 $: << File.expand_path('../../lib', File.dirname(__FILE__))
 
-require 'test/unit'
 require 'xmlconv/model/party'
-require 'mock'
+require "minitest/autorun"
+require 'flexmock/minitest'
 
 module XmlConv
 	module Model
-		class TestParty < Test::Unit::TestCase
-			class ToSMock < Mock
-				def to_s
-					true
-				end
-			end
+		class TestParty < Minitest::Test
 			def setup
 				@party = Party.new
 			end
@@ -40,19 +35,19 @@ module XmlConv
 				assert_equal('id_string', @party.acc_id)
 			end
 			def test_add_party
-				employee = Mock.new('Employee')
-				employee.__next(:role) { 'Employee' }
+				employee = flexmock('Employee')
+				employee.should_receive(:role).at_least.once.and_return('Employee')
 				@party.add_party(employee)
 				assert_equal(employee, @party.employee)
 				assert_equal([employee], @party.parties)
-				ship_to = Mock.new('ShipTo')
-				ship_to.__next(:role) { 'ShipTo' }
+				ship_to = flexmock('ShipTo')
+				ship_to.should_receive(:role).at_least.once.and_return('ShipTo')
 				@party.add_party(ship_to)
 				assert_equal(employee, @party.employee)
 				assert_equal(ship_to, @party.ship_to)
 				assert_equal([employee, ship_to], @party.parties)
-				bill_to = Mock.new('BillTo')
-				bill_to.__next(:role) { 'BillTo' }
+				bill_to = flexmock('BillTo')
+				bill_to.should_receive(:role).at_least.once.and_return('BillTo')
 				@party.add_party(bill_to)
 				assert_equal(employee, @party.employee)
 				assert_equal(bill_to, @party.bill_to)
@@ -67,25 +62,24 @@ module XmlConv
 				assert_nil(@party.name)
 				@party.name = 'a_string'
 				assert_equal('a_string', @party.name)
-				name = ToSMock.new('Name')
+				name = flexmock('Name')
 				@party.name = name
 				assert_equal(name, @party.name)
-				name.__verify
 			end
 			def test_employee
-				employee = Mock.new('Employee')
-				employee.__next(:role) { 'Employee' }
+				employee = flexmock('Employee')
+				employee.should_receive(:role).at_least.once.and_return('Employee')
 				@party.add_party(employee)
 				assert_equal(employee, @party.employee)
 				assert_equal([employee], @party.parties)
-				ship_to = Mock.new('ShipTo')
-				ship_to.__next(:role) { 'ShipTo' }
+				ship_to = flexmock('ShipTo')
+				ship_to.should_receive(:role).at_least.once.and_return('ShipTo')
 				@party.add_party(ship_to)
 				assert_equal(employee, @party.employee)
 				assert_equal(ship_to, @party.ship_to)
 				assert_equal([employee, ship_to], @party.parties)
-				bill_to = Mock.new('BillTo')
-				bill_to.__next(:role) { 'BillTo' }
+				bill_to = flexmock('BillTo')
+				bill_to.should_receive(:role).at_least.once.and_return('BillTo')
 				@party.add_party(bill_to)
 				assert_equal(employee, @party.employee)
 				assert_equal(bill_to, @party.bill_to)

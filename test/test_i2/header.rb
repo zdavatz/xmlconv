@@ -4,12 +4,12 @@
 $: << File.dirname(__FILE__)
 $: << File.expand_path('../../lib', File.dirname(__FILE__))
 
-require 'test/unit'
 require 'xmlconv/i2/header'
+require 'minitest/autorun'
 
 module XmlConv
 	module I2
-		class TestHeader < Test::Unit::TestCase
+		class TestHeader < ::Minitest::Test
 			def setup
 				@header = Header.new
 			end

@@ -4,21 +4,13 @@
 $: << File.dirname(__FILE__)
 $: << File.expand_path('../../lib', File.dirname(__FILE__))
 
-require 'test/unit'
 require 'xmlconv/i2/position'
-require 'mock'
+require 'minitest/autorun'
+require 'flexmock/minitest'
 
 module XmlConv
 	module I2
-		class TestPosition < Test::Unit::TestCase
-			class ToSMock < Mock
-				def is_a?(klass)
-					true
-				end
-				def to_s
-					true
-				end
-			end
+		class TestPosition < ::Minitest::Test
 			def setup
 				@position = Position.new
 			end
@@ -36,14 +28,11 @@ module XmlConv
 				@position.number = '12345'
 				@position.article_ean = '7654321098765'
 				@position.qty = 123
-				date = ToSMock.new('Date')
-				date.__next(:code=) {}
+				date = flexmock('Date')
+        date.should_receive(:code=).and_return({})
+        date.should_receive(:is_a?).and_return(I2::Date)
 				@position.delivery_date = date
-				date.__next(:is_a?) { |klass| 
-					assert_equal(I2::Date, klass)
-					true
-				}
-				date.__next(:to_s) { "540:A Date\n" }
+        date.should_receive(:to_s=).and_return("540:A Date\n")
 				expected = <<-EOS
 500:12345
 501:7654321098765
@@ -53,12 +42,9 @@ module XmlConv
 				assert_equal(expected, @position.to_s)
 			end
 			def test_delivery_date_writer
-				date = Mock.new('DeliveryDate')
-				date.__next(:code=) { |code| 
-					assert_equal(:delivery, code)
-				}
+				date = flexmock('DeliveryDate')
+        date.should_receive(:code=).with(:delivery).and_return(:delivery)
 				@position.delivery_date = date
-				date.__verify
 			end
 		end
 	end

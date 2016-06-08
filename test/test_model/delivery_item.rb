@@ -4,13 +4,13 @@
 $: << File.expand_path('..', File.dirname(__FILE__))
 $: << File.expand_path('../../lib', File.dirname(__FILE__))
 
-require 'test/unit'
 require 'xmlconv/model/delivery_item'
-require 'mock'
+require 'minitest/autorun'
+require 'flexmock/minitest'
 
 module XmlConv
 	module Model
-		class TestDeliveryItem < Test::Unit::TestCase
+		class TestDeliveryItem < ::Minitest::Test
 			def setup
 				@item = DeliveryItem.new
 			end
@@ -37,12 +37,12 @@ module XmlConv
 			end
 			def test_add_price
 				assert_equal([], @item.prices)
-				price = Mock.new('BruttoPreis')
+				price = flexmock('BruttoPreis')
 				@item.add_price(price)
 				assert_equal([price], @item.prices)
 			end
 			def test_add_part_info
-				info = Mock.new('PartInfo')
+				info = flexmock('PartInfo')
 				assert_equal([], @item.part_infos)
 				@item.add_part_info(info)
 				assert_equal([info], @item.part_infos)
