@@ -15,7 +15,7 @@ module Mail
       puts "#{__FILE__}:#{__LINE__} Suppress sending mail with subject: #{my_subject}"
       ::Mail.defaults do  delivery_method :test end
     else
-      puts "Mail.sendmail #{config.smtp_server} #{config.smtp_port} smtp_user: #{config.smtp_user}"
+      puts "Mail.sendmail #{config.smtp_server} #{config.smtp_port} smtp_user: #{config.smtp_user} subject #{my_subject}"
       ::Mail.defaults do
       options = { :address              => config.smtp_server,
                   :port                 => config.smtp_port,
@@ -32,11 +32,10 @@ module Mail
     recipients.uniq!
     return if(recipients.empty?)
     mail = ::Mail.deliver do
-      content_type("text/plain; charset'utf-8'")
-      from(config.mail_from || 'dummy@test.com')
+      from  (config.mail_from || 'dummy@test.com')
       to recipients
-      subject = my_subject
-      body = my_body
+      subject my_subject
+      body my_body
     end
   end
 end
