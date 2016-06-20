@@ -4,6 +4,7 @@
 * Uses mail instead of tmail
 * mock -> flexmock
 * test/unit => minitest
+* For sending mail use config options from config.yml given
 
 === 1.0.1 / 23.02.2011
 
