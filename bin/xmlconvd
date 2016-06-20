@@ -19,11 +19,14 @@ if(log_file.is_a?(String))
 end
 logger = Logger.new(log_file)
 logger.level = Logger.const_get(config.log_level)
-logger.info(config.program_name) do
-  require 'pp'
-  config.pretty_inspect
-end
 XmlConv::LOGGER = logger
+if config.respond_to? :mail_suppress_sending
+  ::Mail.defaults do  delivery_method :test end
+  puts "Mail.mail_suppress_sending"
+elsif config.respond_to? :delivery_method
+  ::Mail.defaults do  delivery_method config.delivery_method end
+  puts "Mail.delivery_method is #{config.delivery_method}"
+end
 
 XmlConv::Util.autoload(config.plugin_dir, 'plugin')
 XmlConv::Util.autoload(config.postproc_dir, 'postproc')

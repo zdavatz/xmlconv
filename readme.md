@@ -14,11 +14,23 @@ xmlconverter, convert XML to flat files.
 
 * sudo gem install xmlconv
 
+
+## DEVELOPERS:
+
+* Zeno R.R. Davatz
+* Masaomi Hatakeyama
+* Hannes Wyss (up to Version 1.0)
+* Niklaus Giger (Ported to Ruby 2.3.1)
+
+## LICENSE:
+
+GPLv2.0
+
 ## Debugging
 
 Use the `bin/xmlconv_admin config=/path/to/your/config.yml`. There you may call stuff like
 
-```transactions.size
+````transactions.size
 transactions.last.status
 transactions.last.output[0..120]
 transactions.last.uri
@@ -31,16 +43,5 @@ transactions.last.response
 transactions.last.output_model
 transactions.last.partner
 transactions.last.reader
-transactions.last.writer```
+transactions.last.writer````
 
-
-## DEVELOPERS:
-
-* Zeno R.R. Davatz
-* Masaomi Hatakeyama
-* Hannes Wyss (up to Version 1.0)
-* Niklaus Giger (Ported to Ruby 2.3.1)
-
-## LICENSE:
-
-GPLv2.0
