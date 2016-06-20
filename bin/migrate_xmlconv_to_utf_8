@@ -44,7 +44,6 @@ require 'xmlconv/util/application'
 require 'xmlconv/util/session'
 require 'xmlconv/util/transaction'
 
-$nrBdds = 0
 module XmlConv
   class Server
     # http://stackoverflow.com/questions/2982677/ruby-1-9-invalid-byte-sequence-in-utf-8
