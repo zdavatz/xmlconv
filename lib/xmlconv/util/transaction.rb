@@ -30,7 +30,7 @@ module XmlConv
         @arguments ||= []
 				@model = reader_instance.convert(input_model, *@arguments)
 				output_model = writer_instance.convert(@model, *@arguments)
-				@output = output_model.to_s
+				@output = output_model.is_a?(Array) ? output_model.join("\n").to_s : output_model.to_s
 				@destination.deliver(output_model)
 				@commit_time = Time.now
 				@output
