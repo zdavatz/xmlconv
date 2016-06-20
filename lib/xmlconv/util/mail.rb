@@ -32,7 +32,7 @@ module Mail
     recipients.uniq!
     return if(recipients.empty?)
     mail = ::Mail.deliver do
-      from  (config.mail_from || 'dummy@test.com')
+      from  config.mail_from
       to recipients
       subject my_subject
       body my_body

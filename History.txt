@@ -1,3 +1,8 @@
+=== 1.0.3 / 20.06.2016
+
+* Remove some fields from config.rb
+* No default for mail.from
+
 === 1.0.2 / 08.06.2016
 
 * Ported to Ruby 2.3.0
