@@ -1,6 +1,6 @@
 === 1.0.4 / 20.06.2016
 
-* config.delivery_method allows us to use sendmail instead of smtp for delivery
+* setup correct smtp delivery if config.smtp_server is given. Works with smtp.gmail.com
 
 === 1.0.3 / 20.06.2016
 

@@ -23,9 +23,17 @@ XmlConv::LOGGER = logger
 if config.respond_to? :mail_suppress_sending
   ::Mail.defaults do  delivery_method :test end
   puts "Mail.mail_suppress_sending"
-elsif config.respond_to? :delivery_method
-  ::Mail.defaults do  delivery_method config.delivery_method end
-  puts "Mail.delivery_method is #{config.delivery_method}"
+elsif config.respond_to?(:smtp_server)
+  options = {}
+  options[:address] = config.smtp_server
+  options[:port] = config.smtp_port
+  options[:domain] = config.smtp_domain
+  options[:user_name] = config.smtp_user
+  options[:password] = config.smtp_pass
+  options[:authentication] = 'plain'
+  options[:enable_starttls_auto] = true
+  puts "Mail.defaults set to :smpt #{options}"
+  ::Mail.defaults do  delivery_method :smtp, options end
 end
 
 XmlConv::Util.autoload(config.plugin_dir, 'plugin')
