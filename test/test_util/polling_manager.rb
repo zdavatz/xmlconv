@@ -5,7 +5,6 @@ $: << File.expand_path('../../lib', File.dirname(__FILE__))
 
 require 'xmlconv/util/polling_manager'
 require 'config'
-require 'mail'
 require 'minitest/autorun'
 require 'flexmock/minitest'
 

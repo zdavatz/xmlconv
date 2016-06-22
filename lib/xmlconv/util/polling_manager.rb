@@ -8,7 +8,6 @@ require 'xmlconv/util/destination'
 require 'xmlconv/util/mail'
 require 'xmlconv/util/transaction'
 require 'net/pop'
-require 'mail'
 
 module XmlConv
 	module Util
