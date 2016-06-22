@@ -8,7 +8,7 @@ require 'xmlconv/util/destination'
 require 'xmlconv/util/mail'
 require 'xmlconv/util/transaction'
 require 'net/pop'
-require 'rmail'
+require 'mail'
 
 module XmlConv
 	module Util
@@ -66,35 +66,37 @@ module XmlConv
     class PopMission < Mission
       attr_accessor :host, :port, :user, :pass, :content_type
       def poll(&block)
-        Net::POP3.start(@host, @port || 110, @user, @pass) { |pop|
-          pop.each_mail { |mail|
-            source = mail.pop
+        puts "PopMission starts polling host #{@host}:#{@port} u: #{@user} pw: #{@pass}"
+        options = {
+                          :address    => @host,
+                          :port       => @port,
+                          :user_name  => @user,
+                          :password   => @pass,
+                          :enable_ssl => true
+          }
+        ::Mail.defaults do retriever_method :pop3, options  end
+        all_mails = ::Mail.delivery_method.is_a?(::Mail::TestMailer) ? ::Mail::TestMailer.deliveries : ::Mail.all
+        all_mails.each do |mail|
             begin
-              ## work around a bug in RMail::Parser that cannot deal with
-              ## RFC-2822-compliant CRLF..
-              source.gsub!(/\r\n/, "\n")
-              poll_message(RMail::Parser.read(source), &block)
+              poll_message(mail, &block)
             ensure
               time = Time.now
-              name = sprintf("%s.%s.%s", @user, 
-                             time.strftime("%Y%m%d%H%M%S"), time.usec)
+              name = sprintf("%s.%s.%s", @user, time.strftime("%Y%m%d%H%M%S"), time.usec)
               FileUtils.mkdir_p(@backup_dir)
               path = File.join(@backup_dir, name)
-              File.open(path, 'w') { |fh| fh.puts(source) }
-              mail.delete
+              File.open(path, 'w') { |fh| fh.puts(mail) }
+              mail.mark_for_delete = true
+              # mail.delete # Not necessary with gem mail, as delete_after_find is set to true by default
             end
-          }
-        }
+        end
       end
       def poll_message(message, &block)
         if(message.multipart?)
-          message.each_part { |part|
+          message.parts.each do |part|
             poll_message(part, &block)
-          }
-        elsif(@content_type.match(message.header.content_type('text/plain')))
-          src = message.decode
-          filtered_transaction(src, sprintf('pop3:%s@%s:%s', @user, @host, @port),
-                               &block)
+          end
+        elsif(/text\/xml/.match(message.content_type))
+          filtered_transaction(message.decoded, sprintf('pop3:%s@%s:%s', @user, @host, @port), &block)
         end
       end
     end
