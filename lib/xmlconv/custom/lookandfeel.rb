@@ -45,6 +45,17 @@ module XmlConv
 			RESOURCES = {
 				:css	=>	'xmlconv.css'
 			}
+
+      alias :orig_base_url :base_url
+
+      # Provides non flavored base url
+      def base_url
+        _flavor = @flavor
+        @flavor = nil
+        url = orig_base_url
+        @flavor = _flavor
+        url
+      end
 		end
 	end
 end
