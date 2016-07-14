@@ -23,7 +23,8 @@ module XmlConv
       def test_base_url_does_not_include_flavor
         lookandfeel = Lookandfeel.new(@session)
         assert_equal('sbsm', lookandfeel.flavor)
-        refute_match(lookandfeel.base_url, @session.flavor)
+        assert_equal('sbsm', @session.flavor)
+        refute_match(@session.flavor, lookandfeel.base_url)
       end
     end
   end
