@@ -4,51 +4,74 @@
 require 'htmlgrid/value'
 
 module XmlConv
-	module View
-		BREAK_WIDTH = 65
-		class Preformatted < HtmlGrid::Value
+  module View
+    class Preformatted < HtmlGrid::Value
+      BREAK_WIDTH = 65
+
       def init
         super
-        pretty = ''
-        if(@value)
-          raw = @value.gsub(/>\s+</, "><").gsub(/\r\n?/, "\n")
-          begin
-            pretty = CGI.pretty(raw)
-          rescue
-            pretty = raw
+        if @value
+          raw = @value.gsub(/>\s+</, '><').gsub(/\t|\r\n?/, '')
+          # fix encoding
+          if raw =~ /ISO\-8859\-1|WINDOWS\-1252/i
+            raw.force_encoding(Encoding::ISO_8859_1)
           end
-          wrap = ''
-          pretty.each_line { |line|
-            if(line.length < BREAK_WIDTH)
-              wrap << line
-            else
-              indent = line[/^ +/].to_s
-              indent = indent[0,indent.length % (BREAK_WIDTH / 3)]
-              tmpparts = line.split(/(?<=") +(?=")/)
-              parts = []
-              tmpparts.each { |part|
-                if(part.length > BREAK_WIDTH)
-                  parts.concat(part.split(/ /))
-                else
-                  parts.push(part)
-                end
+          raw.encode!(Encoding::UTF_8).force_encoding(Encoding::UTF_8)
+          @value = <<~PRE
+            <pre>#{
+              cgi_with_utf8 {
+                # prettify (indent)
+                pretty = begin CGI.pretty(raw); rescue raw; end
+                # omit tags
+                CGI.escapeHTML(wrap(pretty))
               }
-              wrapline = parts.shift
-              while(part = parts.shift)
-                if((wrapline.length + part.length) >= BREAK_WIDTH)
-                  wrap << wrapline
-                  wrap << "\n"
-                  wrapline = indent.dup << (' ' * 5) << part
-                else
-                  wrapline << ' ' << part
-                end
-              end
-              wrap << wrapline
-            end
-          }
-          @value = CGI.escapeHTML(wrap)
+            }</pre>
+          PRE
         end
       end
-		end
-	end
+
+      private
+
+      def wrap(pretty)
+        wrapped = ''
+        pretty.each_line { |line|
+          if line.length < BREAK_WIDTH
+            wrapped << line
+          else
+            indent = line[/^ +/].to_s
+            indent = indent[0,indent.length % (BREAK_WIDTH / 3)]
+            tmpparts = line.split(/(?<=") +(?=")/)
+            parts = []
+            tmpparts.each { |part|
+              if part.length > BREAK_WIDTH
+                parts.concat(part.split(/ /))
+              else
+                parts.push(part)
+              end
+            }
+            wrapline = parts.shift
+            while part = parts.shift
+              if (wrapline.length + part.length) >= BREAK_WIDTH
+                wrapped << wrapline
+                wrapped << "\n"
+                wrapline = indent.dup << (' ' * 5) << part
+              else
+                wrapline << ' ' << part
+              end
+            end
+            wrapped << wrapline
+          end
+        }
+        wrapped
+      end
+
+      def cgi_with_utf8
+        orig_verbose = $VERBOSE
+        $VERBOSE = nil
+        result = yield
+        $VERBOSE = orig_verbose
+        result
+      end
+    end
+  end
 end
