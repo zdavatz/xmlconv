@@ -1,3 +1,13 @@
+=== 1.0.9 / 25.07.2016
+
+* Fix encoding issue for incoming request
+* Fix encoding issue on preformatted view
+* Add charset in http response header and meta tag (UI)
+
+=== 1.0.8 / 13.07.2016
+
+* Fix base_url as non-flavoerd url
+
 === 1.0.7 / 21.06.2016
 
 * Made it work running via mod_ruby with Ruby 1.8.6
