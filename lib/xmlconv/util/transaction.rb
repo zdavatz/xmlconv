@@ -27,8 +27,8 @@ module XmlConv
 				writer_instance = Conversion.const_get(@writer)
 				@start_time = Time.now
         @input = encode(@input)
-        @input.gsub!(/\t+/, '')
-        input_model = reader_instance.parse(encode(@input))
+        @input.gsub!(/\t+|\s+/, ' ')
+        input_model = reader_instance.parse(@input)
         @arguments ||= []
 				@model = reader_instance.convert(input_model, *@arguments)
 				output_model = writer_instance.convert(@model, *@arguments)
