@@ -39,6 +39,9 @@ module XmlConv
 				ODBA.cache = cache
         transaction.should_receive(:transaction_id=).with(1)
         transaction.should_receive(:execute).once.and_return(transaction)
+        transaction.should_receive(:postprocess).once
+        transaction.should_receive(:error=).never
+        transaction.should_receive(:odba_store).once
         transaction.should_receive(:notify).once
 				assert_equal([], @app.transactions)
 				assert_equal(0, @app.transactions.size)
@@ -55,6 +58,9 @@ module XmlConv
 				ODBA.cache = cache
         transaction.should_receive(:transaction_id=).with(1)
         transaction.should_receive(:execute).once.and_raise(Net::SMTPFatalError, 'could not send email')
+        transaction.should_receive(:postprocess).never
+        transaction.should_receive(:error=).never
+        transaction.should_receive(:odba_store).once
 				assert_equal([], @app.transactions)
 				assert_equal(0, @app.transactions.size)
 				@app.execute(transaction)
@@ -70,8 +76,10 @@ module XmlConv
 				ODBA.cache = cache
         transaction.should_receive(:transaction_id=).with(1)
         transaction.should_receive(:execute).and_raise 'oops, something went wrong'
-        transaction.should_receive(:error=)
-        transaction.should_receive(:notify)
+        transaction.should_receive(:postprocess).never
+        transaction.should_receive(:error=).once
+        transaction.should_receive(:odba_store).once
+        transaction.should_receive(:notify).once
 				assert_equal([], @app.transactions)
 				assert_equal(0, @app.transactions.size)
 				@app.execute(transaction)
@@ -80,7 +88,7 @@ module XmlConv
 				ODBA.cache = nil
 			end
 			def test_dumpable
-				Marshal.dump(@app)
+				assert_raises(TypeError) { Marshal.dump(@app) }
 			end
 			def test_next_transaction_id
 				assert_equal([], @app.transactions)
@@ -98,7 +106,7 @@ module XmlConv
 			end
 			def test_odba_exclude_vars
 				@app.instance_variable_set('@next_transaction_id', 10)
-				@app.instance_eval('odba_replace_excluded!')	
+				@app.instance_eval('odba_replace_excluded!')
 				assert_nil(@app.instance_variable_get('@next_transaction_id'))
 			end
 			def test_transaction

@@ -18,14 +18,14 @@ module XmlConv
     class TestPollingMission < ::Minitest::Test
       def setup
         @mission = PollingMission.new
-				@dir = File.expand_path('data/i2', 
+				@dir = File.expand_path('data/i2',
 					File.dirname(__FILE__))
 				FileUtils.mkdir_p(@dir)
 				@file1 = File.expand_path('file1.txt', @dir)
 				File.open(@file1, 'w') { |fh| fh << "File 1\n" }
       end
 			def teardown
-				FileUtils.rm_rf(@dir) 
+				FileUtils.rm_rf(@dir)
 			end
 			def test_file_paths
         @mission.directory = @dir
@@ -100,15 +100,17 @@ module XmlConv
     end
     class TestPopMission < ::Minitest::Test
       def setup
+        ::Mail::TestMailer.deliveries.clear
+        ::Mail.defaults do delivery_method :test end
         @popserver = TCPServer.new('127.0.0.1', 0)
-        addr = @popserver.addr 
+        addr = @popserver.addr
         @mission = PopMission.new
         @mission.host = 'localhost'
         @mission.port = addr.at(1)
         @mission.user = "testuser"
         @mission.pass = "test"
         @mission.content_type = "text/xml"
-        @datadir = File.expand_path('data', File.dirname(__FILE__)) 
+        @datadir = File.expand_path('data', File.dirname(__FILE__))
         @mission.backup_dir = File.join(@datadir, 'backup')
         @mission.destination = File.join(@datadir, 'destination')
         @mission.partner = 'Partner'
@@ -159,14 +161,14 @@ module XmlConv
 			def setup
 				@sys = flexmock('System')
 				@polling = PollingManager.new(@sys)
-				@dir = File.expand_path('data/i2', 
+				@dir = File.expand_path('data/i2',
 					File.dirname(__FILE__))
 				FileUtils.mkdir_p(@dir)
 				@file1 = File.expand_path('file1.txt', @dir)
 				File.open(@file1, 'w') { |fh| fh << "File 1\n" }
 			end
 			def teardown
-				FileUtils.rm_rf(@dir) 
+				FileUtils.rm_rf(@dir)
 				@sys.__verify
         super
 			end
@@ -186,7 +188,7 @@ reader: XmlBdd
           EOS
 				}
 				block = nil
-				block3 = Proc.new { |source| 
+				block3 = Proc.new { |source|
 					flunk "too many sources"
 				}
 				block2 = Proc.new { |source|

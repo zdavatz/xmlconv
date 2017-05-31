@@ -49,18 +49,17 @@ module XmlConv
 				assert_respond_to(@transaction, :commit_time)
 			end
 			def test_execute
-				src = flexmock('source')
 				input = flexmock('input')
 				reader = flexmock('reader')
 				model = flexmock('model')
 				writer = flexmock('writer')
 				output = flexmock('output')
 				destination = flexmock('destination')
-				@transaction.input = src
+				@transaction.input = 'abc'
 				@transaction.reader = reader
 				@transaction.writer = writer
 				@transaction.destination = destination
-        reader.should_receive(:parse).with(src).once.and_return(input)
+        reader.should_receive(:parse).and_return(input)
         reader.should_receive(:convert).with(input).once.and_return(model)
         writer.should_receive(:convert).with(model).once.and_return(output)
         destination.should_receive(:deliver).with(output).once
@@ -68,7 +67,7 @@ module XmlConv
 				time1 = Time.now
 				result = @transaction.execute
 				time2 = Time.now
-				assert_equal(src, @transaction.input)
+				assert_equal('abc', @transaction.input)
 				assert_equal(reader, @transaction.reader)
 				assert_equal(model, @transaction.model)
 				assert_equal(writer, @transaction.writer)
@@ -84,22 +83,22 @@ module XmlConv
 				Marshal.dump(@transaction)
 			end
 			def test_notify
-          ::Mail::TestMailer.deliveries.clear
-          ::Mail.defaults do
-          delivery_method :test
-        end
+        ::Mail::TestMailer.deliveries.clear
+        ::Mail.defaults do delivery_method :test end
+        to_addr = 'foo@bar.com'
+        XmlConv::CONFIG.mail_from = 'from@some.com'
 				@transaction.instance_variable_set('@start_time', Time.now)
 				@transaction.error_recipients = ['bar']
 				@transaction.notify
         assert_equal(0, ::Mail::TestMailer.deliveries.size)
-				@transaction.debug_recipients = ['foo']
+				@transaction.debug_recipients = [to_addr]
 				@transaction.notify
         assert_equal(1, ::Mail::TestMailer.deliveries.size)
-        assert_equal(['foo'], ::Mail::TestMailer.deliveries.last.to)
+        assert_equal([to_addr], ::Mail::TestMailer.deliveries.last.to)
 				@transaction.error = 'error!'
 				@transaction.notify
         assert_equal(2, ::Mail::TestMailer.deliveries.size)
-        assert_equal(['foo', 'bar'], ::Mail::TestMailer.deliveries.last.to)
+        assert_equal([to_addr, 'bar'], ::Mail::TestMailer.deliveries.last.to)
 			end
 		end
 	end

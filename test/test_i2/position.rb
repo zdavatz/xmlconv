@@ -28,17 +28,13 @@ module XmlConv
 				@position.number = '12345'
 				@position.article_ean = '7654321098765'
 				@position.qty = 123
-				date = flexmock('Date')
-        date.should_receive(:code=).and_return({})
-        date.should_receive(:is_a?).and_return(I2::Date)
-				@position.delivery_date = date
-        date.should_receive(:to_s=).and_return("540:A Date\n")
+				@position.delivery_date = I2::Date.new(1999,12,31)
 				expected = <<-EOS
 500:12345
-501:7654321098765
 520:123
-540:A Date
-				EOS
+540:2
+541:19991231
+EOS
 				assert_equal(expected, @position.to_s)
 			end
 			def test_delivery_date_writer

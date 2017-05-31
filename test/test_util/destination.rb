@@ -12,6 +12,10 @@ require 'flexmock/minitest'
 
 module XmlConv
 	module Util
+    class DestinationMail
+      def odba_store
+      end
+    end
 		class TestDestination < ::Minitest::Test
 			def setup
 				@destination = Destination.new
@@ -28,7 +32,7 @@ module XmlConv
 			end
 			def test_deliver__destination
 				delivery = flexmock('Delivery')
-				assert_raises(RuntimeError) { 
+				assert_raises(RuntimeError) {
 					@destination.deliver(delivery)
 				}
 			end
@@ -37,16 +41,16 @@ module XmlConv
 			end
       def test_book
         assert_instance_of(DestinationDir, Destination.book('/'))
-        assert_instance_of(DestinationHttp, 
+        assert_instance_of(DestinationHttp,
                            Destination.book('http://www.example.com'))
-        assert_instance_of(DestinationFtp, 
+        assert_instance_of(DestinationFtp,
                            Destination.book('ftp://www.example.com'))
       end
 		end
 		class TestDestinationDir < ::Minitest::Test
 			def setup
 				@destination = DestinationDir.new
-				@target_dir = File.expand_path('data/destination', 
+				@target_dir = File.expand_path('data/destination',
 					File.dirname(__FILE__))
         super
 			end
@@ -141,6 +145,21 @@ module XmlConv
 				assert_respond_to(@destination, :host=)
 			end
 		end
+    class TestDestinationMail< ::Minitest::Test
+      def setup
+        @destination = DestinationMail.new
+        ::Mail.defaults do delivery_method :test end
+        ::Mail::TestMailer.deliveries.clear
+        super
+      end
+      def test_destination_mail
+        default_dest = 'mailto:noone@nowhere.org'
+        test_recicpient = 'test@other.org'
+        assert_equal(default_dest, @destination.uri.to_s)
+        @destination.deliver('body as text')
+        assert_equal(1, ::Mail::TestMailer.deliveries.length)
+      end
+    end
 		class TestDestinationHttp < ::Minitest::Test
 			def setup
 				@destination = DestinationHttp.new
@@ -175,15 +194,15 @@ module XmlConv
 				response = flexmock('Response')
 				response.should_receive(:message).and_return { 'Status' }
 				delivery.should_receive(:to_s).and_return { 'The Delivery' }
-				http_session.should_receive(:request).and_return { |post_request, body| 
+				http_session.should_receive(:request).and_return { |post_request, body|
 					assert_instance_of(Net::HTTP::Post, post_request)
-					header = post_request.instance_variable_get('@header') 
+					header = post_request.instance_variable_get('@header')
 					assert_equal(['text/xml'], header['content-type'])
 					assert(header.include?('authorization'), "Authorization-Headers not sent")
 					assert_equal('The Delivery', body)
 					response
 				}
-				@transport.should_receive(:start).and_return { |host, port, block| 
+				@transport.should_receive(:start).and_return { |host, port, block|
 					assert_equal('xmlconv.ywesee.com', host)
 					assert_equal(12345, port)
 					block.call(http_session)
@@ -203,9 +222,14 @@ module XmlConv
         @destination.transport = @transport = flexmock('DestinationFtp::FTP_CLASS')
         super
 			end
-			def test_path_writer
+			def test_path_absolute_writer
 				assert_equal('ftp:/', @destination.uri.to_s)
 				@destination.path = '/foo/bar'
+				assert_equal('ftp:/%2Ffoo/bar', @destination.uri.to_s)
+			end
+			def test_path_relative_writer
+				assert_equal('ftp:/', @destination.uri.to_s)
+				@destination.path = 'foo/bar'
 				assert_equal('ftp:/foo/bar', @destination.uri.to_s)
 			end
 			def test_host_writer
@@ -231,13 +255,13 @@ module XmlConv
 				delivery.should_receive(:to_s).and_return { 'The Delivery' }
         delivery.should_receive(:filename).and_return { 'test.dat' }
         ftp_session.should_receive(:chdir).and_return { |path|
-          assert_equal('/foo/bar/', path)
+          assert_equal('foo/bar/', path)
         }
         ftp_session.should_receive(:puttextfile).and_return { |local, remote|
           assert_equal("The Delivery\n", File.read(local))
           assert_equal('test.dat', remote)
         }
-				@transport.should_receive(:open).and_return { |host, user, password, block| 
+				@transport.should_receive(:open).and_return { |host, user, password, block|
 					assert_equal('xmlconv.ywesee.com', host)
 					assert_equal('testaccount', user)
 					assert_equal('password', password)
@@ -262,13 +286,13 @@ module XmlConv
         ftp_session.should_receive(:chdir).and_return { |path|
           assert_equal('foo/bar/', path)
         }
-        expecteds = %w{000_test.dat 001_test.dat}
+        expecteds = %w{test.dat test.dat}
         ftp_session.should_receive(:puttextfile).times(2)\
           .and_return { |local, remote|
           assert_equal("The Delivery\n", File.read(local))
           assert_equal(expecteds.shift, remote)
         }
-				@transport.should_receive(:open).and_return { |host, user, password, block| 
+				@transport.should_receive(:open).and_return { |host, user, password, block|
 					assert_equal('xmlconv.ywesee.com', host)
 					assert_equal('testaccount', user)
 					assert_equal('password', password)
@@ -297,7 +321,7 @@ module XmlConv
           assert_equal('/foo/tmp/test.dat', remote)
         }
         ftp_session.should_receive(:rename).with('/foo/tmp/test.dat', 'test.dat').times(1)
-        @transport.should_receive(:open).and_return { |host, user, password, block| 
+        @transport.should_receive(:open).and_return { |host, user, password, block|
           assert_equal('xmlconv.ywesee.com', host)
           assert_equal('testaccount', user)
           assert_equal('password', password)
@@ -349,7 +373,7 @@ module XmlConv
         delivery.should_receive(:to_s).and_return { 'The Delivery' }
         delivery.should_receive(:filename).and_return { 'test.dat' }
         file_handle = StringIO.new('')
-        @transport.should_receive(:start).and_return { |host, user, opts, block| 
+        @transport.should_receive(:start).and_return { |host, user, opts, block|
           assert_equal('xmlconv.ywesee.com', host)
           assert_equal('testaccount', user)
           assert_equal([], opts[:keys])
@@ -380,7 +404,7 @@ module XmlConv
         delivery.should_receive(:to_s).and_return { 'The Delivery' }
         delivery.should_receive(:filename).and_return { 'test.dat' }
         file_handle = StringIO.new('')
-        @transport.should_receive(:start).and_return { |host, user, opts, block| 
+        @transport.should_receive(:start).and_return { |host, user, opts, block|
           assert_equal('xmlconv.ywesee.com', host)
           assert_equal('testaccount', user)
           assert_equal([], opts[:keys])
