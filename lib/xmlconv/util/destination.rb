@@ -16,8 +16,8 @@ module XmlConv
 			attr_accessor :path, :status
 			attr_reader :uri
 			STATUS_COMPARABLE = {
-				:pending_pickup	=>	10,	
-				:picked_up			=>	20,	
+				:pending_pickup	=>	10,
+				:picked_up			=>	20,
         :bbmb_ok        =>  20,
 				:http_ok				=>	20,
         :ftp_ok         =>  20,
@@ -49,7 +49,7 @@ module XmlConv
 			def update_status
 			end
 			def status_comparable
-				self::class::STATUS_COMPARABLE[@status].to_i				
+				self::class::STATUS_COMPARABLE[@status].to_i
 			end
       def sanitize(str)
         str.to_s.gsub(/[^a-zA-Z0-9 _.]/, '').gsub(' ', '+')
@@ -97,8 +97,8 @@ module XmlConv
         forget_credentials!
       end
       def forget_credentials!
-        @uri = URI::HTTP.new(@uri.scheme, nil, @uri.host, @uri.port, 
-          @uri.registry, @uri.path, @uri.opaque, @uri.query, @uri.fragment)
+        path = /^\//.match(@uri.path) ? @uri.path : '/' + @uri.path
+        @uri = URI::HTTP.new(@uri.scheme, nil, @uri.host, @uri.port,  @uri.registry, path, @uri.opaque, @uri.query, @uri.fragment)
       end
       def host
         @uri.host
@@ -128,17 +128,17 @@ module XmlConv
         @transport = Net::FTP
 			end
       def do_deliver(delivery)
-        @transport.open(@uri.host, @uri.user, @uri.password) { |conn|
+        @transport.open(@uri.host, @uri.user, @uri.password) do |conn|
           conn.chdir(@uri.path)
           deliver_to_connection(conn, delivery)
-        }
+        end
       end
       def deliver_to_connection(connection, delivery, idx=nil)
         if(delivery.is_a?(Array))
-          #delivery.each_with_index { |part, idx| 
-          delivery.each { |part| 
-            #deliver_to_connection(connection, part, idx) 
-            deliver_to_connection(connection, part) 
+          #delivery.each_with_index { |part, idx|
+          delivery.each { |part|
+            #deliver_to_connection(connection, part, idx)
+            deliver_to_connection(connection, part)
           }
         else
           fh = Tempfile.new('xmlconv')
@@ -146,7 +146,7 @@ module XmlConv
           fh.flush
           target = delivery.filename
 #          if(idx)
-            #target = sprintf("%03i_%s", idx, target)
+            #targidxet = sprintf("%03i_%s", idx, target)
 #            target.gsub!(/\.dat/, "%03i.dat" % idx)
 #            target.gsub!(/(CO_\d{13})/, '\1%02d' % idx)
 #          end
@@ -174,9 +174,9 @@ module XmlConv
       def do_deliver(delivery)
         if(delivery.is_a?(Array))
            worst_status = ''
-           delivery.each { |part| 
-             do_deliver(part) 
-             ## bogostatus: assume that the more information in the string, 
+           delivery.each { |part|
+             do_deliver(part)
+             ## bogostatus: assume that the more information in the string,
              ##             the worse the status is (ok < not found)
              ##             rationale: DTSTTCPW
              if(@status.to_s > worst_status.to_s)
@@ -190,7 +190,7 @@ module XmlConv
             if(@uri.user || @uri.password)
               request.basic_auth(@uri.user, @uri.password)
             end
-            response = http.request(request, delivery.to_s)	
+            response = http.request(request, delivery.to_s)
             status_str = response.message.downcase.gsub(/\s+/, "_")
             @status = "http_#{status_str}".intern
           }
@@ -202,23 +202,19 @@ module XmlConv
 				@uri = uri
         super()
       end
-      def deliver(delivery)
+      def deliver(my_body)
+        XmlConv::CONFIG.mail_from ||= 'dummy@nowhere.org'
         recipients = [@uri.to].compact
         recipients.uniq!
         return if(recipients.empty?)
-        subject = 'XmlConv - Delivery'
-        mail = TMail::Mail.new
-        mail.set_content_type('text', 'plain', 'charset'=>'ISO-8859-1')
-        mail.body = delivery.to_s
-        mail.from = XmlConv::CONFIG.mail_from
-        mail.to = recipients
-        mail.subject = subject
-        mail.date = Time.now
-        mail['User-Agent'] = 'XmlConv::Util::Destination'
-        Net::SMTP.start(XmlConv::CONFIG.mail_host) { |smtp|
-          smtp.sendmail(mail.encoded, XmlConv::CONFIG.mail_from, recipients)
-        }
-        @status = :mail_ok
+        my_subject = 'XmlConv - Delivery'
+        mail = ::Mail.deliver do
+          from XmlConv::CONFIG.mail_from
+          to recipients
+          subject my_subject
+          body my_body.to_s
+        end
+        @status = :mail_ok unless mail.error_status
         odba_store
       end
     end
