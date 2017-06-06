@@ -5,6 +5,7 @@
 module XmlConv
 	module I2
 		class Header
+      TRANSACTION_TIME_FORMAT = '%Y%m%d%H%M'
 			attr_accessor :recipient_id, :filename, :prefix, :transaction_id
       attr_reader :suffix
 			def initialize(recipient_id = 'EPIN_PL')
@@ -13,7 +14,7 @@ module XmlConv
         time = Time.now
 #				msec = sprintf('%03i', (time.to_f * 1000).to_i % 100)
         #@transaction_id = time.strftime("%Y%m%d%H%M#{msec}")
-        @transaction_id = time.strftime("%Y%m%d%H%M")
+        @transaction_id = time.strftime(TRANSACTION_TIME_FORMAT)
 			end
       def suffix=(suffix)
         @suffix = "_" << suffix.to_s

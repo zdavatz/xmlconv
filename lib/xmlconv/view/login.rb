@@ -31,6 +31,10 @@ module XmlConv
 		end
 		class Login < Template
 			CONTENT = LoginComposite
+      def to_html(context)
+        return "" if @session.request_method.eql?('POST')
+        super
+      end
 		end
 	end
 end

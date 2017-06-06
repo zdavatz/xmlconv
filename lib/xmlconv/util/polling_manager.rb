@@ -13,7 +13,7 @@ module XmlConv
 	module Util
     class Mission
       attr_accessor :reader, :writer, :destination, :error_recipients,
-        :debug_recipients, :backup_dir, :partner, :postprocs, :filter, 
+        :debug_recipients, :backup_dir, :partner, :postprocs, :filter,
         :tmp_destination, :arguments
       def create_transaction
         transaction = XmlConv::Util::Transaction.new
@@ -182,17 +182,21 @@ module XmlConv
 				file.close if(file)
 			end
 			def poll_sources
-				load_sources { |source|
+				load_sources do |source|
           begin
             source.poll { |transaction|
               @system.execute(transaction)
             }
           rescue Exception => e
             subject = 'XmlConv2 - Polling-Error'
-            body = [e.class, e.message].concat(e.backtrace).join("\n")
+            body = [e.class, e.message,
+                    defined?(source.user) ? 'user '+ source.user : nil,
+                    defined?(source.host) ? 'host '+ source.host : nil,
+                    defined?(source.port) ? 'port '+ source.port.to_s : nil
+                    ].compact.concat(e.backtrace).join("\n")
             Util::Mail.notify source.error_recipients, subject, body
           end
-				}
+        end
 			end
 		end
 	end

@@ -24,6 +24,7 @@ module XmlConv
     'access'              => {},
     'commission'          => 0.3, ## Commission in percent
     'config'              => default_config_files,
+    'bbmb_url'            => 'druby://localhost:12004',
     'db_name'             => 'xmlconv',
     'db_user'             => 'xmlconv',
     'db_auth'             => '',
@@ -38,6 +39,7 @@ module XmlConv
     'mail_from'           => 'xmlconv@ywesee.com',
     'pass_hash'           => nil,
     'polling_file'        => conf_dir,
+    'polling_interval'    => nil,
     'program_name'        => 'XmlConv2',
     'project_root'        => data_dir,
     'plugin_dir'          => File.expand_path('conversion', code_dir),
@@ -49,9 +51,17 @@ module XmlConv
     'ssh_known_hosts_file'=> File.expand_path('known_hosts', conf_dir),
     'target_format_fs'    => ',',
     'target_format_rs'    => "\n",
+    'smtp_server'         => 'smtp.gmail.com',
+    'smtp_user'           => 'nouser@nowhere.com',
+    'smtp_domain'         => 'no.domain.com',
+    'smtp_authtype'       => 'plain',
+    'smtp_port'           => '587',
+    'smtp_pass'           => 'thisIsNotApassword',
     'ydim_id'             => nil,
     'ydim_config'         => nil,
     'vat_rate'            => 7.6,
+    'reader'              => 'XundartBdd',
+    'writer'              => 'BddCsv',
   }
 
   config = RCLConf::RCLConf.new(ARGV, defaults)

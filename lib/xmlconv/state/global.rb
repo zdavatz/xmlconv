@@ -14,14 +14,14 @@ module XmlConv
 			end
 			def transaction
 				if((id = @session.user_input(:transaction_id)) \
-					&& (transaction = @session.transaction(id)))
+					&& (transaction = @session.persistence_layer.transaction(id)))
 					Transaction.new(@session, transaction)
 				else
 					self
 				end
 			end
 			def home
-				Transactions.new(@session, @session.transactions)
+				Transactions.new(@session, @session.persistence_layer.transactions)
 			end
 		end
 	end

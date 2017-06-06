@@ -136,12 +136,12 @@ Output:
       end
 			def status_comparable
 				if(@destination.respond_to?(:status_comparable))
-					@destination.status_comparable 
+					@destination.status_comparable
 				end
 			end
 			def update_status
 				if(@destination.respond_to?(:update_status))
-					@destination.update_status 
+					@destination.update_status
 				end
 			end
 			def uri

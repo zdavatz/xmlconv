@@ -6,7 +6,7 @@ require 'xmlconv/i2/date'
 module XmlConv
 	module I2
 		class Position
-			attr_accessor :number, :article_ean, :qty, :customer_id, :price, :unit, 
+			attr_accessor :number, :article_ean, :qty, :customer_id, :price, :unit,
         :pharmacode, :free_text
 			attr_reader :delivery_date
 			def delivery_date=(date)
@@ -17,7 +17,7 @@ module XmlConv
 				output = <<-EOS
 500:#{@number}
         EOS
-#501:#{@article_ean}
+#        output << "501:#{@article_ean}\n"
         [@customer_id, @pharmacode].compact.each { |id|
           #output << sprintf("502:%s\n", id)
           output << sprintf("501:%s\n", id)
