@@ -1,7 +1,12 @@
+=== 1.1.1 / 06.06.2017
+
+* Adapted to use the rack based SBSM
+* Require  Ruby >= 2.0 and mail gem
+
 === 1.1.0 / 02.09.2016
 
-* Revert fixing base_url as non-flavoerd url on 1.0.8
-* It must be supported in SBSM (Now xmlconv works with flavor in url)
+* Removed use of TMail/Net:SMTP in lib/xmlconv/util/destination.rb
+* Various fixes for passing the tests
 
 === 1.0.9 / 25.07.2016
 
