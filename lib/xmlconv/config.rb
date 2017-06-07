@@ -35,6 +35,7 @@ module XmlConv
     'invoice_item_format' => "Commission %s\n%s %1.2f Turnover\nout of %i transmitted invoices",
     'log_file'            => STDERR,
     'log_level'           => 'INFO',
+    'log_pattern'         => File.join(Dir.pwd, 'log', '%Y/%m/%d/app.log'),
     'mail_host'           => 'localhost',
     'mail_from'           => 'xmlconv@ywesee.com',
     'pass_hash'           => nil,
