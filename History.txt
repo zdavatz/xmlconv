@@ -1,3 +1,7 @@
+=== 1.1.2 / 07.06.2017
+
+* Added forgotten rack_interface.rb
+
 === 1.1.1 / 06.06.2017
 
 * Adapted to use the rack based SBSM
