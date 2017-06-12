@@ -1,3 +1,7 @@
+=== 1.1.3 / 12.06.2017
+
+* Fix processing mail and postprocess of sandoz.xmlconv
+
 === 1.1.2 / 07.06.2017
 
 * Added forgotten rack_interface.rb
