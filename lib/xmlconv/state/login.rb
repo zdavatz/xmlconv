@@ -19,10 +19,9 @@ module XmlConv
             transaction.input       = xml_src
             transaction.reader      = 'SunStoreBdd'
             transaction.writer      = XmlConv::CONFIG.writer
-            poll_config = YAML.load_file(XmlConv::CONFIG.polling_file)
-            transaction.destination = XmlConv::Util::Destination.book(poll_config.destination)
+            transaction.destination = XmlConv::Util::Destination.book(XmlConv::CONFIG.destination)
             transaction.partner     = File.basename(session.request_path)
-            transaction.origin      = session.request_origin
+            transaction.origin      = session.remote_ip
             transaction.postprocs.push(['Soap', 'update_partner'])
             transaction.postprocs.push(['Bbmb2', 'inject', XmlConv::CONFIG.bbmb_url, 'customer_id'])
             res = session.app.execute_with_response(transaction)

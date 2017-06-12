@@ -13,6 +13,17 @@ module Mail
     recipients.uniq!
     return if(recipients.empty?)
     puts "XmlConv::Util::Mail.notify #{ XmlConv::CONFIG.mail_from} -> #{recipients} subject: #{my_subject}"
+    options = { :address              => XmlConv::CONFIG.smtp_server,
+                :port                 => XmlConv::CONFIG.smtp_port,
+                :domain               => XmlConv::CONFIG.smtp_domain,
+                :user_name            => XmlConv::CONFIG.smtp_user,
+                :password             => XmlConv::CONFIG.smtp_pass,
+                :authentication       => XmlConv::CONFIG.smtp_authtype,
+                :enable_starttls_auto => true
+              }
+    ::Mail.defaults do
+      delivery_method :smtp, options
+    end
     mail = ::Mail.deliver do
       from XmlConv::CONFIG.mail_from
       to recipients
