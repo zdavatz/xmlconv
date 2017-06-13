@@ -26,7 +26,11 @@ module XmlConv
 				reader_instance = Conversion.const_get(@reader)
 				writer_instance = Conversion.const_get(@writer)
 				@start_time = Time.now
-        @input = encode(@input)
+        if !@input.valid_encoding?
+          @input = @input.encode("UTF-8", :invalid=>:replace, :replace=>"?")
+        else
+          @input = @input.encode("UTF-8")
+        end
         @input.gsub!(/\t+|\s+/, ' ')
         input_model = reader_instance.parse(@input)
         @arguments ||= []
