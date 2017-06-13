@@ -4,6 +4,7 @@
 require 'sbsm/state'
 require 'xmlconv/view/login'
 require 'xmlconv/state/transactions'
+require 'stringio'
 
 module XmlConv
 	module State
@@ -24,10 +25,21 @@ module XmlConv
             transaction.origin      = session.remote_ip
             transaction.postprocs.push(['Soap', 'update_partner'])
             transaction.postprocs.push(['Bbmb2', 'inject', XmlConv::CONFIG.bbmb_url, 'customer_id'])
+            @transaction = transaction
             res = session.app.execute_with_response(transaction)
           end
         end
         super
+      end
+      def to_html(context)
+        if @session.request_method.eql?('POST')
+          string = StringIO.new
+          @transaction.response.write(string, 2)
+          string.rewind
+          string.read
+        else
+          super(context)
+        end
       end
 			def login
 				if(@session.login)
