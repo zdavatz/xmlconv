@@ -23,7 +23,7 @@ module Mail
               }
     ::Mail.defaults do
       delivery_method :smtp, options
-    end
+    end unless ::Mail.delivery_method.is_a?(::Mail::TestMailer)
     mail = ::Mail.deliver do
       from XmlConv::CONFIG.mail_from
       to recipients
