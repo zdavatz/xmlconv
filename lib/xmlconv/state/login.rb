@@ -22,7 +22,7 @@ module XmlConv
             transaction.writer      = XmlConv::CONFIG.writer
             transaction.destination = XmlConv::Util::Destination.book(XmlConv::CONFIG.destination)
             transaction.partner     = File.basename(session.request_path)
-            transaction.origin      = session.remote_ip
+            transaction.origin      = "http://#{session.remote_ip}"
             transaction.postprocs.push(['Soap', 'update_partner'])
             transaction.postprocs.push(['Bbmb2', 'inject', XmlConv::CONFIG.bbmb_url, 'customer_id'])
             @transaction = transaction
