@@ -1,3 +1,7 @@
+=== 1.1.5 / 14.06.2017
+
+* Prepend http:// to transaction origin
+
 === 1.1.4 / 13.06.2017
 
 * Avoid UTF-8 encoding errors
