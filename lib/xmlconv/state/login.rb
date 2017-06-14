@@ -12,8 +12,15 @@ module XmlConv
 			VIEW = View::Login
       def initialize(session, model)
         if session.request_method.eql?('POST')
-          session.request_params
-          xml_src = "#{session.request_params.keys.first} #{session.request_params.values.first}"
+          xml_src = ''
+          session.request_params.each do |k, v|
+            if /xml/i.match(k)
+              xml_src = "#{k} #{v}"
+              break
+            end
+          end
+          SBSM.debug "XmlConv::State::Login POST params were #{session.request_params}"
+          SBSM.debug " xml_src now #{xml_src}"
           unless xml_src.length == 0
             transaction = XmlConv::Util::Transaction.new
             transaction.domain      = session.server_name
