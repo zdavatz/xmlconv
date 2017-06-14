@@ -12,13 +12,7 @@ module XmlConv
 			VIEW = View::Login
       def initialize(session, model)
         if session.request_method.eql?('POST')
-          xml_src = ''
-          session.request_params.each do |k, v|
-            if /xml/i.match(k)
-              xml_src = "#{k} #{v}"
-              break
-            end
-          end
+          xml_src = session.post_content
           SBSM.debug "XmlConv::State::Login POST params were #{session.request_params}"
           SBSM.debug " xml_src now #{xml_src}"
           unless xml_src.length == 0

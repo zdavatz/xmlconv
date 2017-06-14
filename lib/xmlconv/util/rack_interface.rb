@@ -23,7 +23,7 @@ module XmlConv
         @app = app
         super(app: app,
               session_class: XmlConv::Util::Session,
-              unknown_user: XmlConv::Util::KnownUser,
+              unknown_user: XmlConv::Util::KnownUser.new,
               validator: validator,
               cookie_name: 'virbac.bbmb'
               )
