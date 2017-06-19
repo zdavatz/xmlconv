@@ -182,8 +182,10 @@ module XmlConv
 				file.close if(file)
 			end
 			def poll_sources
+        @@showed_content ||= false
 				load_sources do |source|
           begin
+            SBSM.info "PollingManage has source #{source.inspect}" unless @@showed_content
             source.poll { |transaction|
               @system.execute(transaction)
             }
@@ -197,6 +199,7 @@ module XmlConv
             Util::Mail.notify source.error_recipients, subject, body
           end
         end
+        @@showed_content = true
 			end
 		end
 	end

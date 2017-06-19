@@ -38,18 +38,26 @@ module XmlConv
 			rescue Exception => error
 				## survive notification failure
 			end
-			def _execute(transaction)
-				transaction.transaction_id = next_transaction_id
-				transaction.execute
-        transaction.postprocess
-			rescue Exception => error
-				transaction.error = error
+      def _execute(transaction)
+        has_error = false
+        transaction.transaction_id = next_transaction_id
+        SBSM.info "Starting new transation #{transaction.transaction_id}"
+        transaction.execute
+        res = transaction.postprocess
+        SBSM.info "Postprocessed transation #{transaction.transaction_id} res #{res.class}"
+        res
+      rescue Exception => error
+        SBSM.info "error transation #{transaction.transaction_id} error #{error} \n#{error.backtrace}"
+        transaction.error = error
       ensure
-        ODBA.transaction {
+        SBSM.info "ensure transation #{transaction.transaction_id}"
+        res = ODBA.transaction {
           transaction.odba_store
           @transactions.push(transaction)
           @transactions.odba_isolated_store
         }
+        SBSM.info "has_error is #{has_error} ensure transation #{transaction.transaction_id} res is #{res}" if has_error
+        res
       end
 			def next_transaction_id
 				@id_mutex.synchronize {

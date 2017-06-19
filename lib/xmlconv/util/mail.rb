@@ -12,7 +12,6 @@ module Mail
     recipients.compact!
     recipients.uniq!
     return if(recipients.empty?)
-    puts "XmlConv::Util::Mail.notify #{ XmlConv::CONFIG.mail_from} -> #{recipients} subject: #{my_subject}"
     options = { :address              => XmlConv::CONFIG.smtp_server,
                 :port                 => XmlConv::CONFIG.smtp_port,
                 :domain               => XmlConv::CONFIG.smtp_domain,
@@ -24,6 +23,8 @@ module Mail
     ::Mail.defaults do
       delivery_method :smtp, options
     end unless ::Mail.delivery_method.is_a?(::Mail::TestMailer)
+    msg = "XmlConv::Util::Mail.notify #{ XmlConv::CONFIG.mail_from} -> #{recipients} subject: #{my_subject}\n #{options}"
+    puts msg; SBSM.info(msg)
     mail = ::Mail.deliver do
       from XmlConv::CONFIG.mail_from
       to recipients
