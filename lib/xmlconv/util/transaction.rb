@@ -37,6 +37,7 @@ module XmlConv
 				@model = reader_instance.convert(input_model, *@arguments)
 				output_model = writer_instance.convert(@model, *@arguments)
 				@output = output_model.is_a?(Array) ? output_model.join("\n").to_s : output_model.to_s
+        SBSM.info("_execute #{input_model.class} => #{@output} #{@destination.inspect}")
 				@destination.deliver(output_model)
 				@commit_time = Time.now
 				@output
@@ -103,11 +104,13 @@ Output:
       end
       def postprocess
         if(@postprocs.respond_to?(:each))
-          @postprocs.each { |klass, *args|
+          @postprocs.each do |klass, *args|
             next if args.empty?
+            SBSM.info(msg = "Postprocess calling for klass #{klass} #{args.inspect}")
             args.push(self)
-            PostProcess.const_get(klass).send(*args)
-          }
+            res = PostProcess.const_get(klass).send(*args)
+            SBSM.info(msg = "Postprocess returned #{res} for klass #{klass}")
+          end
         end
       end
       def respond delivery, response

@@ -173,7 +173,11 @@ module XmlConv
 			def initialize(system)
 				@system = system
 			end
-			def load_sources(&block)
+      def load_sources(&block)
+        unless File.exist?(CONFIG.polling_file)
+          SBSM.warn("Could not find #{CONFIG.polling_file}. Skip polling")
+          return
+        end
 				file = File.open(CONFIG.polling_file)
 				YAML.load_documents(file) { |mission|
 					block.call(mission)
