@@ -14,7 +14,7 @@ module XmlConv
         if session.request_method.eql?('POST')
           xml_src = session.post_content
           SBSM.debug "XmlConv::State::Login POST params were #{session.request_params}"
-          SBSM.debug " xml_src now #{xml_src}"
+          SBSM.debug " xml_src #{xml_src.encoding} now #{xml_src}"
           unless xml_src.length == 0
             transaction = XmlConv::Util::Transaction.new
             transaction.domain      = session.server_name

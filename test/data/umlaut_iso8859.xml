@@ -1,0 +1,28 @@
+<?xml version "1.0" encoding="utf-8"?>
+<customerOrder xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     compressionDesired="false" productDescriptionDesired="true"
+     backLogDesired="true" language="fr"
+     roundUpForCondition="true" version="1.0">
+  <client number="99" password="" />
+  <orderHeader deliveryDate="2017-06-06"
+       referenceNumber="060620172" mannerOfTransport="tour"
+       phoneCallDesired="false" urgent="false">
+    <deliveryAddress line1="136, Ch. De-La-Montagne"
+         line4="Pharmacie GOUDA" line5PostalCode="1224"
+         line5City="Chêne-Bougeries">
+      <addressLine2And3Text line2="Chêne-Bougeries" line3="GOUDA"
+           />
+    </deliveryAddress>
+  </orderHeader>
+  <orderLines>
+    <productOrderLine orderQuantity="10"
+         roundUpForCondition="true" backLogDesired="true">
+      <pharmaCode id="3463433" />
+    </productOrderLine>
+    <productOrderLine orderQuantity="2"
+         roundUpForCondition="true" backLogDesired="true">
+      <pharmaCode id="3029702" />
+    </productOrderLine>
+  </orderLines>
+</customerOrder>

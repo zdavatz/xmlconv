@@ -5,6 +5,7 @@
 require 'odba'
 require 'xmlconv/util/destination'
 require 'xmlconv/util/mail'
+require 'sbsm/logger'
 
 module XmlConv
 	module Util
@@ -26,11 +27,8 @@ module XmlConv
 				reader_instance = Conversion.const_get(@reader)
 				writer_instance = Conversion.const_get(@writer)
 				@start_time = Time.now
-        if !@input.valid_encoding?
-          @input = @input.encode("UTF-8", :invalid=>:replace, :replace=>"?")
-        else
-          @input = @input.encode("UTF-8")
-        end
+        @input =  @input.force_encoding("UTF-8")
+        @input = @input.encode("UTF-8", :invalid=>:replace, :replace=>"?") if !@input.valid_encoding?
         @input.gsub!(/\t+|\s+/, ' ')
         input_model = reader_instance.parse(@input)
         @arguments ||= []
@@ -44,23 +42,6 @@ module XmlConv
 			ensure
 				@destination.forget_credentials!
 			end
-
-      # Assumes its encoding once as ISO-8859-1 (latin1) at here,
-      # Because input_body is passed from ruby 1.8.6
-      def encode(input_body)
-        src = input_body.to_s
-        begin
-          # ISO-8859-1 (latin1) and WINDOWS-1252
-          src.encode('ISO-8859-1').force_encoding('UTF-8')
-        rescue Encoding::InvalidByteSequenceError,
-               Encoding::UndefinedConversionError
-          begin
-            src.force_encoding('ISO-8859-1').encode('UTF-8')
-          rescue
-            src
-          end
-        end
-      end
 
       def invoice_ids
         @model.invoices.collect do |inv|
