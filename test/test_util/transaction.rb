@@ -4,6 +4,10 @@
 $: << File.dirname(__FILE__)
 $: << File.expand_path('..', File.dirname(__FILE__))
 $: << File.expand_path('../../lib', File.dirname(__FILE__))
+begin
+  require 'pry'
+rescue LoadError
+end
 
 require 'xmlconv/util/transaction'
 require 'mail'
@@ -100,6 +104,37 @@ module XmlConv
         assert_equal(2, ::Mail::TestMailer.deliveries.size)
         assert_equal([to_addr, 'bar'], ::Mail::TestMailer.deliveries.last.to)
 			end
+      def test_execute_utf_8_problem
+        input = flexmock('input')
+        reader = flexmock('reader')
+        model = flexmock('model')
+        writer = flexmock('writer')
+        output = Array.new
+				destination = flexmock('destination')
+        destination.should_receive(:deliver).with(output).once.and_return(output.to_s)
+        destination.should_receive(:forget_credentials!).once
+        test_data_dir = File.expand_path(File.join(File.dirname(__FILE__), '..', 'data'))
+        content = File.open("#{test_data_dir}/umlaut_iso8859.xml", 'rb').read
+        @transaction.input = content
+        @transaction.reader = reader
+        @transaction.writer = writer
+        @transaction.destination = destination
+        reader.should_receive(:parse).and_return(input)
+        reader.should_receive(:convert).with(input).once.and_return(model)
+        writer.should_receive(:convert).with(model).once.and_return(output)
+        time1 = Time.now
+        result = @transaction.execute
+        time2 = Time.now
+        assert(/Ch\?ne-Bougeries/.match(@transaction.input))
+        assert_raises("ArgumentError: invalid byte sequence in UTF-8") { /Ch?ne-Bougeries/.match(content) }
+        assert_equal(reader, @transaction.reader)
+        assert_equal(model, @transaction.model)
+        assert_equal(writer, @transaction.writer)
+        assert_equal([], output)
+        assert_equal("", result)
+        assert_in_delta(time1, @transaction.start_time, 0.001)
+        assert_in_delta(time2, @transaction.commit_time, 0.001)
+      end
 		end
 	end
 end

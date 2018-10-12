@@ -38,18 +38,26 @@ module XmlConv
 			rescue Exception => error
 				## survive notification failure
 			end
-			def _execute(transaction)
-				transaction.transaction_id = next_transaction_id
-				transaction.execute
-        transaction.postprocess
-			rescue Exception => error
-				transaction.error = error
+      def _execute(transaction)
+        has_error = false
+        transaction.transaction_id = next_transaction_id
+        SBSM.info "Starting_transaction #{transaction.transaction_id}"
+        transaction.execute
+        res = transaction.postprocess
+        SBSM.info "Postprocessed_transaction #{transaction.transaction_id} res #{res.class}"
+        res
+      rescue Exception => error
+        has_error = true
+        SBSM.info "error_transaction #{transaction.transaction_id} error #{error} \n#{error.backtrace}"
+        transaction.error = error
       ensure
-        ODBA.transaction {
+        res = ODBA.transaction {
           transaction.odba_store
           @transactions.push(transaction)
           @transactions.odba_isolated_store
         }
+        SBSM.info "has_error_transaction is #{has_error} #{transaction.transaction_id} res is #{res.class}" if has_error
+        res
       end
 			def next_transaction_id
 				@id_mutex.synchronize {
@@ -122,7 +130,7 @@ class XmlConvApp < SBSM::AdminServer
   POLLING_INTERVAL = 60 #* 15
 	def initialize(app: XmlConv::Util::RackInterface.new)
     @rack_app = app
-    super(app: app)
+    super(app: app) # TODO?? , multi_threaded: true)
 		@persistence_layer = ODBA.cache.fetch_named('XmlConv', self) do XmlConv::Util::Application.new end
 		@persistence_layer.init
 		@dispatch_queue = Queue.new

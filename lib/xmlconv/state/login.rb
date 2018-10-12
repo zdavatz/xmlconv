@@ -12,8 +12,9 @@ module XmlConv
 			VIEW = View::Login
       def initialize(session, model)
         if session.request_method.eql?('POST')
-          session.request_params
-          xml_src = "#{session.request_params.keys.first} #{session.request_params.values.first}"
+          xml_src = session.post_content
+          SBSM.debug "XmlConv::State::Login POST params were #{session.request_params}"
+          SBSM.debug " xml_src #{xml_src.encoding} now #{xml_src}"
           unless xml_src.length == 0
             transaction = XmlConv::Util::Transaction.new
             transaction.domain      = session.server_name
@@ -22,7 +23,7 @@ module XmlConv
             transaction.writer      = XmlConv::CONFIG.writer
             transaction.destination = XmlConv::Util::Destination.book(XmlConv::CONFIG.destination)
             transaction.partner     = File.basename(session.request_path)
-            transaction.origin      = session.remote_ip
+            transaction.origin      = "http://#{session.remote_ip}"
             transaction.postprocs.push(['Soap', 'update_partner'])
             transaction.postprocs.push(['Bbmb2', 'inject', XmlConv::CONFIG.bbmb_url, 'customer_id'])
             @transaction = transaction

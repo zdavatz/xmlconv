@@ -38,6 +38,7 @@ module XmlConv
         cache.should_receive(:store).with(@app.transactions)
 				ODBA.cache = cache
         transaction.should_receive(:transaction_id=).with(1)
+        transaction.should_receive(:transaction_id)
         transaction.should_receive(:execute).once.and_return(transaction)
         transaction.should_receive(:postprocess).once
         transaction.should_receive(:error=).never
@@ -57,6 +58,7 @@ module XmlConv
         cache.should_receive(:store).with(@app.transactions)
 				ODBA.cache = cache
         transaction.should_receive(:transaction_id=).with(1)
+        transaction.should_receive(:transaction_id)
         transaction.should_receive(:execute).once.and_raise(Net::SMTPFatalError, 'could not send email')
         transaction.should_receive(:postprocess).never
         transaction.should_receive(:error=).never
@@ -75,6 +77,7 @@ module XmlConv
         cache.should_receive(:store).with(@app.transactions)
 				ODBA.cache = cache
         transaction.should_receive(:transaction_id=).with(1)
+        transaction.should_receive(:transaction_id)
         transaction.should_receive(:execute).and_raise 'oops, something went wrong'
         transaction.should_receive(:postprocess).never
         transaction.should_receive(:error=).once
